@@ -1,0 +1,36 @@
+{
+  "n_rows": 3269,
+  "n_districts": 402,
+  "n_countries": 18,
+  "crisis_prevalence_pct": 21.35,
+  "period_start_min": "2021-06-01",
+  "period_start_max": "2024-02-01",
+  "strict_districts": 586,
+  "ar_features": [
+    "ipc_lag_1",
+    "ipc_persistence_2yr",
+    "spatial_lag",
+    "ipc_period"
+  ],
+  "news_features": [
+    "conflict_relative_coverage",
+    "displacement_relative_coverage",
+    "economic_relative_coverage",
+    "food_security_relative_coverage",
+    "governance_relative_coverage",
+    "health_relative_coverage",
+    "humanitarian_relative_coverage",
+    "weather_relative_coverage",
+    "other_relative_coverage",
+    "conflict_zscore",
+    "displacement_zscore",
+    "economic_zscore",
+    "food_security_zscore",
+    "governance_zscore",
+    "health_zscore",
+    "humanitarian_zscore",
+    "weather_zscore",
+    "other_zscore"
+  ],
+  "target": "target_crisis_binary"
+}

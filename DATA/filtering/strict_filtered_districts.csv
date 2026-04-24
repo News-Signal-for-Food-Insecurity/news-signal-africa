@@ -1,0 +1,587 @@
+district,mean_articles_per_month,n_months_observed
+"High plateau Irish potatoes, maize, acha (Digitaria), and livestock, Bauchi, Nigeria",29743.208333333332,48
+"Ginger and turmeric with maize, sorghum, yams, and acha (Digitaria), Kaduna, Nigeria",29360.416666666668,48
+"High plateau Irish potatoes, maize, acha (Digitaria), and livestock, Plateau, Nigeria",29219.916666666668,48
+"Northern Pastoral Zone, Waso, Samburu East, Samburu, Kenya",15710.583333333334,48
+"Western Agropastoral Zone, Waso, Samburu East, Samburu, Kenya",15710.583333333334,48
+"Gumer, Gurage, Central Ethiopia, Ethiopia",8297.833333333334,48
+"Gumer, Gurage, SNNPR, Ethiopia",8297.833333333334,48
+"Gumer, Guraghe, SNNPR, Ethiopia",8297.791666666666,48
+"Not Zoned (Desert), Tchirozerine, Agadez, Niger",3504.5833333333335,48
+"Transhumant and Nomad Pastoralism, Tchirozerine, Agadez, Niger",3504.5833333333335,48
+"Aïr Massif Irrigated Gardening, Tchirozerine, Agadez, Niger",3504.5833333333335,48
+Rwanda,3245.7291666666665,48
+"Central Agropastoral, Fitri, Batha, Chad",2959.3125,48
+"Western Agropastoral Millet, Soudari, North Kordofan, Sudan",2704.1458333333335,48
+"West and Central Pastoral, Soudari, North Kordofan, Sudan",2700.875,48
+"Urban, Chitungwiza, Harare, Zimbabwe",2094.4166666666665,48
+"Urban, Epworth, Harare, Zimbabwe",2083.1875,48
+"Urban, Harare Urban, Harare, Zimbabwe",2083.1458333333335,48
+Angola,1959.3125,48
+"Lusulu, Lupane and Southern Gokwe Mixed Agriculture, Kwekwe Rural, Midlands, Zimbabwe",1837.6666666666667,48
+"Eastern Kalahari Sandveld Communal, Kwekwe Rural, Midlands, Zimbabwe",1831.5208333333333,48
+"Northern Cattle and Cereal Farming, Kwekwe Rural, Midlands, Zimbabwe",1831.5208333333333,48
+"Urban, Kwekwe Urban, Midlands, Zimbabwe",1831.5,48
+"SANAGA-MBAM PLAIN: cocoa, plantain, pineapple, market gardening, cassava, yellow yams, smallstock, poultry, Mbam et Kim, Centre, Cameroon",1662.5625,48
+"Eastern Central Lowland Cassava Sorghum and Groundnut Zone, Dokolo, Northern, Uganda",1626.7083333333333,48
+"Lakes Recessional Millet and Sorghum, Goundam, Tombouctou, Mali",1626.2083333333333,48
+"Northern Livestock, Goundam, Tombouctou, Mali",1626.2083333333333,48
+"Nomadism and Trans-Saharan Trade, Goundam, Tombouctou, Mali",1626.2083333333333,48
+"Mid North Simsim Maize Cassava Zone, Dokolo, Northern, Uganda",1624.7708333333333,48
+"Lakeshore and Riverbank Fishing Zone, Dokolo, Northern, Uganda",1624.7708333333333,48
+"Lagos Peri-urban: fishing, poultry, piggeries, market gardening, and coconuts, Ogun, Nigeria",1555.75,48
+"Lagos Peri-urban: fishing, poultry, piggeries, market gardening, and coconuts, Lagos, Nigeria",1337.9375,48
+"Rokero Camp, Sudan",1276.6458333333333,48
+"Enderta, Southeast Tigray, Tigray, Ethiopia",1249.9791666666667,48
+"Enderta, South Eastern, Tigray, Ethiopia",1249.9791666666667,48
+"Addun Pastoral, Hobyo, Mudug, Somalia",1206.2083333333333,48
+"Cowpea Belt Agropastoral, Hobyo, Mudug, Somalia",1206.2083333333333,48
+"Coastal Deeh Pastoral and Fishing, Hobyo, Mudug, Somalia",1206.2083333333333,48
+"Kasungu Lilongwe Plain, Dowa, Central, Malawi",1159.7291666666667,48
+"Urban, Dowa, Central, Malawi",1108.4166666666667,48
+"Central yams and maize belt, with cassava, rice, and soybeans, Federal Capital Territory, Nigeria",1010.6875,48
+"Flood-retreat Cultivation, Um Durman, Khartoum, Sudan",980.7916666666666,48
+"Southern Riverine Small/Medium-scale Cultivation, Um Durman, Khartoum, Sudan",980.7916666666666,48
+"West and Central Pastoral, Um Durman, Khartoum, Sudan",980.7916666666666,48
+"Southern Riverine Small/Medium-scale Cultivation, Jebel Awlia, Khartoum, Sudan",967.7916666666666,48
+"Eastern Agropastoral Sorghum, Sharg An Neel, Khartoum, Sudan",964.0416666666666,48
+"Southern Riverine Small/Medium-scale Cultivation, Khartoum, Khartoum, Sudan",964.0416666666666,48
+"Eastern Pastoral, Jebel Awlia, Khartoum, Sudan",964.0416666666666,48
+"Eastern Pastoral, Bahri, Khartoum, Sudan",964.0416666666666,48
+"Eastern Pastoral, Khartoum, Khartoum, Sudan",964.0416666666666,48
+"Eastern Pastoral, Sharg An Neel, Khartoum, Sudan",964.0416666666666,48
+"West and Central Pastoral, Um Bada, Khartoum, Sudan",964.0416666666666,48
+"West and Central Pastoral, Karrari, Khartoum, Sudan",964.0416666666666,48
+"Flood-retreat Cultivation, Jebel Awlia, Khartoum, Sudan",964.0416666666666,48
+"Southern Riverine Small/Medium-scale Cultivation, Bahri, Khartoum, Sudan",964.0416666666666,48
+"Central Irrigated Schemes, Jebel Awlia, Khartoum, Sudan",964.0416666666666,48
+"Southern Riverine Small/Medium-scale Cultivation, Karrari, Khartoum, Sudan",964.0416666666666,48
+"Southern Highlands, Gitega, Burundi",943.8333333333334,48
+"Humid Plateaus, Gitega, Burundi",943.8333333333334,48
+"Eastern Arid Plateaus, Gitega, Burundi",943.8333333333334,48
+"Kinshasa Peri-urban, Kasangulu, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",908.6666666666666,48
+"Fishing and Staples Riverine, City of Kinshasa, Kinshasa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",906.9791666666666,48
+"Cassava, Maize and Groundnuts, City of Kinshasa, Kinshasa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",906.9791666666666,48
+"Kinshasa Peri-urban, City of Kinshasa, Kinshasa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",906.9791666666666,48
+"Cheringoma and Muanza Maize and Cassava, Muanza, Sofala, Mozambique",834.3125,48
+"Cheringoma and Muanza Maize and Cassava, Cheringoma, Sofala, Mozambique",834.3125,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Nasarawa, Nigeria",831.25,48
+"Niger-Benue rivers fishing and food crops, Nasarawa, Nigeria",831.25,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Edo, Nigeria",767.1458333333334,48
+"Niger-Benue rivers fishing and food crops, Edo, Nigeria",767.1458333333334,48
+"Niger-Benue rivers fishing and food crops, Anambra, Nigeria",727.3541666666666,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Anambra, Nigeria",727.3541666666666,48
+"Ankaratra: staple crops, horticulture, milk, Betafo, Vakinankaratra, Madagascar",706.8958333333334,48
+"Ankaratra: staple crops, horticulture, milk, Antanifotsy, Vakinankaratra, Madagascar",706.75,48
+"Ankaratra: staple crops, horticulture, milk, Faratsiho, Vakinankaratra, Madagascar",706.7083333333334,48
+"Ankaratra: staple crops, horticulture, milk, Ambatolampy, Vakinankaratra, Madagascar",706.6458333333334,48
+"Ankaratra: staple crops, horticulture, milk, Antsirabe II, Vakinankaratra, Madagascar",706.6041666666666,48
+"Agropastoral midwest: rice, maize, pulses, Mandoto, Vakinankaratra, Madagascar",706.6041666666666,48
+"Ankaratra: staple crops, horticulture, milk, Antsirabe I, Vakinankaratra, Madagascar",706.6041666666666,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Fune, Yobe, Nigeria",701.8333333333334,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Delta, Nigeria",682.5416666666666,48
+"Central Highlands, High Potential Zone, Starehe, Nairobi, Kenya",667.2708333333334,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Enugu, Nigeria",656.0416666666666,48
+"Rubkona, Unity, South Sudan",615.3333333333334,48
+"Mayendit, Unity, South Sudan",607.9583333333334,48
+"Pariang, Unity, South Sudan",607.9583333333334,48
+"Abiemnhom, Unity, South Sudan",607.9583333333334,48
+"Guit, Unity, South Sudan",607.9583333333334,48
+"Mayom, Unity, South Sudan",607.9583333333334,48
+"Koch, Unity, South Sudan",607.9583333333334,48
+"Leer, Unity, South Sudan",607.9583333333334,48
+"Panyijiar, Unity, South Sudan",607.9583333333334,48
+"Orientale Fishing with Agriculture, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",607.3333333333334,48
+"Forest Cultivation and Products, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",607.3333333333334,48
+"Artisanal Mining with Agriculture, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",607.3333333333334,48
+"Northeast Highlands Agriculture, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",607.3333333333334,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Kogi, Nigeria",599.7916666666666,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kamonia, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",591.0,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Kamonia, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",591.0,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kamonia, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",591.0,48
+"Lighter Forest with Rice and Cassava, Kamonia, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",591.0,48
+"Niger-Benue rivers fishing and food crops, Kwara, Nigeria",586.2291666666666,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Kwara, Nigeria",586.2291666666666,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Damaturu, Yobe, Nigeria",586.1666666666666,48
+"Copperbelt and Marginal Agriculture, City of Lubumbashi, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",585.8125,48
+"Northern Plateau Cassava, Maize, Groundnuts and Beans, Bosobolo, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",584.6666666666666,48
+"Fishing and Staples Riverine, Bosobolo, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",584.6666666666666,48
+"Midland Agricultural Savannah, City of Bukavu, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",583.8125,48
+"High Food Production and Surplus Trade, Shabunda, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",582.5625,48
+"Forest Cultivation and Products, Shabunda, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",582.5625,48
+"Mountain Agropastoral, Shabunda, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",582.5625,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Konduga, Borno, Nigeria",580.3541666666666,48
+"Mountain Agropastoral, Kalehe, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",578.8958333333334,48
+"Midland Agricultural Savannah, Kalehe, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",578.8958333333334,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",578.7083333333334,48
+"Fishing and Staples Riverine, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",578.7083333333334,48
+"Lighter Forest with Rice and Cassava, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",578.7083333333334,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",578.7083333333334,48
+"Savannah Surplus Maize, Kamina, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",577.9791666666666,48
+"Savannah Cassava, Kamina, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",577.9791666666666,48
+"Niger-Benue rivers fishing and food crops, Gombi, Adamawa, Nigeria",577.9791666666666,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Gombi, Adamawa, Nigeria",577.9791666666666,48
+"Forest Cultivation and Products, Punia, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",577.3958333333334,48
+"Artisanal Mining with Agriculture, Punia, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",577.3958333333334,48
+"Savannah Cassava, Dilolo, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",576.9166666666666,48
+"Agropastoral – Staple Crops, Small Stock and Cattle and Wild Foods, Kasongo-Lunda, Kwango, Democratic Republic of the Congo, Congo, The Democratic Republic of the",576.5833333333334,48
+"Fishing and Staples Riverine, Boende, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",576.4375,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, Boende, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",576.4375,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Boende, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",576.4375,48
+"Artisanal Mining with Agriculture, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",574.4791666666666,48
+"Maniema Savannah Agriculture, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",574.4791666666666,48
+"Forest Cultivation and Products, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",574.4791666666666,48
+"High Food Production and Surplus Trade, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",574.4791666666666,48
+"Mountain Agropastoral, Masisi, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",574.2708333333334,48
+"Virunga Volcanic Soils Agriculture, Masisi, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",574.2708333333334,48
+"Bomongo and Makanza Districts Intensive Fishing, Bumba, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",574.1041666666666,48
+"Northern Tanganyika Midland Agriculture, Fizi, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.75,48
+"Bomongo and Makanza Districts Intensive Fishing, Bikoro, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.6458333333334,48
+"Forest Cultivation and Products, Dungu, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.5416666666666,48
+"Maniema Savannah Agriculture, Kibombo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.5,48
+"Orientale Fishing with Agriculture, Kibombo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.5,48
+"Copperbelt and Marginal Agriculture, City of Kolwezi, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.2916666666666,48
+"Northern Plateau Cassava, Maize, Groundnuts and Beans, Businga, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.2916666666666,48
+"Fishing and Staples Riverine, Businga, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.2916666666666,48
+"Forest Cultivation and Products, Businga, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.2916666666666,48
+"Cassava, Maize and Groundnuts, Kenge, Kwango, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.25,48
+"Agriculture with High Production and Marketing, Kenge, Kwango, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.25,48
+"High Food Production and Surplus Trade, Kasongo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.2083333333334,48
+"Maniema Savannah Agriculture, Kasongo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.2083333333334,48
+"Forest Cultivation and Products, Kasongo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.2083333333334,48
+"Savannah with Cassava and Cowpeas and Small Livestock, City of Kananga, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.1875,48
+"Mountain Agropastoral, Lubero, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.1666666666666,48
+"Virunga Volcanic Soils Agriculture, Goma and Rutshuru, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.1666666666666,48
+"Forest Cultivation and Products, Lubero, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.1666666666666,48
+"Cassava, Maize and Groundnuts, Kasangulu, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.1458333333334,48
+"Orientale Fishing with Agriculture, Basoko, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.0416666666666,48
+"Forest Cultivation and Products, Basoko, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.0416666666666,48
+"Artisanal Mining with Agriculture, Basoko, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",573.0416666666666,48
+"Forest Cultivation and Products, Bumba, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.9375,48
+"Bomongo and Makanza Districts Intensive Fishing, Bolomba, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.9375,48
+"Northern Plateau Cassava, Maize, Groundnuts and Beans, Bumba, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.9375,48
+"Fishing and Staples Riverine, Bumba, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.9375,48
+"Bumba Rice and Tubers, Bumba, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.9375,48
+"Cassava, Maize and Groundnuts, Bolobo, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.8541666666666,48
+"Fishing and Staples Riverine, Bolobo, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.8541666666666,48
+"Bomongo and Makanza Districts Intensive Fishing, Lukolela, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.8541666666666,48
+"Agriculture with High Production and Marketing, Bagata, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.8125,48
+"Cassava, Maize and Groundnuts, Bagata, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.8125,48
+"Midland Agricultural Savannah, Kabare, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.8125,48
+"Fishing and Staples Riverine, Bagata, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.8125,48
+"Mountain Agropastoral, Fizi, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.7708333333334,48
+"Forest Cultivation and Products, Irumu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.7708333333334,48
+"Northeast Highlands Agriculture, Irumu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.7708333333334,48
+"Orientale Fishing with Agriculture, Irumu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.7708333333334,48
+"Mountain Agropastoral, Mwenga, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.75,48
+"Midland Agricultural Savannah, Mwenga, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.75,48
+"Kamalondo Depression, Manono, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.75,48
+"Savannah Surplus Maize, Manono, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.75,48
+"Bomongo and Makanza Districts Intensive Fishing, Bongandanga, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.7291666666666,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Lomela, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.7291666666666,48
+"Orientale Fishing with Agriculture, Isangi, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.7291666666666,48
+"Forest Cultivation and Products, Isangi, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.7291666666666,48
+"Fishing and Staples Riverine, Lomela, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.7291666666666,48
+"Mountain Agropastoral, Rutshuru, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.7083333333334,48
+"Virunga Volcanic Soils Agriculture, Rutshuru, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.7083333333334,48
+"Bomongo and Makanza Districts Intensive Fishing, Lisala, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.7083333333334,48
+"Bomongo and Makanza Districts Intensive Fishing, Bomongo, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.6875,48
+"Bomongo and Makanza Districts Intensive Fishing, Makanza, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.6875,48
+"Southern Tanganyika-Mwero Fishing, Kalemie, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.6666666666666,48
+"Savannah Surplus Maize, Kalemie, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.6666666666666,48
+"Agriculture with High Production and Marketing, Gungu, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.6458333333334,48
+"Agropastoral – Staple Crops, Small Stock and Cattle and Wild Foods, Gungu, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.6458333333334,48
+"Cassava, Maize and Groundnuts, Gungu, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.6458333333334,48
+"Forest Cultivation and Products, Walikale, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.6458333333334,48
+"Bomongo and Makanza Districts Intensive Fishing, Bonganga, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.625,48
+"Fishing and Staples Riverine, City of Bandundu, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.5833333333334,48
+"Savannah Surplus Maize, Nyunzu, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.5833333333334,48
+"Cassava, Maize and Groundnuts, City of Bandundu, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.5833333333334,48
+"Mountain Agropastoral, Oicha, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.5416666666666,48
+"Southern Tanganyika-Mwero Fishing, Kasenga, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.5416666666666,48
+"Northern Tanganyika Midland Agriculture, Uvira, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.5416666666666,48
+"Northeast Highlands Agriculture, Oicha, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.5416666666666,48
+"Savannah Surplus Maize, Kongolo, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.5416666666666,48
+"Savannah Surplus Maize, Kabalo, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.5,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, Bikoro, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4791666666666,48
+"Forest Cultivation and Products, Banalia, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4791666666666,48
+"Artisanal Mining with Agriculture, Banalia, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4791666666666,48
+"Orientale Fishing with Agriculture, Banalia, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4791666666666,48
+"Fishing and Staples Riverine, Bikoro, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4791666666666,48
+"Southern Tanganyika-Mwero Fishing, Pweto, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4791666666666,48
+"Fishing and Staples Riverine, Bokungu, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4583333333334,48
+"Southern Tanganyika-Mwero Fishing, Moba, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4583333333334,48
+"Savannah Surplus Maize, Moba, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4583333333334,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Bokungu, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4583333333334,48
+"Orientale Fishing with Agriculture, Ubundu, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4375,48
+"Forest Cultivation and Products, Ubundu, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4375,48
+"Copperbelt and Marginal Agriculture, Kambove, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4375,48
+"Agropastoral – Staple Crops, Small Stock and Cattle and Wild Foods, Feshi, Kwango, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4166666666666,48
+"Cassava, Maize and Groundnuts, Feshi, Kwango, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4166666666666,48
+"Agriculture with High Production and Marketing, Feshi, Kwango, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.4166666666666,48
+"High Food Crop Production and Trading, Lubao, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.375,48
+"Orientale Fishing with Agriculture, Lubao, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.375,48
+"Agriculture with High Production and Marketing, Bulungu, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.375,48
+"Forest Cultivation and Products, Bafwasende, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.3333333333334,48
+"Fishing and Staples Riverine, Inongo, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.3333333333334,48
+"Artisanal Mining with Agriculture, Bafwasende, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.3333333333334,48
+"Cassava, Maize and Groundnuts, Inongo, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.3333333333334,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Inongo, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.3333333333334,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, Ingende, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.3125,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Ingende, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.3125,48
+"Fishing and Staples Riverine, Ingende, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.3125,48
+"Forest Cultivation and Products, Bondo, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.2916666666666,48
+"Artisanal Mining with Agriculture, Bondo, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.2916666666666,48
+"Orientale Fishing with Agriculture, Bondo, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.2916666666666,48
+"Orientale Fishing with Agriculture, City of Kisangani, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.2708333333334,48
+"Forest Cultivation and Products, City of Kisangani, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.2708333333334,48
+"Orientale Fishing with Agriculture, Yahuma, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.2083333333334,48
+"Forest Cultivation and Products, Opala, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.2083333333334,48
+"Orientale Fishing with Agriculture, Opala, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.2083333333334,48
+"Forest Cultivation and Products, Yahuma, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.2083333333334,48
+"Cassava, Maize and Groundnuts, Oshwe, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.1875,48
+"Fishing and Staples Riverine, Oshwe, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.1875,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Oshwe, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.1875,48
+"Orientale Fishing with Agriculture, Kailo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.0625,48
+"Forest Cultivation and Products, Kailo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.0625,48
+"Artisanal Mining with Agriculture, Kailo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.0625,48
+"Forest Cultivation and Products, Ango, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.0416666666666,48
+"Forest – Staple Crops, Cash Crops and Market Gardening, Seke-Banza, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.0416666666666,48
+"Cassava, Maize and Groundnuts, Seke-Banza, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.0416666666666,48
+"River Fishing and Staple Crops, Seke-Banza, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.0416666666666,48
+"Orientale Fishing with Agriculture, Ango, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.0416666666666,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kazumba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.0208333333334,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Kazumba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.0208333333334,48
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Kazumba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.0208333333334,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kazumba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",572.0208333333334,48
+"River Fishing and Staple Crops, Mbanza-Ngungu, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.9583333333334,48
+"Forest Cultivation and Products, City of Kindu, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.9583333333334,48
+"Northeast Highlands Agriculture, Faradje, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.9583333333334,48
+"Market Gardening and Staple Crops, Mbanza-Ngungu, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.9583333333334,48
+"Forest Cultivation and Products, Faradje, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.9583333333334,48
+"Cassava, Maize and Groundnuts, Mbanza-Ngungu, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.9583333333334,48
+"Agriculture with High Production and Marketing, Kahemba, Kwango, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.9375,48
+"Agropastoral – Staple Crops, Small Stock and Cattle and Wild Foods, Kahemba, Kwango, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.9375,48
+"Northeast Highlands Agriculture, Aru, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.9375,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, Dibaya, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8958333333334,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, City of Mbandaka, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8958333333334,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Dibaya, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8958333333334,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Dibaya, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8958333333334,48
+"Fishing and Staples Riverine, City of Mbandaka, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8958333333334,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Lubefu, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8541666666666,48
+"Orientale Fishing with Agriculture, Lubefu, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8541666666666,48
+"Lighter Forest with Rice and Cassava, Lubefu, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8541666666666,48
+"Northern Plateau Cassava, Maize, Groundnuts and Beans, City of Gbadolite, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8333333333334,48
+"Fishing and Staples Riverine, City of Gbadolite, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8333333333334,48
+"Savannah Surplus Maize, Kabongo, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8333333333334,48
+"Fishing and Staples Riverine, Idiofa, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8125,48
+"Agriculture with High Production and Marketing, Idiofa, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8125,48
+"Copperbelt and Marginal Agriculture, Lubudi, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8125,48
+"Savannah Surplus Maize, Lubudi, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8125,48
+"Cassava, Maize and Groundnuts, Idiofa, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.8125,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, Befale, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7916666666666,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Befale, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7916666666666,48
+"Fishing and Staples Riverine, Befale, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7916666666666,48
+"Copperbelt and Marginal Agriculture, Mutshatsha, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"Forest Cultivation and Products, Yakoma, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, Bolomba, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"Fishing and Staples Riverine, Bolomba, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"Artisanal Mining with Agriculture, Yakoma, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Bolomba, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"Fishing and Staples Riverine, Yakoma, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"High Food Crop Production and Trading, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"Northern Plateau Cassava, Maize, Groundnuts and Beans, Yakoma, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7708333333334,48
+"Forest Cultivation and Products, Bambesa, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7291666666666,48
+"Market Gardening and Staple Crops, Songololo, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7291666666666,48
+"Cassava, Maize and Groundnuts, Songololo, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7291666666666,48
+"Orientale Fishing with Agriculture, Bambesa, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7291666666666,48
+"River Fishing and Staple Crops, Songololo, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7291666666666,48
+"Lighter Forest with Rice and Cassava, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Forest Cultivation and Products, Aketi, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Orientale Fishing with Agriculture, Aketi, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Artisanal Mining with Agriculture, Mambasa, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Orientale Fishing with Agriculture, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Cassava, Maize and Groundnuts, Moanda, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Coastal Fishing and Kitchen Gardening, Moanda, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Artisanal Mining with Agriculture, Aketi, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Forest Cultivation and Products, Mambasa, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Agriculture with High Production and Marketing, Masi-Manimba, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Cassava, Maize and Groundnuts, Masi-Manimba, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Forest – Staple Crops, Cash Crops and Market Gardening, Moanda, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"River Fishing and Staple Crops, Moanda, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.7083333333334,48
+"Cassava, Maize and Groundnuts, City of Matadi, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6875,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, Lukolela, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6875,48
+"Copperbelt and Marginal Agriculture, City of Likasi, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6875,48
+"Lighter Forest with Rice and Cassava, Dimbelenge, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6666666666666,48
+"Savannah Surplus Maize, Bukama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6666666666666,48
+"Fishing and Staples Riverine, Kiri, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6666666666666,48
+"Copperbelt and Marginal Agriculture, Kipushi, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6666666666666,48
+"Kamalondo Depression, Bukama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6666666666666,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Kiri, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6666666666666,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, Dimbelenge, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6666666666666,48
+"Agriculture with High Production and Marketing, City of Kikwit, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6666666666666,48
+"Cassava, Maize and Groundnuts, Kiri, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6666666666666,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Dimbelenge, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6666666666666,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Dimbelenge, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6666666666666,48
+"Cassava, Maize and Groundnuts, City of Boma, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6666666666666,48
+"Fishing and Staples Riverine, Ikela, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6458333333334,48
+"Artisanal Mining with Agriculture, Ikela, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6458333333334,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Ikela, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6458333333334,48
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Luilu, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.625,48
+"Cassava, Maize and Groundnuts, Kimvula, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.625,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Luilu, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.625,48
+"River Fishing and Staple Crops, Luozi, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.625,48
+"Cassava, Maize and Groundnuts, Luozi, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.625,48
+"Cassava, Maize and Groundnuts, Madimba, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.625,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Luiza, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6041666666666,48
+"Cassava, Maize and Groundnuts, Tshela, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6041666666666,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Kole, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6041666666666,48
+"Fishing and Staples Riverine, Kole, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6041666666666,48
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Luiza, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6041666666666,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Luiza, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6041666666666,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, Luiza, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6041666666666,48
+"Lighter Forest with Rice and Cassava, Kole, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6041666666666,48
+"Forest – Staple Crops, Cash Crops and Market Gardening, Tshela, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.6041666666666,48
+"Lighter Forest with Rice and Cassava, Mweka, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5833333333334,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, City of Tshikapa, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5833333333334,48
+"Lighter Forest with Rice and Cassava, Demba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5833333333334,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Demba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5833333333334,48
+"Orientale Fishing with Agriculture, Poko, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5833333333334,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Mweka, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5833333333334,48
+"Fishing and Staples Riverine, Mweka, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5833333333334,48
+"Fishing and Staples Riverine, Libenge, South Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5833333333334,48
+"Forest Cultivation and Products, Poko, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5833333333334,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, City of Tshikapa, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5833333333334,48
+"Northern Plateau Cassava, Maize, Groundnuts and Beans, Libenge, South Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5833333333334,48
+"Fishing and Staples Riverine, Kungu, South Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5625,48
+"Copperbelt and Marginal Agriculture, Sakania, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5625,48
+"Copperbelt and Marginal Agriculture, Kasenga, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5625,48
+"Savannah Surplus Maize, Kaniama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5625,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, Bongandanga, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5625,48
+"Savannah Cassava, Kaniama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5625,48
+"Savannah Surplus Maize, Kasenga, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5625,48
+"Fishing and Staples Riverine, Bongandanga, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5625,48
+"Northern Plateau Cassava, Maize, Groundnuts and Beans, Kungu, South Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5625,48
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Ngandajika, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5625,48
+"Artisanal Mining with Agriculture, Pangi, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kabeya-Kamwanga, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"Lighter Forest with Rice and Cassava, Lodja, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"Fishing and Staples Riverine, Basankusu, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, Basankusu, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"Fishing and Staples Riverine, Lisala, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"Fishing and Staples Riverine, Kutu, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"Fishing and Staples Riverine, Lodja, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Lodja, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"Forest Cultivation and Products, Pangi, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"Northern Plateau Cassava, Maize, Groundnuts and Beans, Lisala, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kabeya-Kamwanga, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"Cassava, Maize and Groundnuts, Kutu, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"High Food Production and Surplus Trade, Pangi, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5416666666666,48
+"Forest Cultivation and Products, Watsa, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Northeast Highlands Agriculture, Watsa, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Fishing and Staples Riverine, Luebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, City of Mbaka, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Midland Agricultural Savannah, Walungu, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Northeast Highlands Agriculture, Mahagi, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, Makanza, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Luebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Orientale Fishing with Agriculture, Mahagi, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Northern Plateau Cassava, Maize, Groundnuts and Beans, Gemena, South Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Fishing and Staples Riverine, City of Mbaka, Equateur, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Artisanal Mining with Agriculture, Watsa, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Fishing and Staples Riverine, Gemena, South Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5208333333334,48
+"Fishing and Staples Riverine, Ilebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Forest – Staple Crops, Cash Crops and Market Gardening, Lukula, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Ngajika, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Fishing and Staples Riverine, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Forest Cultivation and Products, Wamba, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Kamalondo Depression, Malemba-Nkulu, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Lighter Forest with Rice and Cassava, Ilebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Lighter Forest with Rice and Cassava, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Clay Soils with High Production of Cassava and Maize, and Cattle, City of Mwene-Ditu, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, Miabi, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Ilebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Artisanal Mining with Agriculture, Wamba, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Miabi, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Orientale Fishing with Agriculture, Buta, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Artisanal Mining with Agriculture, Lubutu, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Kamiji, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Miabi, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Savannah Surplus Maize, Malemba-Nkulu, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Artisanal Mining with Agriculture, Buta, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Cassava, Maize and Groundnuts, Lukula, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Savannah Surplus Maize, Mitwaba, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Savannah Surplus Maize, Pweto, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Forest Cultivation and Products, Lubutu, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"Forest Cultivation and Products, Buta, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.5,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, City of Mbuji-Mayi, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, Katanda, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Fishing and Staples Riverine, Mobayi-Mbongo, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Kata, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Coastal Fishing and Kitchen Gardening, Moa, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Lupatapata, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kata, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Cassava, Maize and Groundnuts, Moa, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Northern Plateau Cassava, Maize, Groundnuts and Beans, Budjala, South Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Artisanal Mining with Agriculture, Mobayi-Mbongo, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, City of Mbuji-Mayi, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Tshilenge, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Cassava, Maize and Groundnuts, Mushie, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Cassava, Maize and Groundnuts, Kwamouth, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Northern Plateau Cassava, Maize, Groundnuts and Beans, Mobayi-Mbongo, North Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Djolu, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Forest – Staple Crops, Cash Crops and Market Gardening, Moa, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Fishing and Staples Riverine, Mushie, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"River Fishing and Staple Crops, Moa, Kongo-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Savannah Cassava, Kapanga, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Savannah with Cassava and Cowpeas and Small Livestock, Tshilenge, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Savannah Cassava, Sandoa, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, Djolu, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Forest Cultivation and Products, Rungu, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Agriculture with High Production and Marketing, Kwamouth, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Fishing and Staples Riverine, Kwamouth, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Fishing and Staples Riverine, Djolu, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Fishing and Staples Riverine, Budjala, South Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Katanda, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, Lupatapata, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"	Intensive Artisanal Diamond Exploitation with Crop Cultivation, Tshilenge, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4791666666666,48
+"Savannah Cassava, Soa, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Fishing and Staples Riverine, City of Zongo, South Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Cassava, Maize and Groundnuts, City of Bundu, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Cassava, Maize and Groundnuts, Popokabaka, Kwango, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Cassava, Maize and Groundnuts, Yumbi, Mai-Ndombe, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Northern Plateau Cassava, Maize, Groundnuts and Beans, City of Zongo, South Ubangi, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Monkoto, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Forest Cultivation and Products, Niangara, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Fishing and Staples Riverine, City of Bundu, Kwilu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Fishing and Staples Riverine, Monkoto, Tshuapa, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Cuvette Centrale Staple Crops, Fishing and Charcoal, Bonganga, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Agropastoral – Staple Crops, Small Stock and Cattle and Wild Foods, Popokabaka, Kwango, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Congo, The Democratic Republic of the",571.4583333333334,48
+"Midland Agricultural Savannah, Idjwi, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Fishing and Staples Riverine, Bonganga, Mongala, Democratic Republic of the Congo, Congo, The Democratic Republic of the",571.4583333333334,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Gombe, Nigeria",568.1041666666666,48
+"Kolfe - Keran, Region 14, Addis Ababa, Ethiopia",555.0833333333334,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Maiduguri, Borno, Nigeria",549.5208333333334,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jigawa, Nigeria",543.3125,48
+Central African Republic,536.2291666666666,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Fika, Yobe, Nigeria",535.4166666666666,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Guzamala, Borno, Nigeria",534.7708333333334,48
+"Hadeija-Nguru wetlands: mixed cereals, vegetables, and fishing, Bauchi, Nigeria",531.4791666666666,48
+"Tenta, South Wello, Amhara, Ethiopia",529.4583333333334,48
+"Tenta, South Wollo, Amhara, Ethiopia",529.4583333333334,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Gubio, Borno, Nigeria",527.2083333333334,48
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Anambra, Nigeria",526.1666666666666,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jere, Borno, Nigeria",526.0208333333334,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Mafa, Borno, Nigeria",525.875,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Nangere, Yobe, Nigeria",524.6666666666666,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Kaga, Borno, Nigeria",524.3333333333334,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Potiskum, Yobe, Nigeria",524.0,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jakusko, Yobe, Nigeria",523.625,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Nganzai, Borno, Nigeria",523.6041666666666,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Tarmuwa, Yobe, Nigeria",523.4791666666666,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Kukawa, Borno, Nigeria",523.4166666666666,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Magumeri, Borno, Nigeria",523.3958333333334,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Monguno, Borno, Nigeria",523.3541666666666,48
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Bauchi, Nigeria",523.3125,48
+"North-east sahelian: millet, sesame, cowpeas, and livestock, Bauchi, Nigeria",523.2916666666666,48
+"Central sorghum, maize, groundnuts, cowpeas, and sesame, Bauchi, Nigeria",523.2916666666666,48
+"North-west and central maize dominant, with sorghum, sweet potatoes, and cowpeas, Bauchi, Nigeria",523.2916666666666,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Taraba, Nigeria",517.4375,48
+"Niger-Benue rivers fishing and food crops, Taraba, Nigeria",517.4375,48
+"Niger-Benue rivers fishing and food crops, Yola North, Adamawa, Nigeria",499.4791666666667,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Yola North, Adamawa, Nigeria",499.4791666666667,48
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Ogun, Nigeria",494.0208333333333,48
+Lesotho,493.5208333333333,48
+"Niger-Benue rivers fishing and food crops, Fufore, Adamawa, Nigeria",492.9166666666667,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Fufore, Adamawa, Nigeria",492.9166666666667,48
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Bayelsa, Nigeria",490.1458333333333,48
+"Niger-Benue rivers fishing and food crops, Demsa, Adamawa, Nigeria",480.3541666666667,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Demsa, Adamawa, Nigeria",480.3541666666667,48
+"Niger-Benue rivers fishing and food crops, Numan, Adamawa, Nigeria",477.7291666666667,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Numan, Adamawa, Nigeria",477.7291666666667,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Guyuk, Adamawa, Nigeria",477.7083333333333,48
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Rivers, Nigeria",477.5416666666667,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Lamurde, Adamawa, Nigeria",477.5208333333333,48
+"Niger-Benue rivers fishing and food crops, Lamurde, Adamawa, Nigeria",477.5208333333333,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Benue, Nigeria",477.3958333333333,48
+"Niger-Benue rivers fishing and food crops, Benue, Nigeria",477.3958333333333,48
+"Niger-Benue rivers fishing and food crops, Niger, Nigeria",477.3958333333333,48
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Niger, Nigeria",477.3958333333333,48
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Ebonyi, Nigeria",462.9166666666667,48
+"Juba, Central Equatoria, South Sudan",461.7708333333333,48
+Mauritania,447.3541666666667,48
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Ondo, Nigeria",443.375,48
+"Turkwell Riverine Zone, Lodwa Township, Turkana Central, Turkana, Kenya",381.3541666666667,48
+"Northwestern Pastoral Zone, Lodwa Township, Turkana Central, Turkana, Kenya",381.3541666666667,48
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Akwa Ibom, Nigeria",376.5625,48
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Cross River, Nigeria",373.4375,48
+"Northeastern Pastoral Zone, Township, Wajir East, Wajir, Kenya",371.4375,48
+"Eastern Pastoral Zone, Sankuri, Garissa Township, Garissa, Kenya",371.2708333333333,48
+"Mandera Riverine Zone, Township, Mandera East, Mandera, Kenya",371.2291666666667,48
+"Northeastern Agropastoral Zone, Moyale Township, Moyale, Marsabit, Kenya",371.2083333333333,48
+"Eastern Pastoral Zone, Waberi, Garissa Township, Garissa, Kenya",371.1458333333333,48
+"Eastern Pastoral Zone, Iftin, Garissa Township, Garissa, Kenya",371.125,48
+"Eastern Pastoral Zone, Galbet, Garissa Township, Garissa, Kenya",371.0833333333333,48
+"Eastern Pastoral Zone, Balambala, Garissa Township, Garissa, Kenya",371.0833333333333,48
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Kaduna, Nigeria",362.5416666666667,48
+"Central yams and maize belt, with cassava, rice, and soybeans, Nasarawa, Nigeria",353.8541666666667,48
+"North-east maize dominant with rice, cowpeas, soybeans, and groundnuts, Damboa, Borno, Nigeria",304.0625,48
+"Cassava dominant with maize, yams, and tree-crops, Edo, Nigeria",289.75,48
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Gusau, Zamfara, Nigeria",287.0625,48
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Kaura-Namoda, Zamfara, Nigeria",283.9375,48
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Delta, Nigeria",276.2083333333333,48
+"Kano-Katsina sahelian: millet, sorghum, sesame, and livestock, Dutsin-Ma, Katsina, Nigeria",274.2708333333333,48
+"Cassava dominant with maize, yams, and tree-crops, Oyo, Nigeria",264.875,48
+"Central yams and maize belt, with cassava, rice, and soybeans, Oyo, Nigeria",264.875,48
+"South-west cocoa with oil palm, tubers, and cereals, Oyo, Nigeria",264.875,48
+"South-east cassava, cereals, and oil palm with extensive off-farm work and trade, Anambra, Nigeria",250.45833333333334,48
+"South-east rice dominant with cassava, yams, and oil palm, Anambra, Nigeria",249.95833333333334,48
+"Benue river sugar cane, rice, and sugar estate labor, Taraba, Nigeria",245.04166666666666,48
+"Southern Highland Cattle and Mixed Cropping, Moamba, Maputo, Mozambique",240.47916666666666,48
+"Southern Coastal Rishing, Manioc, and Maize, Boane, Maputo, Mozambique",240.375,48
+"Southern Highland Cattle and Mixed Cropping, Boane, Maputo, Mozambique",240.375,48
+"Southern Highland Cattle and Mixed Cropping, Namaacha, Maputo, Mozambique",240.33333333333334,48
+"Southern Highland Cattle and Mixed Cropping, Magude, Maputo, Mozambique",240.3125,48
+"Southern Coastal Rishing, Manioc, and Maize, Cidade Da Matola, Maputo, Mozambique",240.04166666666666,48
+"Southern Coastal Rishing, Manioc, and Maize, Marracuene, Maputo, Mozambique",240.0,48
+"Southern Coastal Rishing, Manioc, and Maize, Manhiça, Maputo, Mozambique",239.9375,48
+"Southern Coastal Rishing, Manioc, and Maize, Manhica, Maputo, Mozambique",239.9375,48
+"Southern Coastal Rishing, Manioc, and Maize, Cidade De Maputo, Maputo City, Mozambique",239.9375,48
+"Southern Coastal Rishing, Manioc, and Maize, Matutuine, Maputo, Mozambique",239.9375,48
+"Southern Coastal Rishing, Manioc, and Maize, Matola City, Maputo, Mozambique",239.9375,48
+"Southern Coastal Rishing, Manioc, and Maize, Maputo City, Maputo City, Mozambique",239.9375,48
+"Southern Highland Cattle and Mixed Cropping, Matutuine, Maputo, Mozambique",239.9375,48
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Maru, Zamfara, Nigeria",234.58333333333334,48
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Wamako, Sokoto, Nigeria",233.22916666666666,48
+"Kano-Katsina sahelian: millet, sorghum, sesame, and livestock, Dutsi, Katsina, Nigeria",230.77083333333334,48
+"South-west rice, cassava, and cattle with cross-border trade, Ogun, Nigeria",217.8125,48
+"Central yams and maize belt, with cassava, rice, and soybeans, Ogun, Nigeria",217.8125,48
+"Cassava dominant with maize, yams, and tree-crops, Ogun, Nigeria",217.8125,48
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Malumfashi, Katsina, Nigeria",216.39583333333334,48
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Danja, Katsina, Nigeria",214.95833333333334,48
+"West cereals and remittances, Passore, Nord, Burkina Faso",211.9375,48
+"Central plateau cereals and market gardening, Passore, Nord, Burkina Faso",211.9375,48
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Birnin Magaji, Zamfara, Nigeria",210.4375,48
+"Benue river sugar cane, rice, and sugar estate labor, Numan, Adamawa, Nigeria",205.33333333333334,48
+"Cassava dominant with maize, yams, and tree-crops, Delta, Nigeria",205.14583333333334,48
+"Benue river sugar cane, rice, and sugar estate labor, Lamurde, Adamawa, Nigeria",205.125,48
+"Cassava dominant with maize, yams, and tree-crops, Benue, Nigeria",205.0,48
+"Central yams and maize belt, with cassava, rice, and soybeans, Benue, Nigeria",205.0,48
+"Citrus fruits with tubers, cereals, soybeans, and groundnuts, Benue, Nigeria",205.0,48
+"Cashews with oil palm, tubers, and maize, Benue, Nigeria",205.0,48
+"South-east cassava, cereals, and oil palm with extensive off-farm work and trade, Rivers, Nigeria",201.83333333333334,48
+Togo,201.35416666666666,48
+"Chad Basin: masakwa flood-recession sorghum and wheat, Rivers, Nigeria",201.33333333333334,48
+"Central sorghum, maize, groundnuts, cowpeas, and sesame, Kaduna, Nigeria",201.29166666666666,48
+"Central yams and maize belt, with cassava, rice, and soybeans, Kaduna, Nigeria",201.29166666666666,48
+"North-west and central maize dominant, with sorghum, sweet potatoes, and cowpeas, Kaduna, Nigeria",201.29166666666666,48

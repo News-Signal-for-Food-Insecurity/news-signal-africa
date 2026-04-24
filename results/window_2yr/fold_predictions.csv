@@ -1,0 +1,1101 @@
+district_id,ipc_period_start,target_crisis_binary,fold_id,prob_ar,prob_combined
+"Abiemnhom, Unity, South Sudan",2023-06-01,1.0,1,0.9631451437987912,0.9644862730896907
+"Addun Pastoral, Hobyo, Mudug, Somalia",2023-06-01,1.0,1,0.9631451437987912,0.9205313086442292
+"Agropastoral midwest: rice, maize, pulses, Mandoto, Vakinankaratra, Madagascar",2023-06-01,0.0,1,0.021679491738153,0.013205991663254526
+"Ankaratra: staple crops, horticulture, milk, Ambatolampy, Vakinankaratra, Madagascar",2023-06-01,0.0,1,0.021679491738153,0.013205991663254526
+"Ankaratra: staple crops, horticulture, milk, Antanifotsy, Vakinankaratra, Madagascar",2023-06-01,0.0,1,0.021679491738153,0.013366416935098177
+"Ankaratra: staple crops, horticulture, milk, Antsirabe I, Vakinankaratra, Madagascar",2023-06-01,0.0,1,0.021679491738153,0.013205991663254526
+"Ankaratra: staple crops, horticulture, milk, Antsirabe II, Vakinankaratra, Madagascar",2023-06-01,0.0,1,0.021679491738153,0.013205991663254526
+"Ankaratra: staple crops, horticulture, milk, Betafo, Vakinankaratra, Madagascar",2023-06-01,0.0,1,0.021679491738153,0.013205991663254526
+"Ankaratra: staple crops, horticulture, milk, Faratsiho, Vakinankaratra, Madagascar",2023-06-01,0.0,1,0.021679491738153,0.013205991663254526
+"Artisanal Mining with Agriculture, Aketi, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012934626009739908
+"Artisanal Mining with Agriculture, Bafwasende, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Artisanal Mining with Agriculture, Banalia, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.011768316337918977
+"Artisanal Mining with Agriculture, Basoko, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012133365925694764
+"Artisanal Mining with Agriculture, Bondo, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012133365925694764
+"Artisanal Mining with Agriculture, Buta, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012776306915160216
+"Artisanal Mining with Agriculture, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.8527610079666119,0.8269797006700773
+"Artisanal Mining with Agriculture, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.062003582036779054,0.025223156681567875
+"Artisanal Mining with Agriculture, Kailo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03506323981362415
+"Artisanal Mining with Agriculture, Lubutu, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.049140076239303776,0.03632706019146797
+"Artisanal Mining with Agriculture, Mambasa, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012887100579659617
+"Artisanal Mining with Agriculture, Pangi, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.049140076239303776,0.03632706019146797
+"Artisanal Mining with Agriculture, Punia, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012133365925694764
+"Artisanal Mining with Agriculture, Wamba, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02751543954159282,0.013285999050171004
+"Artisanal Mining with Agriculture, Watsa, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012028973342771187
+"Aïr Massif Irrigated Gardening, Tchirozerine, Agadez, Niger",2023-06-01,0.0,1,0.036050516439240336,0.020189038611965516
+"Benue river sugar cane, rice, and sugar estate labor, Lamurde, Adamawa, Nigeria",2023-06-01,0.0,1,0.04887853828837748,0.029480786916890468
+"Benue river sugar cane, rice, and sugar estate labor, Taraba, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.05282808412345668
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Bauchi, Nigeria",2023-06-01,0.0,1,0.09085396396564133,0.05270468990615819
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Damaturu, Yobe, Nigeria",2023-06-01,0.0,1,0.09085396396564133,0.0502492515310458
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Fika, Yobe, Nigeria",2023-06-01,0.0,1,0.08763728287533584,0.0891631107278924
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Fune, Yobe, Nigeria",2023-06-01,0.0,1,0.08763728287533584,0.07615763874295793
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Gombe, Nigeria",2023-06-01,0.0,1,0.09085396396564133,0.0617827555526896
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Gubio, Borno, Nigeria",2023-06-01,1.0,1,0.6905215335252223,0.9521145188468649
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Guzamala, Borno, Nigeria",2023-06-01,1.0,1,0.6905215335252223,0.966132518026304
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jakusko, Yobe, Nigeria",2023-06-01,0.0,1,0.13213491210936792,0.11812388071561965
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jere, Borno, Nigeria",2023-06-01,0.0,1,0.09085396396564133,0.06495524452602959
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jigawa, Nigeria",2023-06-01,0.0,1,0.09085396396564133,0.0626055318473075
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Kaga, Borno, Nigeria",2023-06-01,0.0,1,0.4494805051004137,0.8106111966808842
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Konduga, Borno, Nigeria",2023-06-01,0.0,1,0.27371150640065656,0.36583309774479694
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Kukawa, Borno, Nigeria",2023-06-01,1.0,1,0.6110129269366148,0.9283479283519277
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Mafa, Borno, Nigeria",2023-06-01,1.0,1,0.6905215335252223,0.9528831753601449
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Magumeri, Borno, Nigeria",2023-06-01,1.0,1,0.6905215335252223,0.9495424410720743
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Maiduguri, Borno, Nigeria",2023-06-01,0.0,1,0.09085396396564133,0.0788378105810733
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Monguno, Borno, Nigeria",2023-06-01,0.0,1,0.43026119491606557,0.4067362484252328
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Nangere, Yobe, Nigeria",2023-06-01,0.0,1,0.27371150640065656,0.24827831381439794
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Nganzai, Borno, Nigeria",2023-06-01,1.0,1,0.43026119491606557,0.43418707638148796
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Potiskum, Yobe, Nigeria",2023-06-01,0.0,1,0.09085396396564133,0.05741241372003597
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Tarmuwa, Yobe, Nigeria",2023-06-01,0.0,1,0.27371150640065656,0.24701519895876195
+"Cashews with oil palm, tubers, and maize, Benue, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.037436086099785305
+"Cassava dominant with maize, yams, and tree-crops, Benue, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.037436086099785305
+"Cassava dominant with maize, yams, and tree-crops, Delta, Nigeria",2023-06-01,0.0,1,0.04790368461227663,0.0200843316128291
+"Cassava dominant with maize, yams, and tree-crops, Edo, Nigeria",2023-06-01,0.0,1,0.044339203124761896,0.02471277362185454
+"Cassava dominant with maize, yams, and tree-crops, Ogun, Nigeria",2023-06-01,0.0,1,0.044339203124761896,0.010373232033186373
+"Cassava dominant with maize, yams, and tree-crops, Oyo, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.03359171311721381
+"Central Agropastoral, Fitri, Batha, Chad",2023-06-01,0.0,1,0.13492627528682585,0.23785330951209402
+"Central Highlands, High Potential Zone, Starehe, Nairobi, Kenya",2023-06-01,0.0,1,0.07077495660162672,0.056857140474048
+"Central Irrigated Schemes, Jebel Awlia, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.26758288263689034
+"Central plateau cereals and market gardening, Passore, Nord, Burkina Faso",2023-06-01,0.0,1,0.07077495660162672,0.08802864689489834
+"Central sorghum, maize, groundnuts, cowpeas, and sesame, Bauchi, Nigeria",2023-06-01,0.0,1,0.09085396396564133,0.05270468990615819
+"Central sorghum, maize, groundnuts, cowpeas, and sesame, Kaduna, Nigeria",2023-06-01,1.0,1,0.9468361775698572,0.9389278558067016
+"Central yams and maize belt, with cassava, rice, and soybeans, Benue, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.037436086099785305
+"Central yams and maize belt, with cassava, rice, and soybeans, Federal Capital Territory, Nigeria",2023-06-01,0.0,1,0.17351089280123727,0.06283849495973504
+"Central yams and maize belt, with cassava, rice, and soybeans, Kaduna, Nigeria",2023-06-01,0.0,1,0.4435232643376034,0.3583638697651023
+"Central yams and maize belt, with cassava, rice, and soybeans, Nasarawa, Nigeria",2023-06-01,0.0,1,0.09085396396564133,0.047851014479799836
+"Central yams and maize belt, with cassava, rice, and soybeans, Ogun, Nigeria",2023-06-01,0.0,1,0.044339203124761896,0.010373232033186373
+"Central yams and maize belt, with cassava, rice, and soybeans, Oyo, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.03359171311721381
+"Cheringoma and Muanza Maize and Cassava, Cheringoma, Sofala, Mozambique",2023-06-01,0.0,1,0.0633849229352703,0.04496567189599269
+"Cheringoma and Muanza Maize and Cassava, Muanza, Sofala, Mozambique",2023-06-01,0.0,1,0.0633849229352703,0.04496567189599269
+"Citrus fruits with tubers, cereals, soybeans, and groundnuts, Benue, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.037436086099785305
+"Clay Soils with High Production of Cassava and Maize, and Cattle, City of Mwene-Ditu, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.028018223593869032
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04124069011265883,0.018920481710528972
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Kazumba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.037224641936517894
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Luilu, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.02219874312099369
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Luiza, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06899631287527926,0.04827058355336595
+"Coastal Deeh Pastoral and Fishing, Hobyo, Mudug, Somalia",2023-06-01,1.0,1,0.9631451437987912,0.9205313086442292
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Akwa Ibom, Nigeria",2023-06-01,0.0,1,0.06109851925505246,0.028426922234850566
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Anambra, Nigeria",2023-06-01,0.0,1,0.04790368461227663,0.025781176765571016
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Bayelsa, Nigeria",2023-06-01,0.0,1,0.044339203124761896,0.017479021028165165
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Cross River, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.031215148265446583
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Delta, Nigeria",2023-06-01,0.0,1,0.04790368461227663,0.019490476227569466
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Ogun, Nigeria",2023-06-01,0.0,1,0.04790368461227663,0.016047177701825517
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Ondo, Nigeria",2023-06-01,0.0,1,0.04790368461227663,0.027391844463737155
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Rivers, Nigeria",2023-06-01,0.0,1,0.04790368461227663,0.043374053269875264
+"Copperbelt and Marginal Agriculture, City of Kolwezi, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04887853828837748,0.029871578310666353
+"Copperbelt and Marginal Agriculture, City of Likasi, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.02219874312099369
+"Copperbelt and Marginal Agriculture, Kambove, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04839912718518835,0.028018223593869032
+"Copperbelt and Marginal Agriculture, Kasenga, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.036050516439240336,0.019083526521292603
+"Copperbelt and Marginal Agriculture, Kipushi, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.03040235755823791,0.013401152667352076
+"Copperbelt and Marginal Agriculture, Lubudi, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04695726613360319,0.026176234633789562
+"Copperbelt and Marginal Agriculture, Mutshatsha, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.02613093714595905
+"Copperbelt and Marginal Agriculture, Sakania, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04839912718518835,0.028018223593869032
+"Cowpea Belt Agropastoral, Hobyo, Mudug, Somalia",2023-06-01,0.0,1,0.9631451437987912,0.9205313086442292
+"Eastern Agropastoral Sorghum, Sharg An Neel, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.26758288263689034
+"Eastern Arid Plateaus, Gitega, Burundi",2023-06-01,0.0,1,0.02488515817950546,0.01643676619641649
+"Eastern Central Lowland Cassava Sorghum and Groundnut Zone, Dokolo, Northern, Uganda",2023-06-01,0.0,1,0.03040235755823791,0.010985116572327794
+"Eastern Kalahari Sandveld Communal, Kwekwe Rural, Midlands, Zimbabwe",2023-06-01,1.0,1,0.5174403599085367,0.6258872924040894
+"Eastern Pastoral Zone, Balambala, Garissa Township, Garissa, Kenya",2023-06-01,1.0,1,0.8932171721115817,0.9169628984269905
+"Eastern Pastoral Zone, Galbet, Garissa Township, Garissa, Kenya",2023-06-01,1.0,1,0.8932171721115817,0.9169628984269905
+"Eastern Pastoral Zone, Iftin, Garissa Township, Garissa, Kenya",2023-06-01,1.0,1,0.9468361775698572,0.931296332837536
+"Eastern Pastoral Zone, Sankuri, Garissa Township, Garissa, Kenya",2023-06-01,1.0,1,0.9368480321075414,0.931296332837536
+"Eastern Pastoral Zone, Waberi, Garissa Township, Garissa, Kenya",2023-06-01,1.0,1,0.8932171721115817,0.9169628984269905
+"Eastern Pastoral, Bahri, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.26758288263689034
+"Eastern Pastoral, Jebel Awlia, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.26758288263689034
+"Eastern Pastoral, Khartoum, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.26758288263689034
+"Eastern Pastoral, Sharg An Neel, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.26758288263689034
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03476850756042653
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.020857071583646636
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Kole, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.028018223593869032
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Lodja, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04695726613360319,0.026693048588486715
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Lomela, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04124069011265883,0.018920481710528972
+"Fishing and Staples Riverine, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03476850756042653
+"Fishing and Staples Riverine, Ilebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.053760731636037624,0.03352092882930556
+"Fishing and Staples Riverine, Kole, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.028018223593869032
+"Fishing and Staples Riverine, Lodja, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04695726613360319,0.026693048588486715
+"Fishing and Staples Riverine, Lomela, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04124069011265883,0.018920481710528972
+"Fishing and Staples Riverine, Luebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.05425630710964785,0.03352092882930556
+"Fishing and Staples Riverine, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.028018223593869032
+"Fishing and Staples Riverine, Mweka, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.05857338656348098,0.0430493212421146
+"Flood-retreat Cultivation, Jebel Awlia, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.26758288263689034
+"Flood-retreat Cultivation, Um Durman, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.2719074559586926
+"Forest Cultivation and Products, Aketi, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012934626009739908
+"Forest Cultivation and Products, Ango, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012887100579659617
+"Forest Cultivation and Products, Bafwasende, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Forest Cultivation and Products, Bambesa, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012776306915160216
+"Forest Cultivation and Products, Banalia, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.011768316337918977
+"Forest Cultivation and Products, Basoko, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012133365925694764
+"Forest Cultivation and Products, Bondo, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012133365925694764
+"Forest Cultivation and Products, Buta, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012776306915160216
+"Forest Cultivation and Products, City of Kindu, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.05425630710964785,0.03352092882930556
+"Forest Cultivation and Products, City of Kisangani, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Forest Cultivation and Products, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.8527610079666119,0.8269797006700773
+"Forest Cultivation and Products, Dungu, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012601751535947427
+"Forest Cultivation and Products, Faradje, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02751543954159282,0.013285999050171004
+"Forest Cultivation and Products, Irumu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.8634082286032763,0.8242449748298823
+"Forest Cultivation and Products, Isangi, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Forest Cultivation and Products, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.5134717470460237,0.6911811092652508
+"Forest Cultivation and Products, Kailo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03506323981362415
+"Forest Cultivation and Products, Kasongo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03506323981362415
+"Forest Cultivation and Products, Lubero, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.17908667038448461,0.19132328699128515
+"Forest Cultivation and Products, Lubutu, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.049140076239303776,0.03632706019146797
+"Forest Cultivation and Products, Mambasa, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.037737863265283354,0.0315582270921018
+"Forest Cultivation and Products, Niangara, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012776306915160216
+"Forest Cultivation and Products, Opala, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Forest Cultivation and Products, Pangi, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.049140076239303776,0.03632706019146797
+"Forest Cultivation and Products, Poko, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012776306915160216
+"Forest Cultivation and Products, Punia, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012133365925694764
+"Forest Cultivation and Products, Rungu, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012776306915160216
+"Forest Cultivation and Products, Shabunda, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.0570164750089207,0.025439105673986585
+"Forest Cultivation and Products, Ubundu, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Forest Cultivation and Products, Walikale, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.4310365720312803,0.4962313026461113
+"Forest Cultivation and Products, Wamba, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02751543954159282,0.013285999050171004
+"Forest Cultivation and Products, Watsa, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012028973342771187
+"Forest Cultivation and Products, Yahuma, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Ginger and turmeric with maize, sorghum, yams, and acha (Digitaria), Kaduna, Nigeria",2023-06-01,0.0,1,0.13368900307573225,0.10864720931800098
+"Guit, Unity, South Sudan",2023-06-01,1.0,1,0.9631451437987912,0.9644862730896907
+"High Food Crop Production and Trading, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04124069011265883,0.018920481710528972
+"High Food Crop Production and Trading, Lubao, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.020933365604301472
+"High Food Production and Surplus Trade, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.7737070957487094,0.7471886638195642
+"High Food Production and Surplus Trade, Kasongo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03506323981362415
+"High Food Production and Surplus Trade, Pangi, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.049140076239303776,0.03632706019146797
+"High Food Production and Surplus Trade, Shabunda, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.0662527025648336,0.037019841422107465
+"High plateau Irish potatoes, maize, acha (Digitaria), and livestock, Bauchi, Nigeria",2023-06-01,0.0,1,0.09085396396564133,0.05592336125413974
+"High plateau Irish potatoes, maize, acha (Digitaria), and livestock, Plateau, Nigeria",2023-06-01,0.0,1,0.1272865473329234,0.0998248061814252
+"Humid Plateaus, Gitega, Burundi",2023-06-01,0.0,1,0.02488515817950546,0.01643676619641649
+"Juba, Central Equatoria, South Sudan",2023-06-01,1.0,1,0.7681152012932624,0.9187096268884727
+"Kamalondo Depression, Bukama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04695726613360319,0.026693048588486715
+"Kamalondo Depression, Malemba-Nkulu, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.028018223593869032
+"Kamalondo Depression, Manono, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.06899631287527926,0.0486740010022314
+"Kano-Katsina sahelian: millet, sorghum, sesame, and livestock, Dutsi, Katsina, Nigeria",2023-06-01,0.0,1,0.1074906670728173,0.08097555536726282
+"Kano-Katsina sahelian: millet, sorghum, sesame, and livestock, Dutsin-Ma, Katsina, Nigeria",2023-06-01,1.0,1,0.7030159120802467,0.9365225147644077
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Danja, Katsina, Nigeria",2023-06-01,0.0,1,0.12305852026297,0.08304435673983206
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Kaduna, Nigeria",2023-06-01,0.0,1,0.0932107093244852,0.11587840023709911
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Malumfashi, Katsina, Nigeria",2023-06-01,0.0,1,0.0932107093244852,0.05858915049227576
+"Kasungu Lilongwe Plain, Dowa, Central, Malawi",2023-06-01,0.0,1,0.03040235755823791,0.02163692715137821
+"Koch, Unity, South Sudan",2023-06-01,1.0,1,0.9631451437987912,0.9644862730896907
+"Kolfe - Keran, Region 14, Addis Ababa, Ethiopia",2023-06-01,0.0,1,0.02751543954159282,0.021599966327632853
+"Lagos Peri-urban: fishing, poultry, piggeries, market gardening, and coconuts, Lagos, Nigeria",2023-06-01,0.0,1,0.044339203124761896,0.01186741143798821
+"Lagos Peri-urban: fishing, poultry, piggeries, market gardening, and coconuts, Ogun, Nigeria",2023-06-01,0.0,1,0.044339203124761896,0.010880614728536655
+"Lakes Recessional Millet and Sorghum, Goundam, Tombouctou, Mali",2023-06-01,0.0,1,0.044339203124761896,0.017064116038660627
+"Lakeshore and Riverbank Fishing Zone, Dokolo, Northern, Uganda",2023-06-01,0.0,1,0.04839912718518835,0.022144535404008615
+"Leer, Unity, South Sudan",2023-06-01,1.0,1,0.9631451437987912,0.9644862730896907
+"Lighter Forest with Rice and Cassava, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03476850756042653
+"Lighter Forest with Rice and Cassava, Demba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03476850756042653
+"Lighter Forest with Rice and Cassava, Dimbelenge, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.053760731636037624,0.03352092882930556
+"Lighter Forest with Rice and Cassava, Ilebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.053760731636037624,0.03352092882930556
+"Lighter Forest with Rice and Cassava, Kamonia, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.7199572522364067,0.7781444785379267
+"Lighter Forest with Rice and Cassava, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.020857071583646636
+"Lighter Forest with Rice and Cassava, Kole, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.028018223593869032
+"Lighter Forest with Rice and Cassava, Lodja, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04695726613360319,0.026693048588486715
+"Lighter Forest with Rice and Cassava, Lubefu, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.024801218014061894
+"Lighter Forest with Rice and Cassava, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.028018223593869032
+"Lighter Forest with Rice and Cassava, Mweka, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.05857338656348098,0.0430493212421146
+"Lusulu, Lupane and Southern Gokwe Mixed Agriculture, Kwekwe Rural, Midlands, Zimbabwe",2023-06-01,0.0,1,0.036050516439240336,0.013400633898149257
+"Mandera Riverine Zone, Township, Mandera East, Mandera, Kenya",2023-06-01,1.0,1,0.8932171721115817,0.9169628984269905
+"Maniema Savannah Agriculture, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.7737070957487094,0.7471886638195642
+"Maniema Savannah Agriculture, Kasongo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06652187275291807,0.04500962043458277
+"Maniema Savannah Agriculture, Kibombo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.051181298586785,0.031640488741829176
+"Mayendit, Unity, South Sudan",2023-06-01,1.0,1,0.9631451437987912,0.9644862730896907
+"Mayom, Unity, South Sudan",2023-06-01,1.0,1,0.9631451437987912,0.9644862730896907
+"Mid North Simsim Maize Cassava Zone, Dokolo, Northern, Uganda",2023-06-01,0.0,1,0.04839912718518835,0.022144535404008615
+"Midland Agricultural Savannah, City of Bukavu, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.036050516439240336,0.01801825388720145
+"Midland Agricultural Savannah, Idjwi, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Midland Agricultural Savannah, Kabare, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.03040235755823791,0.013285999050171004
+"Midland Agricultural Savannah, Kalehe, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.05180326170837347,0.031935528452278504
+"Midland Agricultural Savannah, Mwenga, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.08109771576170655,0.05869749183244137
+"Midland Agricultural Savannah, Walungu, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04166858336247844,0.032516021377018006
+"Mountain Agropastoral, Fizi, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.8367901343657845,0.7711511601423131
+"Mountain Agropastoral, Kalehe, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06024894573328142,0.03750431673038848
+"Mountain Agropastoral, Lubero, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.12676439570661585,0.11878726873266396
+"Mountain Agropastoral, Masisi, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.7737070957487094,0.7442823707817242
+"Mountain Agropastoral, Mwenga, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.08109771576170655,0.05869749183244137
+"Mountain Agropastoral, Oicha, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.8517473407044928,0.8242449748298823
+"Mountain Agropastoral, Rutshuru, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.6862591473670819,0.7832412262895414
+"Mountain Agropastoral, Shabunda, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.15881783308243097,0.11404381779305534
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Anambra, Nigeria",2023-06-01,0.0,1,0.06109851925505246,0.03360292004049176
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Benue, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.0590344904285014
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Delta, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.05924739963811343
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Demsa, Adamawa, Nigeria",2023-06-01,0.0,1,0.04887853828837748,0.037829105011210694
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Edo, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.028176011858903182
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Fufore, Adamawa, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.09355201124791739
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Gombi, Adamawa, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.06699313522697779
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Guyuk, Adamawa, Nigeria",2023-06-01,0.0,1,0.04887853828837748,0.03745605118063819
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Kogi, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.05033873081351634
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Kwara, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.04458617142986039
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Nasarawa, Nigeria",2023-06-01,0.0,1,0.053760731636037624,0.0298668150699091
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Niger, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.0590344904285014
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Numan, Adamawa, Nigeria",2023-06-01,0.0,1,0.04887853828837748,0.037829105011210694
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Taraba, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.07832197924167053
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Yola North, Adamawa, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.05874038589016
+"Nomadism and Trans-Saharan Trade, Goundam, Tombouctou, Mali",2023-06-01,0.0,1,0.044339203124761896,0.017064116038660627
+"North-east maize dominant with rice, cowpeas, soybeans, and groundnuts, Damboa, Borno, Nigeria",2023-06-01,1.0,1,0.6767437270703486,0.9103375881089778
+"North-east sahelian: millet, sesame, cowpeas, and livestock, Bauchi, Nigeria",2023-06-01,0.0,1,0.09085396396564133,0.05270468990615819
+"North-west and central maize dominant, with sorghum, sweet potatoes, and cowpeas, Bauchi, Nigeria",2023-06-01,0.0,1,0.09085396396564133,0.05270468990615819
+"North-west and central maize dominant, with sorghum, sweet potatoes, and cowpeas, Kaduna, Nigeria",2023-06-01,0.0,1,0.13501717414005912,0.11197560669563392
+"Northeast Highlands Agriculture, Aru, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.03785619637559482,0.018920481710528972
+"Northeast Highlands Agriculture, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.8527610079666119,0.8269797006700773
+"Northeast Highlands Agriculture, Faradje, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02751543954159282,0.013285999050171004
+"Northeast Highlands Agriculture, Irumu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.8634082286032763,0.8242449748298823
+"Northeast Highlands Agriculture, Mahagi, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.7823500707147287,0.7662859950715694
+"Northeast Highlands Agriculture, Oicha, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.8517473407044928,0.8242449748298823
+"Northeast Highlands Agriculture, Watsa, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012028973342771187
+"Northeastern Agropastoral Zone, Moyale Township, Moyale, Marsabit, Kenya",2023-06-01,1.0,1,0.8932171721115817,0.9169628984269905
+"Northeastern Pastoral Zone, Township, Wajir East, Wajir, Kenya",2023-06-01,1.0,1,0.8932171721115817,0.9169628984269905
+"Northern Cattle and Cereal Farming, Kwekwe Rural, Midlands, Zimbabwe",2023-06-01,0.0,1,0.0543485046564652,0.022734733758040315
+"Northern Livestock, Goundam, Tombouctou, Mali",2023-06-01,0.0,1,0.044339203124761896,0.017064116038660627
+"Northern Pastoral Zone, Waso, Samburu East, Samburu, Kenya",2023-06-01,0.0,1,0.9631451437987912,0.943666735614286
+"Northern Tanganyika Midland Agriculture, Fizi, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.8397602450389369,0.8072799650242684
+"Northern Tanganyika Midland Agriculture, Uvira, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.8362026554224986,0.7840083369216049
+"Northwestern Pastoral Zone, Lodwa Township, Turkana Central, Turkana, Kenya",2023-06-01,1.0,1,0.7565164006792267,0.8780786511404631
+"Not Zoned (Desert), Tchirozerine, Agadez, Niger",2023-06-01,0.0,1,0.036050516439240336,0.020189038611965516
+"Orientale Fishing with Agriculture, Aketi, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012934626009739908
+"Orientale Fishing with Agriculture, Ango, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012887100579659617
+"Orientale Fishing with Agriculture, Bambesa, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012776306915160216
+"Orientale Fishing with Agriculture, Banalia, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.011768316337918977
+"Orientale Fishing with Agriculture, Basoko, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012133365925694764
+"Orientale Fishing with Agriculture, Bondo, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012133365925694764
+"Orientale Fishing with Agriculture, Buta, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012776306915160216
+"Orientale Fishing with Agriculture, City of Kisangani, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Orientale Fishing with Agriculture, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.8527610079666119,0.8269797006700773
+"Orientale Fishing with Agriculture, Irumu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.8634082286032763,0.8242449748298823
+"Orientale Fishing with Agriculture, Isangi, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Orientale Fishing with Agriculture, Kailo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03506323981362415
+"Orientale Fishing with Agriculture, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.020857071583646636
+"Orientale Fishing with Agriculture, Kibombo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.051181298586785,0.031640488741829176
+"Orientale Fishing with Agriculture, Lubao, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.020933365604301472
+"Orientale Fishing with Agriculture, Lubefu, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.024801218014061894
+"Orientale Fishing with Agriculture, Mahagi, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.06318149917055205,0.03853750191687503
+"Orientale Fishing with Agriculture, Opala, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Orientale Fishing with Agriculture, Poko, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.02488515817950546,0.012776306915160216
+"Orientale Fishing with Agriculture, Ubundu, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Orientale Fishing with Agriculture, Yahuma, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.021679491738153,0.012028973342771187
+"Panyijiar, Unity, South Sudan",2023-06-01,1.0,1,0.9631451437987912,0.9644862730896907
+"Pariang, Unity, South Sudan",2023-06-01,1.0,1,0.9539579125143698,0.9593655224352857
+"Rokero Camp, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.37456117355661894
+"Rubkona, Unity, South Sudan",2023-06-01,1.0,1,0.9631451437987912,0.9665380828815588
+"SANAGA-MBAM PLAIN: cocoa, plantain, pineapple, market gardening, cassava, yellow yams, smallstock, poultry, Mbam et Kim, Centre, Cameroon",2023-06-01,0.0,1,0.036050516439240336,0.040328362421905434
+"Savannah Cassava, Dilolo, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.021951152318187842
+"Savannah Cassava, Kamina, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.0282574089564036
+"Savannah Cassava, Kaniama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04839912718518835,0.028018223593869032
+"Savannah Cassava, Kapanga, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.023878207598582578
+"Savannah Surplus Maize, Bukama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04695726613360319,0.026693048588486715
+"Savannah Surplus Maize, Kabalo, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.07698680151620661,0.057094090340101364
+"Savannah Surplus Maize, Kabongo, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04839912718518835,0.0282574089564036
+"Savannah Surplus Maize, Kalemie, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03476850756042653
+"Savannah Surplus Maize, Kamina, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.0282574089564036
+"Savannah Surplus Maize, Kaniama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04839912718518835,0.028018223593869032
+"Savannah Surplus Maize, Kasenga, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.036050516439240336,0.019083526521292603
+"Savannah Surplus Maize, Kongolo, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.10341078168831204,0.08886534834823147
+"Savannah Surplus Maize, Lubudi, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04695726613360319,0.026176234633789562
+"Savannah Surplus Maize, Malemba-Nkulu, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.028018223593869032
+"Savannah Surplus Maize, Manono, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.09295393294139662,0.08053404985071079
+"Savannah Surplus Maize, Mitwaba, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.4251245469681386,0.4980167727463226
+"Savannah Surplus Maize, Moba, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.08397731345590179,0.04896450616041903
+"Savannah Surplus Maize, Nyunzu, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.7022307359186247,0.4453853677796418
+"Savannah Surplus Maize, Pweto, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.4251245469681386,0.4980167727463226
+"Savannah with Cassava and Cowpeas and Small Livestock, City of Kananga, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.036759599503134455
+"Savannah with Cassava and Cowpeas and Small Livestock, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03476850756042653
+"Savannah with Cassava and Cowpeas and Small Livestock, Demba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03476850756042653
+"Savannah with Cassava and Cowpeas and Small Livestock, Dibaya, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03352092882930556
+"Savannah with Cassava and Cowpeas and Small Livestock, Dimbelenge, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.053760731636037624,0.03352092882930556
+"Savannah with Cassava and Cowpeas and Small Livestock, Ilebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.053760731636037624,0.03352092882930556
+"Savannah with Cassava and Cowpeas and Small Livestock, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04124069011265883,0.018920481710528972
+"Savannah with Cassava and Cowpeas and Small Livestock, Kamiji, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.028018223593869032
+"Savannah with Cassava and Cowpeas and Small Livestock, Kamonia, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.7199572522364067,0.7781444785379267
+"Savannah with Cassava and Cowpeas and Small Livestock, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.020857071583646636
+"Savannah with Cassava and Cowpeas and Small Livestock, Kazumba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.037224641936517894
+"Savannah with Cassava and Cowpeas and Small Livestock, Lubefu, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.024801218014061894
+"Savannah with Cassava and Cowpeas and Small Livestock, Luebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.05425630710964785,0.03352092882930556
+"Savannah with Cassava and Cowpeas and Small Livestock, Luilu, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.044339203124761896,0.02219874312099369
+"Savannah with Cassava and Cowpeas and Small Livestock, Luiza, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06899631287527926,0.04827058355336595
+"Savannah with Cassava and Cowpeas and Small Livestock, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.04790368461227663,0.028018223593869032
+"Savannah with Cassava and Cowpeas and Small Livestock, Miabi, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06109851925505246,0.03476850756042653
+"Savannah with Cassava and Cowpeas and Small Livestock, Mweka, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.05857338656348098,0.0430493212421146
+"Savannah with Cassava and Cowpeas and Small Livestock, Tshilenge, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06652187275291807,0.04463514895324274
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Birnin Magaji, Zamfara, Nigeria",2023-06-01,1.0,1,0.729785908399194,0.9628401895205007
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Gusau, Zamfara, Nigeria",2023-06-01,0.0,1,0.1554744913133663,0.06590015125883457
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Kaura-Namoda, Zamfara, Nigeria",2023-06-01,0.0,1,0.1393528499802313,0.10128928125560552
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Maru, Zamfara, Nigeria",2023-06-01,1.0,1,0.7434957454499986,0.947948877411052
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Wamako, Sokoto, Nigeria",2023-06-01,0.0,1,0.08921374018846662,0.06461341047764241
+"South-east cassava, cereals, and oil palm with extensive off-farm work and trade, Anambra, Nigeria",2023-06-01,0.0,1,0.04695726613360319,0.018945247388536323
+"South-east cassava, cereals, and oil palm with extensive off-farm work and trade, Rivers, Nigeria",2023-06-01,0.0,1,0.044339203124761896,0.025982234151586913
+"South-east rice dominant with cassava, yams, and oil palm, Anambra, Nigeria",2023-06-01,0.0,1,0.04790368461227663,0.022301700248948442
+"South-west cocoa with oil palm, tubers, and cereals, Oyo, Nigeria",2023-06-01,0.0,1,0.0633849229352703,0.03359171311721381
+"South-west rice, cassava, and cattle with cross-border trade, Ogun, Nigeria",2023-06-01,0.0,1,0.044339203124761896,0.010373232033186373
+"Southern Coastal Rishing, Manioc, and Maize, Boane, Maputo, Mozambique",2023-06-01,0.0,1,0.039415451255660296,0.013615699648393874
+"Southern Coastal Rishing, Manioc, and Maize, Cidade Da Matola, Maputo, Mozambique",2023-06-01,0.0,1,0.036050516439240336,0.013058076962485031
+"Southern Coastal Rishing, Manioc, and Maize, Cidade De Maputo, Maputo City, Mozambique",2023-06-01,0.0,1,0.036050516439240336,0.01301739619123727
+"Southern Coastal Rishing, Manioc, and Maize, Manhiça, Maputo, Mozambique",2023-06-01,0.0,1,0.036050516439240336,0.01301739619123727
+"Southern Coastal Rishing, Manioc, and Maize, Marracuene, Maputo, Mozambique",2023-06-01,0.0,1,0.02751543954159282,0.009653047758359238
+"Southern Coastal Rishing, Manioc, and Maize, Matutuine, Maputo, Mozambique",2023-06-01,0.0,1,0.02751543954159282,0.00931325245160928
+"Southern Highland Cattle and Mixed Cropping, Boane, Maputo, Mozambique",2023-06-01,0.0,1,0.039415451255660296,0.013615699648393874
+"Southern Highland Cattle and Mixed Cropping, Magude, Maputo, Mozambique",2023-06-01,0.0,1,0.036050516439240336,0.014255569857332711
+"Southern Highland Cattle and Mixed Cropping, Matutuine, Maputo, Mozambique",2023-06-01,0.0,1,0.02751543954159282,0.00931325245160928
+"Southern Highland Cattle and Mixed Cropping, Moamba, Maputo, Mozambique",2023-06-01,0.0,1,0.02751543954159282,0.009232141292449099
+"Southern Highland Cattle and Mixed Cropping, Namaacha, Maputo, Mozambique",2023-06-01,0.0,1,0.02751543954159282,0.009232141292449099
+"Southern Highlands, Gitega, Burundi",2023-06-01,0.0,1,0.02488515817950546,0.01643676619641649
+"Southern Riverine Small/Medium-scale Cultivation, Bahri, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.26758288263689034
+"Southern Riverine Small/Medium-scale Cultivation, Jebel Awlia, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.26758288263689034
+"Southern Riverine Small/Medium-scale Cultivation, Karrari, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.26758288263689034
+"Southern Riverine Small/Medium-scale Cultivation, Khartoum, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.26758288263689034
+"Southern Riverine Small/Medium-scale Cultivation, Um Durman, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.2719074559586926
+"Southern Tanganyika-Mwero Fishing, Kalemie, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.06652187275291807,0.04463514895324274
+"Southern Tanganyika-Mwero Fishing, Kasenga, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,0.0,1,0.07077495660162672,0.04587160998523229
+"Southern Tanganyika-Mwero Fishing, Moba, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.08397731345590179,0.04896450616041903
+"Southern Tanganyika-Mwero Fishing, Pweto, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.07698680151620661,0.058216082003237975
+"Transhumant and Nomad Pastoralism, Tchirozerine, Agadez, Niger",2023-06-01,0.0,1,0.036050516439240336,0.020189038611965516
+"Turkwell Riverine Zone, Lodwa Township, Turkana Central, Turkana, Kenya",2023-06-01,1.0,1,0.7565164006792267,0.8780786511404631
+"Urban, Chitungwiza, Harare, Zimbabwe",2023-06-01,0.0,1,0.036050516439240336,0.02152823393107597
+"Urban, Epworth, Harare, Zimbabwe",2023-06-01,0.0,1,0.04839912718518835,0.052309166122674826
+"Urban, Harare Urban, Harare, Zimbabwe",2023-06-01,0.0,1,0.04839912718518835,0.053009641200049536
+"Urban, Kwekwe Urban, Midlands, Zimbabwe",2023-06-01,0.0,1,0.036050516439240336,0.013400633898149257
+"Virunga Volcanic Soils Agriculture, Masisi, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-06-01,1.0,1,0.5134717470460237,0.6878998977369832
+"West and Central Pastoral, Karrari, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.26758288263689034
+"West and Central Pastoral, Soudari, North Kordofan, Sudan",2023-06-01,1.0,1,0.9445904098666903,0.8609517048810178
+"West and Central Pastoral, Um Bada, Khartoum, Sudan",2023-06-01,1.0,1,0.14414724264866044,0.2954476658318058
+"West and Central Pastoral, Um Durman, Khartoum, Sudan",2023-06-01,1.0,1,0.13732332741156558,0.2719074559586926
+"West cereals and remittances, Passore, Nord, Burkina Faso",2023-06-01,0.0,1,0.07077495660162672,0.08802864689489834
+"Western Agropastoral Millet, Soudari, North Kordofan, Sudan",2023-06-01,1.0,1,0.9445904098666903,0.8609517048810178
+"Western Agropastoral Zone, Waso, Samburu East, Samburu, Kenya",2023-06-01,0.0,1,0.9539579125143698,0.9428039201687903
+"Abiemnhom, Unity, South Sudan",2023-10-01,1.0,2,0.7689337653472742,0.9445802655676836
+"Addun Pastoral, Hobyo, Mudug, Somalia",2023-10-01,1.0,2,0.7689337653472742,0.893524918077902
+"Agropastoral midwest: rice, maize, pulses, Mandoto, Vakinankaratra, Madagascar",2023-10-01,0.0,2,0.14921506021630757,0.027296622028921722
+"Ankaratra: staple crops, horticulture, milk, Ambatolampy, Vakinankaratra, Madagascar",2023-10-01,0.0,2,0.14921506021630757,0.027296622028921722
+"Ankaratra: staple crops, horticulture, milk, Antanifotsy, Vakinankaratra, Madagascar",2023-10-01,0.0,2,0.14921506021630757,0.027296622028921722
+"Ankaratra: staple crops, horticulture, milk, Antsirabe I, Vakinankaratra, Madagascar",2023-10-01,0.0,2,0.14921506021630757,0.027296622028921722
+"Ankaratra: staple crops, horticulture, milk, Antsirabe II, Vakinankaratra, Madagascar",2023-10-01,0.0,2,0.14921506021630757,0.027296622028921722
+"Ankaratra: staple crops, horticulture, milk, Betafo, Vakinankaratra, Madagascar",2023-10-01,0.0,2,0.14921506021630757,0.027296622028921722
+"Ankaratra: staple crops, horticulture, milk, Faratsiho, Vakinankaratra, Madagascar",2023-10-01,0.0,2,0.14921506021630757,0.027296622028921722
+"Artisanal Mining with Agriculture, Aketi, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04554090484107079
+"Artisanal Mining with Agriculture, Bafwasende, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Artisanal Mining with Agriculture, Banalia, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Artisanal Mining with Agriculture, Basoko, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Artisanal Mining with Agriculture, Bondo, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Artisanal Mining with Agriculture, Buta, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Artisanal Mining with Agriculture, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6991170862021265,0.9058321458608956
+"Artisanal Mining with Agriculture, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.21718845531397307,0.07347036403011728
+"Artisanal Mining with Agriculture, Kailo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.22939681195416342,0.06696625972222027
+"Artisanal Mining with Agriculture, Lubutu, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.21976621379266068,0.09024964035800788
+"Artisanal Mining with Agriculture, Mambasa, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.18256287545442215,0.04554090484107079
+"Artisanal Mining with Agriculture, Pangi, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.21976621379266068,0.09477010829322069
+"Artisanal Mining with Agriculture, Punia, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.03891879727396996
+"Artisanal Mining with Agriculture, Wamba, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04554090484107079
+"Artisanal Mining with Agriculture, Watsa, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Aïr Massif Irrigated Gardening, Tchirozerine, Agadez, Niger",2023-10-01,0.0,2,0.1588624553465772,0.031985785248016936
+"Benue river sugar cane, rice, and sugar estate labor, Lamurde, Adamawa, Nigeria",2023-10-01,1.0,2,0.18256287545442215,0.07497063423751366
+"Benue river sugar cane, rice, and sugar estate labor, Taraba, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.06661568722462526
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Bauchi, Nigeria",2023-10-01,1.0,2,0.18256287545442215,0.04962726755244747
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Damaturu, Yobe, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.055517440190320955
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Fika, Yobe, Nigeria",2023-10-01,1.0,2,0.49461202908382546,0.6409886568366993
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Fune, Yobe, Nigeria",2023-10-01,1.0,2,0.49461202908382546,0.6551663305206608
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Gombe, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.05514827764583744
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Gubio, Borno, Nigeria",2023-10-01,1.0,2,0.6991170862021265,0.8879002318930737
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Guzamala, Borno, Nigeria",2023-10-01,1.0,2,0.6991170862021265,0.89648251205551
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jakusko, Yobe, Nigeria",2023-10-01,1.0,2,0.49461202908382546,0.6396669183691631
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jere, Borno, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.04962726755244747
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jigawa, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.053177404873185716
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Kaga, Borno, Nigeria",2023-10-01,1.0,2,0.5693519748986147,0.7093976986537371
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Konduga, Borno, Nigeria",2023-10-01,1.0,2,0.29681548798789154,0.1255718206533002
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Kukawa, Borno, Nigeria",2023-10-01,1.0,2,0.6657450509340728,0.8818214862214064
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Mafa, Borno, Nigeria",2023-10-01,1.0,2,0.6991170862021265,0.8879002318930737
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Magumeri, Borno, Nigeria",2023-10-01,1.0,2,0.6991170862021265,0.8879002318930737
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Maiduguri, Borno, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.04962726755244747
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Monguno, Borno, Nigeria",2023-10-01,1.0,2,0.3431719078378121,0.19298780977036079
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Nangere, Yobe, Nigeria",2023-10-01,1.0,2,0.5693519748986147,0.7093976986537371
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Nganzai, Borno, Nigeria",2023-10-01,1.0,2,0.6007178047515399,0.7520152859673392
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Potiskum, Yobe, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.04962726755244747
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Tarmuwa, Yobe, Nigeria",2023-10-01,1.0,2,0.5693519748986147,0.7093976986537371
+"Cashews with oil palm, tubers, and maize, Benue, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.07485956013284584
+"Cassava dominant with maize, yams, and tree-crops, Benue, Nigeria",2023-10-01,1.0,2,0.18256287545442215,0.07485956013284584
+"Cassava dominant with maize, yams, and tree-crops, Delta, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.02384100017972443
+"Cassava dominant with maize, yams, and tree-crops, Edo, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.026359575141092877
+"Cassava dominant with maize, yams, and tree-crops, Ogun, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.04546631401699381
+"Cassava dominant with maize, yams, and tree-crops, Oyo, Nigeria",2023-10-01,0.0,2,0.1588624553465772,0.042785726057478005
+"Central Agropastoral, Fitri, Batha, Chad",2023-10-01,0.0,2,0.19893844248765433,0.07455393835159924
+"Central Highlands, High Potential Zone, Starehe, Nairobi, Kenya",2023-10-01,0.0,2,0.19893844248765433,0.07222797326356085
+"Central Irrigated Schemes, Jebel Awlia, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5902563084636373
+"Central plateau cereals and market gardening, Passore, Nord, Burkina Faso",2023-10-01,0.0,2,0.18256287545442215,0.03992580411295054
+"Central sorghum, maize, groundnuts, cowpeas, and sesame, Bauchi, Nigeria",2023-10-01,1.0,2,0.18256287545442215,0.04962726755244747
+"Central sorghum, maize, groundnuts, cowpeas, and sesame, Kaduna, Nigeria",2023-10-01,1.0,2,0.6971173723051854,0.8741149218165899
+"Central yams and maize belt, with cassava, rice, and soybeans, Benue, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.07485956013284584
+"Central yams and maize belt, with cassava, rice, and soybeans, Federal Capital Territory, Nigeria",2023-10-01,0.0,2,0.19654344430508502,0.04959917882540596
+"Central yams and maize belt, with cassava, rice, and soybeans, Kaduna, Nigeria",2023-10-01,1.0,2,0.5984397465901317,0.7238892902028341
+"Central yams and maize belt, with cassava, rice, and soybeans, Nasarawa, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.038500916708903335
+"Central yams and maize belt, with cassava, rice, and soybeans, Ogun, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.04546631401699381
+"Central yams and maize belt, with cassava, rice, and soybeans, Oyo, Nigeria",2023-10-01,0.0,2,0.1588624553465772,0.042785726057478005
+"Cheringoma and Muanza Maize and Cassava, Cheringoma, Sofala, Mozambique",2023-10-01,0.0,2,0.2210629628914014,0.06146050975128758
+"Cheringoma and Muanza Maize and Cassava, Muanza, Sofala, Mozambique",2023-10-01,0.0,2,0.2210629628914014,0.06146050975128758
+"Citrus fruits with tubers, cereals, soybeans, and groundnuts, Benue, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.07485956013284584
+"Clay Soils with High Production of Cassava and Maize, and Cattle, City of Mwene-Ditu, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Kata, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Kazumba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06367872221862847
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Luilu, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05722225909929927
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Luiza, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.22727333003040323,0.09477010829322069
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Ngajika, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Coastal Deeh Pastoral and Fishing, Hobyo, Mudug, Somalia",2023-10-01,1.0,2,0.7689337653472742,0.893524918077902
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Akwa Ibom, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.03629016002458812
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Anambra, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.028973490581642083
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Bayelsa, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.02419406219695395
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Cross River, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.03938785844221866
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Delta, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.040139365342647164
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Ogun, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.034837987786961656
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Ondo, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.03023748793741943
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Rivers, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.03673888247285267
+"Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6991170862021265,0.8989948685101681
+"Copperbelt and Marginal Agriculture, City of Kolwezi, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06262454696038816
+"Copperbelt and Marginal Agriculture, City of Likasi, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.052835941780274565
+"Copperbelt and Marginal Agriculture, Kambove, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Copperbelt and Marginal Agriculture, Kasenga, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.050826814371968544
+"Copperbelt and Marginal Agriculture, Kipushi, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04851930225063254
+"Copperbelt and Marginal Agriculture, Lubudi, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.052835941780274565
+"Copperbelt and Marginal Agriculture, Mutshatsha, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05722225909929927
+"Copperbelt and Marginal Agriculture, Sakania, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Cowpea Belt Agropastoral, Hobyo, Mudug, Somalia",2023-10-01,0.0,2,0.7689337653472742,0.893524918077902
+"Eastern Agropastoral Sorghum, Sharg An Neel, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5902563084636373
+"Eastern Arid Plateaus, Gitega, Burundi",2023-10-01,0.0,2,0.18256287545442215,0.058418943419438096
+"Eastern Central Lowland Cassava Sorghum and Groundnut Zone, Dokolo, Northern, Uganda",2023-10-01,0.0,2,0.18256287545442215,0.030542277849329624
+"Eastern Kalahari Sandveld Communal, Kwekwe Rural, Midlands, Zimbabwe",2023-10-01,1.0,2,0.34405745723370473,0.23957218318931042
+"Eastern Pastoral Zone, Balambala, Garissa Township, Garissa, Kenya",2023-10-01,0.0,2,0.749101356841239,0.8967248136513074
+"Eastern Pastoral Zone, Galbet, Garissa Township, Garissa, Kenya",2023-10-01,0.0,2,0.749101356841239,0.8967248136513074
+"Eastern Pastoral Zone, Iftin, Garissa Township, Garissa, Kenya",2023-10-01,0.0,2,0.749101356841239,0.9042963544493025
+"Eastern Pastoral Zone, Sankuri, Garissa Township, Garissa, Kenya",2023-10-01,0.0,2,0.749101356841239,0.8984628541879004
+"Eastern Pastoral Zone, Waberi, Garissa Township, Garissa, Kenya",2023-10-01,0.0,2,0.749101356841239,0.8967248136513074
+"Eastern Pastoral, Bahri, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5902563084636373
+"Eastern Pastoral, Jebel Awlia, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5902563084636373
+"Eastern Pastoral, Khartoum, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5902563084636373
+"Eastern Pastoral, Sharg An Neel, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5902563084636373
+"Enderta, Southeast Tigray, Tigray, Ethiopia",2023-10-01,1.0,2,0.749101356841239,0.9327520487598077
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06367872221862847
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.052835941780274565
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Kole, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Lodja, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05722225909929927
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Lomela, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.052835941780274565
+"Fishing and Staples Riverine, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06367872221862847
+"Fishing and Staples Riverine, Ilebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Fishing and Staples Riverine, Kole, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Fishing and Staples Riverine, Lodja, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05722225909929927
+"Fishing and Staples Riverine, Lomela, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.052835941780274565
+"Fishing and Staples Riverine, Luebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Fishing and Staples Riverine, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Fishing and Staples Riverine, Mweka, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.21976621379266068,0.08866743823610726
+"Flood-retreat Cultivation, Jebel Awlia, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5902563084636373
+"Flood-retreat Cultivation, Um Durman, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5630186059575987
+"Forest Cultivation and Products, Aketi, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04554090484107079
+"Forest Cultivation and Products, Ango, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.047111973696259475
+"Forest Cultivation and Products, Bafwasende, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Forest Cultivation and Products, Bambesa, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04554090484107079
+"Forest Cultivation and Products, Banalia, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Forest Cultivation and Products, Basoko, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Forest Cultivation and Products, Bondo, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Forest Cultivation and Products, Buta, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Forest Cultivation and Products, City of Kindu, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.2059218641274898,0.06696625972222027
+"Forest Cultivation and Products, City of Kisangani, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Forest Cultivation and Products, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6991170862021265,0.9058321458608956
+"Forest Cultivation and Products, Dungu, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Forest Cultivation and Products, Faradje, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04554090484107079
+"Forest Cultivation and Products, Irumu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6991170862021265,0.8983767448383665
+"Forest Cultivation and Products, Isangi, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Forest Cultivation and Products, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.40614632845102905,0.4042527557169251
+"Forest Cultivation and Products, Kailo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.22939681195416342,0.06696625972222027
+"Forest Cultivation and Products, Kasongo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.22939681195416342,0.06696625972222027
+"Forest Cultivation and Products, Lubero, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.35281116608121826,0.27779851343656
+"Forest Cultivation and Products, Lubutu, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.21976621379266068,0.09024964035800788
+"Forest Cultivation and Products, Mambasa, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.20210876745621517,0.07578760058573884
+"Forest Cultivation and Products, Niangara, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.0430246217091144
+"Forest Cultivation and Products, Opala, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Forest Cultivation and Products, Pangi, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.21976621379266068,0.09477010829322069
+"Forest Cultivation and Products, Poko, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04554090484107079
+"Forest Cultivation and Products, Punia, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.03891879727396996
+"Forest Cultivation and Products, Rungu, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04554090484107079
+"Forest Cultivation and Products, Shabunda, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.20210876745621517,0.07538809151552615
+"Forest Cultivation and Products, Ubundu, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Forest Cultivation and Products, Walikale, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.45766244948867185,0.37660695079412965
+"Forest Cultivation and Products, Wamba, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04554090484107079
+"Forest Cultivation and Products, Watsa, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Forest Cultivation and Products, Yahuma, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Ginger and turmeric with maize, sorghum, yams, and acha (Digitaria), Kaduna, Nigeria",2023-10-01,1.0,2,0.48763367458926665,0.5970433812866109
+"Guit, Unity, South Sudan",2023-10-01,1.0,2,0.7689337653472742,0.9445802655676836
+"High Food Crop Production and Trading, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"High Food Crop Production and Trading, Lubao, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05722225909929927
+"High Food Production and Surplus Trade, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.40614632845102905,0.4042527557169251
+"High Food Production and Surplus Trade, Kasongo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.22939681195416342,0.06696625972222027
+"High Food Production and Surplus Trade, Pangi, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.21976621379266068,0.09477010829322069
+"High Food Production and Surplus Trade, Shabunda, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.20210876745621517,0.07538809151552615
+"High plateau Irish potatoes, maize, acha (Digitaria), and livestock, Bauchi, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.03462684560027767
+"High plateau Irish potatoes, maize, acha (Digitaria), and livestock, Plateau, Nigeria",2023-10-01,1.0,2,0.45434469177377623,0.4528136707123892
+"Humid Plateaus, Gitega, Burundi",2023-10-01,0.0,2,0.18256287545442215,0.058418943419438096
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, City of Mbuji-Mayi, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, City of Tshikapa, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.2210629628914014,0.06696625972222027
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Dibaya, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06367872221862847
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Dimbelenge, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kabeya-Kamwanga, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kamonia, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6818799121508887,0.8871661728916426
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kata, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kazumba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06367872221862847
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Luiza, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.2059218641274898,0.06696625972222027
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Lupatapata, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.22939681195416342,0.06696625972222027
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05722225909929927
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Miabi, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.2059218641274898,0.06696625972222027
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Tshilenge, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.2210629628914014,0.06696625972222027
+"Juba, Central Equatoria, South Sudan",2023-10-01,1.0,2,0.6971173723051854,0.8967726647504631
+"Kamalondo Depression, Bukama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Kamalondo Depression, Malemba-Nkulu, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Kamalondo Depression, Manono, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.29672994525563984,0.11108687968928406
+"Kano-Katsina sahelian: millet, sorghum, sesame, and livestock, Dutsi, Katsina, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.06592295202965653
+"Kano-Katsina sahelian: millet, sorghum, sesame, and livestock, Dutsin-Ma, Katsina, Nigeria",2023-10-01,1.0,2,0.6526720164801689,0.8560605575316752
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Danja, Katsina, Nigeria",2023-10-01,0.0,2,0.19654344430508502,0.11965542160587174
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Kaduna, Nigeria",2023-10-01,0.0,2,0.19654344430508502,0.05075740767562478
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Malumfashi, Katsina, Nigeria",2023-10-01,0.0,2,0.19654344430508502,0.068932348649008
+"Kasungu Lilongwe Plain, Dowa, Central, Malawi",2023-10-01,0.0,2,0.18256287545442215,0.039177542612954884
+"Koch, Unity, South Sudan",2023-10-01,1.0,2,0.7689337653472742,0.9445802655676836
+"Kolfe - Keran, Region 14, Addis Ababa, Ethiopia",2023-10-01,0.0,2,0.1588624553465772,0.024916479114059243
+"Lagos Peri-urban: fishing, poultry, piggeries, market gardening, and coconuts, Lagos, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.027674200373560092
+"Lagos Peri-urban: fishing, poultry, piggeries, market gardening, and coconuts, Ogun, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.029764435081150443
+"Lakes Recessional Millet and Sorghum, Goundam, Tombouctou, Mali",2023-10-01,0.0,2,0.18256287545442215,0.05088322302231193
+"Lakeshore and Riverbank Fishing Zone, Dokolo, Northern, Uganda",2023-10-01,0.0,2,0.19654344430508502,0.054668805094065576
+"Leer, Unity, South Sudan",2023-10-01,1.0,2,0.7689337653472742,0.9445802655676836
+"Lighter Forest with Rice and Cassava, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06367872221862847
+"Lighter Forest with Rice and Cassava, Demba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06367872221862847
+"Lighter Forest with Rice and Cassava, Dimbelenge, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Lighter Forest with Rice and Cassava, Ilebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Lighter Forest with Rice and Cassava, Kamonia, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6526720164801689,0.8790013759540318
+"Lighter Forest with Rice and Cassava, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.052835941780274565
+"Lighter Forest with Rice and Cassava, Kole, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Lighter Forest with Rice and Cassava, Lodja, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05722225909929927
+"Lighter Forest with Rice and Cassava, Lubefu, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05722225909929927
+"Lighter Forest with Rice and Cassava, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Lighter Forest with Rice and Cassava, Mweka, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.21976621379266068,0.08866743823610726
+"Lusulu, Lupane and Southern Gokwe Mixed Agriculture, Kwekwe Rural, Midlands, Zimbabwe",2023-10-01,0.0,2,0.19893844248765433,0.0590005999830603
+"Mandera Riverine Zone, Township, Mandera East, Mandera, Kenya",2023-10-01,0.0,2,0.749101356841239,0.9026473479993388
+"Maniema Savannah Agriculture, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.40614632845102905,0.4042527557169251
+"Maniema Savannah Agriculture, Kasongo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.24759302704851752,0.09477010829322069
+"Maniema Savannah Agriculture, Kibombo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.22939681195416342,0.06696625972222027
+"Mayendit, Unity, South Sudan",2023-10-01,1.0,2,0.7689337653472742,0.9445802655676836
+"Mayom, Unity, South Sudan",2023-10-01,1.0,2,0.7689337653472742,0.9445802655676836
+"Mid North Simsim Maize Cassava Zone, Dokolo, Northern, Uganda",2023-10-01,0.0,2,0.19654344430508502,0.054668805094065576
+"Midland Agricultural Savannah, City of Bukavu, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.0485505031785998
+"Midland Agricultural Savannah, Idjwi, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Midland Agricultural Savannah, Kabare, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.18256287545442215,0.05022462234010094
+"Midland Agricultural Savannah, Kalehe, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.49461202908382546,0.764587815168761
+"Midland Agricultural Savannah, Mwenga, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.24759302704851752,0.11154710033019268
+"Midland Agricultural Savannah, Walungu, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.20210876745621517,0.07578760058573884
+"Mountain Agropastoral, Fizi, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6971173723051854,0.8778231924736921
+"Mountain Agropastoral, Kalehe, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.5693519748986147,0.8466650178831238
+"Mountain Agropastoral, Lubero, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.29672994525563984,0.10890723732338362
+"Mountain Agropastoral, Masisi, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6657450509340728,0.8717377150886375
+"Mountain Agropastoral, Mwenga, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.24759302704851752,0.11154710033019268
+"Mountain Agropastoral, Oicha, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6991170862021265,0.8983767448383665
+"Mountain Agropastoral, Rutshuru, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.647647027327569,0.8890156991600721
+"Mountain Agropastoral, Shabunda, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.29681548798789154,0.23309732658908008
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Anambra, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.05922126108648274
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Benue, Nigeria",2023-10-01,1.0,2,0.18256287545442215,0.07614240531836264
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Delta, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.05602945282915286
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Demsa, Adamawa, Nigeria",2023-10-01,1.0,2,0.18256287545442215,0.04515214538658196
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Edo, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.041651377211298135
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Fufore, Adamawa, Nigeria",2023-10-01,1.0,2,0.18256287545442215,0.06517713884221776
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Gombi, Adamawa, Nigeria",2023-10-01,1.0,2,0.18256287545442215,0.06405869637907889
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Guyuk, Adamawa, Nigeria",2023-10-01,1.0,2,0.18256287545442215,0.07614240531836264
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Kogi, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.03990163577977264
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Kwara, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.05754474835285044
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Nasarawa, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.05241194914989497
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Niger, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.07614240531836264
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Numan, Adamawa, Nigeria",2023-10-01,1.0,2,0.44153012831284566,0.44355959382229404
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Taraba, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.07137785932261552
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Yola North, Adamawa, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.10543757350341158
+"Nomadism and Trans-Saharan Trade, Goundam, Tombouctou, Mali",2023-10-01,0.0,2,0.18256287545442215,0.05088322302231193
+"North-east maize dominant with rice, cowpeas, soybeans, and groundnuts, Damboa, Borno, Nigeria",2023-10-01,1.0,2,0.6467836364708697,0.8731906877652782
+"North-east sahelian: millet, sesame, cowpeas, and livestock, Bauchi, Nigeria",2023-10-01,1.0,2,0.18256287545442215,0.04962726755244747
+"North-west and central maize dominant, with sorghum, sweet potatoes, and cowpeas, Bauchi, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.04962726755244747
+"North-west and central maize dominant, with sorghum, sweet potatoes, and cowpeas, Kaduna, Nigeria",2023-10-01,1.0,2,0.19654344430508502,0.05972026972803776
+"Northeast Highlands Agriculture, Aru, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.050826814371968544
+"Northeast Highlands Agriculture, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6991170862021265,0.9058321458608956
+"Northeast Highlands Agriculture, Faradje, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04554090484107079
+"Northeast Highlands Agriculture, Irumu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6991170862021265,0.8983767448383665
+"Northeast Highlands Agriculture, Mahagi, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.4088434722393975,0.42031924476337196
+"Northeast Highlands Agriculture, Oicha, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6991170862021265,0.8983767448383665
+"Northeast Highlands Agriculture, Watsa, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Northeastern Agropastoral Zone, Moyale Township, Moyale, Marsabit, Kenya",2023-10-01,0.0,2,0.749101356841239,0.8967248136513074
+"Northeastern Pastoral Zone, Township, Wajir East, Wajir, Kenya",2023-10-01,0.0,2,0.749101356841239,0.8963848817649456
+"Northern Cattle and Cereal Farming, Kwekwe Rural, Midlands, Zimbabwe",2023-10-01,0.0,2,0.21976621379266068,0.07374026728780668
+"Northern Livestock, Goundam, Tombouctou, Mali",2023-10-01,0.0,2,0.18256287545442215,0.05088322302231193
+"Northern Pastoral Zone, Waso, Samburu East, Samburu, Kenya",2023-10-01,0.0,2,0.7689337653472742,0.9414404942254607
+"Northern Tanganyika Midland Agriculture, Fizi, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6991170862021265,0.8856820174438308
+"Northern Tanganyika Midland Agriculture, Uvira, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.43971860268479046,0.5914651930019558
+"Northwestern Pastoral Zone, Lodwa Township, Turkana Central, Turkana, Kenya",2023-10-01,0.0,2,0.6868622640912188,0.8776755160179133
+"Not Zoned (Desert), Tchirozerine, Agadez, Niger",2023-10-01,0.0,2,0.1588624553465772,0.031985785248016936
+"Orientale Fishing with Agriculture, Aketi, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04554090484107079
+"Orientale Fishing with Agriculture, Ango, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.047111973696259475
+"Orientale Fishing with Agriculture, Bambesa, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04554090484107079
+"Orientale Fishing with Agriculture, Banalia, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Orientale Fishing with Agriculture, Basoko, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Orientale Fishing with Agriculture, Bondo, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Orientale Fishing with Agriculture, Buta, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Orientale Fishing with Agriculture, City of Kisangani, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Orientale Fishing with Agriculture, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6991170862021265,0.9058321458608956
+"Orientale Fishing with Agriculture, Irumu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6991170862021265,0.8983767448383665
+"Orientale Fishing with Agriculture, Isangi, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Orientale Fishing with Agriculture, Kailo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.22939681195416342,0.06696625972222027
+"Orientale Fishing with Agriculture, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.052835941780274565
+"Orientale Fishing with Agriculture, Kibombo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.22939681195416342,0.06696625972222027
+"Orientale Fishing with Agriculture, Lubao, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05722225909929927
+"Orientale Fishing with Agriculture, Lubefu, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05722225909929927
+"Orientale Fishing with Agriculture, Mahagi, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.29681548798789154,0.24416620607243192
+"Orientale Fishing with Agriculture, Opala, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Orientale Fishing with Agriculture, Poko, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.04554090484107079
+"Orientale Fishing with Agriculture, Ubundu, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Orientale Fishing with Agriculture, Yahuma, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.1588624553465772,0.039895419181950637
+"Panyijiar, Unity, South Sudan",2023-10-01,1.0,2,0.7689337653472742,0.9445802655676836
+"Pariang, Unity, South Sudan",2023-10-01,1.0,2,0.7486810658798765,0.9383465003972773
+"Rubkona, Unity, South Sudan",2023-10-01,1.0,2,0.7689337653472742,0.9445802655676836
+"SANAGA-MBAM PLAIN: cocoa, plantain, pineapple, market gardening, cassava, yellow yams, smallstock, poultry, Mbam et Kim, Centre, Cameroon",2023-10-01,0.0,2,0.18256287545442215,0.036645767349673765
+"Savannah Cassava, Dilolo, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05155955332945893
+"Savannah Cassava, Kamina, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06116666257626742
+"Savannah Cassava, Kaniama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Savannah Cassava, Kapanga, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.052835941780274565
+"Savannah Cassava, Soa, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.050826814371968544
+"Savannah Surplus Maize, Bukama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Savannah Surplus Maize, Kabalo, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.24759302704851752,0.11983420045607535
+"Savannah Surplus Maize, Kabongo, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Savannah Surplus Maize, Kalemie, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.2634608999516987,0.08402482613150522
+"Savannah Surplus Maize, Kamina, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06116666257626742
+"Savannah Surplus Maize, Kaniama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Savannah Surplus Maize, Kasenga, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.18256287545442215,0.050826814371968544
+"Savannah Surplus Maize, Kongolo, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.32943526837343173,0.287016979319265
+"Savannah Surplus Maize, Lubudi, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.052835941780274565
+"Savannah Surplus Maize, Malemba-Nkulu, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Savannah Surplus Maize, Manono, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6849940824377277,0.8505333848760251
+"Savannah Surplus Maize, Mitwaba, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.29681548798789154,0.2600561456938531
+"Savannah Surplus Maize, Moba, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.2634608999516987,0.08402482613150522
+"Savannah Surplus Maize, Nyunzu, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.46954131388089143,0.42783192995865843
+"Savannah Surplus Maize, Pweto, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.29681548798789154,0.2600561456938531
+"Savannah with Cassava and Cowpeas and Small Livestock, City of Kananga, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06566515258384328
+"Savannah with Cassava and Cowpeas and Small Livestock, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06367872221862847
+"Savannah with Cassava and Cowpeas and Small Livestock, Demba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06367872221862847
+"Savannah with Cassava and Cowpeas and Small Livestock, Dibaya, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06367872221862847
+"Savannah with Cassava and Cowpeas and Small Livestock, Dimbelenge, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Savannah with Cassava and Cowpeas and Small Livestock, Ilebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Savannah with Cassava and Cowpeas and Small Livestock, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Savannah with Cassava and Cowpeas and Small Livestock, Kamiji, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Savannah with Cassava and Cowpeas and Small Livestock, Kamonia, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6526720164801689,0.8790013759540318
+"Savannah with Cassava and Cowpeas and Small Livestock, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.052835941780274565
+"Savannah with Cassava and Cowpeas and Small Livestock, Kazumba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06367872221862847
+"Savannah with Cassava and Cowpeas and Small Livestock, Lubefu, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05722225909929927
+"Savannah with Cassava and Cowpeas and Small Livestock, Luebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.0625303275646372
+"Savannah with Cassava and Cowpeas and Small Livestock, Luilu, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.05722225909929927
+"Savannah with Cassava and Cowpeas and Small Livestock, Luiza, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.22727333003040323,0.09477010829322069
+"Savannah with Cassava and Cowpeas and Small Livestock, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19654344430508502,0.06262454696038816
+"Savannah with Cassava and Cowpeas and Small Livestock, Miabi, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.19893844248765433,0.06367872221862847
+"Savannah with Cassava and Cowpeas and Small Livestock, Mweka, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.21976621379266068,0.08866743823610726
+"Savannah with Cassava and Cowpeas and Small Livestock, Tshilenge, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.21976621379266068,0.09024964035800788
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Birnin Magaji, Zamfara, Nigeria",2023-10-01,1.0,2,0.6868622640912188,0.8458501609279909
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Gusau, Zamfara, Nigeria",2023-10-01,0.0,2,0.22939681195416342,0.09165395756008812
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Kaura-Namoda, Zamfara, Nigeria",2023-10-01,1.0,2,0.2815888555510373,0.09146949460005625
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Maru, Zamfara, Nigeria",2023-10-01,1.0,2,0.6868622640912188,0.8894833029252516
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Wamako, Sokoto, Nigeria",2023-10-01,0.0,2,0.19654344430508502,0.03712755280550859
+"South-east cassava, cereals, and oil palm with extensive off-farm work and trade, Anambra, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.03664537361515858
+"South-east cassava, cereals, and oil palm with extensive off-farm work and trade, Rivers, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.03099816529776305
+"South-east rice dominant with cassava, yams, and oil palm, Anambra, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.035799298563095966
+"South-west cocoa with oil palm, tubers, and cereals, Oyo, Nigeria",2023-10-01,0.0,2,0.1588624553465772,0.042785726057478005
+"South-west rice, cassava, and cattle with cross-border trade, Ogun, Nigeria",2023-10-01,0.0,2,0.18256287545442215,0.04546631401699381
+"Southern Coastal Rishing, Manioc, and Maize, Boane, Maputo, Mozambique",2023-10-01,0.0,2,0.18256287545442215,0.03544521468177552
+"Southern Coastal Rishing, Manioc, and Maize, Cidade Da Matola, Maputo, Mozambique",2023-10-01,0.0,2,0.18256287545442215,0.03129085646559753
+"Southern Coastal Rishing, Manioc, and Maize, Cidade De Maputo, Maputo City, Mozambique",2023-10-01,0.0,2,0.18256287545442215,0.03129085646559753
+"Southern Coastal Rishing, Manioc, and Maize, Manhiça, Maputo, Mozambique",2023-10-01,0.0,2,0.18256287545442215,0.03129085646559753
+"Southern Coastal Rishing, Manioc, and Maize, Marracuene, Maputo, Mozambique",2023-10-01,0.0,2,0.18256287545442215,0.028565828896870243
+"Southern Coastal Rishing, Manioc, and Maize, Matutuine, Maputo, Mozambique",2023-10-01,0.0,2,0.18256287545442215,0.028565828896870243
+"Southern Highland Cattle and Mixed Cropping, Boane, Maputo, Mozambique",2023-10-01,0.0,2,0.18256287545442215,0.03544521468177552
+"Southern Highland Cattle and Mixed Cropping, Magude, Maputo, Mozambique",2023-10-01,0.0,2,0.18256287545442215,0.03330520018170106
+"Southern Highland Cattle and Mixed Cropping, Matutuine, Maputo, Mozambique",2023-10-01,0.0,2,0.18256287545442215,0.028565828896870243
+"Southern Highland Cattle and Mixed Cropping, Moamba, Maputo, Mozambique",2023-10-01,0.0,2,0.18256287545442215,0.028277877752001877
+"Southern Highland Cattle and Mixed Cropping, Namaacha, Maputo, Mozambique",2023-10-01,0.0,2,0.18256287545442215,0.028565828896870243
+"Southern Highlands, Gitega, Burundi",2023-10-01,0.0,2,0.18256287545442215,0.058418943419438096
+"Southern Riverine Small/Medium-scale Cultivation, Bahri, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5902563084636373
+"Southern Riverine Small/Medium-scale Cultivation, Jebel Awlia, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.626091208719569
+"Southern Riverine Small/Medium-scale Cultivation, Karrari, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5902563084636373
+"Southern Riverine Small/Medium-scale Cultivation, Khartoum, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5902563084636373
+"Southern Riverine Small/Medium-scale Cultivation, Um Durman, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5630186059575987
+"Southern Tanganyika-Mwero Fishing, Kalemie, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.7173974962083991,0.7821371550388985
+"Southern Tanganyika-Mwero Fishing, Kasenga, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,0.0,2,0.2634608999516987,0.08402482613150522
+"Southern Tanganyika-Mwero Fishing, Moba, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.2634608999516987,0.08402482613150522
+"Southern Tanganyika-Mwero Fishing, Pweto, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.29672994525563984,0.10890723732338362
+"Tenta, South Wollo, Amhara, Ethiopia",2023-10-01,1.0,2,0.18256287545442215,0.0725977124608496
+"Transhumant and Nomad Pastoralism, Tchirozerine, Agadez, Niger",2023-10-01,0.0,2,0.1588624553465772,0.031985785248016936
+"Turkwell Riverine Zone, Lodwa Township, Turkana Central, Turkana, Kenya",2023-10-01,0.0,2,0.6868622640912188,0.8776755160179133
+"Urban, Chitungwiza, Harare, Zimbabwe",2023-10-01,0.0,2,0.19654344430508502,0.05378416825110208
+"Urban, Epworth, Harare, Zimbabwe",2023-10-01,0.0,2,0.19654344430508502,0.07092701746616262
+"Urban, Harare Urban, Harare, Zimbabwe",2023-10-01,0.0,2,0.19654344430508502,0.07092701746616262
+"Urban, Kwekwe Urban, Midlands, Zimbabwe",2023-10-01,0.0,2,0.19893844248765433,0.0590005999830603
+"Virunga Volcanic Soils Agriculture, Goma and Rutshuru, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.7087449825889057,0.8848393810206884
+"Virunga Volcanic Soils Agriculture, Masisi, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2023-10-01,1.0,2,0.6007178047515399,0.8427112511810939
+"West and Central Pastoral, Karrari, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5902563084636373
+"West and Central Pastoral, Soudari, North Kordofan, Sudan",2023-10-01,1.0,2,0.746165988243436,0.858837182536794
+"West and Central Pastoral, Um Bada, Khartoum, Sudan",2023-10-01,1.0,2,0.7157024746871109,0.6535837369429205
+"West and Central Pastoral, Um Durman, Khartoum, Sudan",2023-10-01,1.0,2,0.623546448545953,0.5630186059575987
+"West cereals and remittances, Passore, Nord, Burkina Faso",2023-10-01,0.0,2,0.18256287545442215,0.03992580411295054
+"Western Agropastoral Millet, Soudari, North Kordofan, Sudan",2023-10-01,1.0,2,0.746165988243436,0.8595448472670867
+"Western Agropastoral Zone, Waso, Samburu East, Samburu, Kenya",2023-10-01,0.0,2,0.7689337653472742,0.9414404942254607
+"Abiemnhom, Unity, South Sudan",2024-02-01,1.0,3,0.9889818947629331,0.5238003062166333
+"Addun Pastoral, Hobyo, Mudug, Somalia",2024-02-01,1.0,3,0.9295737746789013,0.5271026686205084
+"Agropastoral midwest: rice, maize, pulses, Mandoto, Vakinankaratra, Madagascar",2024-02-01,0.0,3,0.004143767528403408,0.4540009849040982
+"Ankaratra: staple crops, horticulture, milk, Ambatolampy, Vakinankaratra, Madagascar",2024-02-01,0.0,3,0.004143767528403408,0.4540009849040982
+"Ankaratra: staple crops, horticulture, milk, Antanifotsy, Vakinankaratra, Madagascar",2024-02-01,0.0,3,0.004143767528403408,0.4540009849040982
+"Ankaratra: staple crops, horticulture, milk, Antsirabe I, Vakinankaratra, Madagascar",2024-02-01,0.0,3,0.004143767528403408,0.4540009849040982
+"Ankaratra: staple crops, horticulture, milk, Antsirabe II, Vakinankaratra, Madagascar",2024-02-01,0.0,3,0.004143767528403408,0.4540009849040982
+"Ankaratra: staple crops, horticulture, milk, Betafo, Vakinankaratra, Madagascar",2024-02-01,0.0,3,0.004143767528403408,0.4540009849040982
+"Ankaratra: staple crops, horticulture, milk, Faratsiho, Vakinankaratra, Madagascar",2024-02-01,0.0,3,0.004143767528403408,0.4540009849040982
+"Artisanal Mining with Agriculture, Aketi, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"Artisanal Mining with Agriculture, Bafwasende, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Artisanal Mining with Agriculture, Banalia, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Artisanal Mining with Agriculture, Basoko, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Artisanal Mining with Agriculture, Bondo, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.009669778831632074,0.458452724125589
+"Artisanal Mining with Agriculture, Buta, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011949241013614992,0.458452724125589
+"Artisanal Mining with Agriculture, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9609546958329137,0.5420862775701015
+"Artisanal Mining with Agriculture, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.1066471364582579,0.458452724125589
+"Artisanal Mining with Agriculture, Kailo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.04102064772806777,0.458452724125589
+"Artisanal Mining with Agriculture, Lubutu, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05083159992415203,0.458452724125589
+"Artisanal Mining with Agriculture, Mambasa, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.009669778831632074,0.458452724125589
+"Artisanal Mining with Agriculture, Pangi, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05083159992415203,0.458452724125589
+"Artisanal Mining with Agriculture, Punia, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Artisanal Mining with Agriculture, Wamba, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.012448896768828058,0.458452724125589
+"Artisanal Mining with Agriculture, Watsa, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"Aïr Massif Irrigated Gardening, Tchirozerine, Agadez, Niger",2024-02-01,0.0,3,0.05299358220591154,0.45310408393742047
+"Benue river sugar cane, rice, and sugar estate labor, Lamurde, Adamawa, Nigeria",2024-02-01,0.0,3,0.039486203735200905,0.4642625923454543
+"Benue river sugar cane, rice, and sugar estate labor, Taraba, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.46091087246567286
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Bauchi, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.45193312047416817
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Damaturu, Yobe, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.45193312047416817
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Fika, Yobe, Nigeria",2024-02-01,0.0,3,0.22944770515104868,0.4737719374696878
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Fune, Yobe, Nigeria",2024-02-01,0.0,3,0.22944770515104868,0.4737719374696878
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Gombe, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.45193312047416817
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Gubio, Borno, Nigeria",2024-02-01,1.0,3,0.8925675920279977,0.5310440578704635
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Guzamala, Borno, Nigeria",2024-02-01,1.0,3,0.8925675920279977,0.5310440578704635
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jakusko, Yobe, Nigeria",2024-02-01,0.0,3,0.22944770515104868,0.4737719374696878
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jere, Borno, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.45193312047416817
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jigawa, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.45193312047416817
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Kaga, Borno, Nigeria",2024-02-01,0.0,3,0.6399617074011382,0.5359796526402526
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Konduga, Borno, Nigeria",2024-02-01,0.0,3,0.22944770515104868,0.4737719374696878
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Kukawa, Borno, Nigeria",2024-02-01,0.0,3,0.37339064381162973,0.4737719374696878
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Mafa, Borno, Nigeria",2024-02-01,1.0,3,0.8925675920279977,0.5310440578704635
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Magumeri, Borno, Nigeria",2024-02-01,1.0,3,0.8925675920279977,0.5310440578704635
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Maiduguri, Borno, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.45193312047416817
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Monguno, Borno, Nigeria",2024-02-01,0.0,3,0.22944770515104868,0.4737719374696878
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Nangere, Yobe, Nigeria",2024-02-01,0.0,3,0.17526012509786154,0.4737719374696878
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Nganzai, Borno, Nigeria",2024-02-01,1.0,3,0.6399617074011382,0.5359796526402526
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Potiskum, Yobe, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.45193312047416817
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Tarmuwa, Yobe, Nigeria",2024-02-01,0.0,3,0.17526012509786154,0.4737719374696878
+"Cashews with oil palm, tubers, and maize, Benue, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.4642625923454543
+"Cassava dominant with maize, yams, and tree-crops, Benue, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.4642625923454543
+"Cassava dominant with maize, yams, and tree-crops, Delta, Nigeria",2024-02-01,0.0,3,0.013443447673259954,0.46091087246567286
+"Cassava dominant with maize, yams, and tree-crops, Edo, Nigeria",2024-02-01,0.0,3,0.013443447673259954,0.4642625923454543
+"Cassava dominant with maize, yams, and tree-crops, Ogun, Nigeria",2024-02-01,0.0,3,0.005083685742460505,0.46091087246567286
+"Cassava dominant with maize, yams, and tree-crops, Oyo, Nigeria",2024-02-01,0.0,3,0.008052806979389702,0.46091087246567286
+"Central Agropastoral, Fitri, Batha, Chad",2024-02-01,0.0,3,0.050846307752004806,0.45193312047416817
+"Central Highlands, High Potential Zone, Starehe, Nairobi, Kenya",2024-02-01,0.0,3,0.024437849538327703,0.4588793352664077
+"Central plateau cereals and market gardening, Passore, Nord, Burkina Faso",2024-02-01,0.0,3,0.018290811667330795,0.4495476409906293
+"Central sorghum, maize, groundnuts, cowpeas, and sesame, Bauchi, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.45193312047416817
+"Central sorghum, maize, groundnuts, cowpeas, and sesame, Kaduna, Nigeria",2024-02-01,0.0,3,0.8185089383409898,0.5424428013320086
+"Central yams and maize belt, with cassava, rice, and soybeans, Benue, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.4642625923454543
+"Central yams and maize belt, with cassava, rice, and soybeans, Federal Capital Territory, Nigeria",2024-02-01,0.0,3,0.05723463978451496,0.4588793352664077
+"Central yams and maize belt, with cassava, rice, and soybeans, Kaduna, Nigeria",2024-02-01,0.0,3,0.3687112533591542,0.48034803123536934
+"Central yams and maize belt, with cassava, rice, and soybeans, Nasarawa, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.4642625923454543
+"Central yams and maize belt, with cassava, rice, and soybeans, Ogun, Nigeria",2024-02-01,0.0,3,0.005083685742460505,0.46091087246567286
+"Central yams and maize belt, with cassava, rice, and soybeans, Oyo, Nigeria",2024-02-01,0.0,3,0.008052806979389702,0.46091087246567286
+"Cheringoma and Muanza Maize and Cassava, Cheringoma, Sofala, Mozambique",2024-02-01,1.0,3,0.04102064772806777,0.4588793352664077
+"Cheringoma and Muanza Maize and Cassava, Muanza, Sofala, Mozambique",2024-02-01,1.0,3,0.04102064772806777,0.4588793352664077
+"Citrus fruits with tubers, cereals, soybeans, and groundnuts, Benue, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.4642625923454543
+"Clay Soils with High Production of Cassava and Maize, and Cattle, City of Mwene-Ditu, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.017300171040038892,0.458452724125589
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Kata, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.03670224703514114,0.458452724125589
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Kazumba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.042393823744504844,0.458452724125589
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Luilu, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.013166101413729656,0.458452724125589
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Luiza, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.04641437340667466,0.458452724125589
+"Clay Soils with High Production of Cassava and Maize, and Cattle, Ngajika, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011963386117177587,0.458452724125589
+"Coastal Deeh Pastoral and Fishing, Hobyo, Mudug, Somalia",2024-02-01,1.0,3,0.9295737746789013,0.5271026686205084
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Akwa Ibom, Nigeria",2024-02-01,0.0,3,0.03506115121704119,0.46091087246567286
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Anambra, Nigeria",2024-02-01,0.0,3,0.01843608376148122,0.46091087246567286
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Bayelsa, Nigeria",2024-02-01,0.0,3,0.01843608376148122,0.46091087246567286
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Cross River, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.46091087246567286
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Delta, Nigeria",2024-02-01,0.0,3,0.013443447673259954,0.46091087246567286
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Ogun, Nigeria",2024-02-01,0.0,3,0.013443447673259954,0.46091087246567286
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Ondo, Nigeria",2024-02-01,0.0,3,0.013443447673259954,0.46091087246567286
+"Coastal strip and Niger Delta: fishing, cassava, plantain, oil palm, and rubber, Rivers, Nigeria",2024-02-01,0.0,3,0.013443447673259954,0.46091087246567286
+"Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9475562412528582,0.5420862775701015
+"Copperbelt and Marginal Agriculture, City of Kolwezi, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.004143767528403408,0.458452724125589
+"Copperbelt and Marginal Agriculture, City of Likasi, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.013443447673259954,0.458452724125589
+"Copperbelt and Marginal Agriculture, Kambove, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.012448896768828058,0.458452724125589
+"Copperbelt and Marginal Agriculture, Kasenga, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.013443447673259954,0.458452724125589
+"Copperbelt and Marginal Agriculture, Kipushi, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.01843608376148122,0.458452724125589
+"Copperbelt and Marginal Agriculture, Lubudi, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.004143767528403408,0.458452724125589
+"Copperbelt and Marginal Agriculture, Mutshatsha, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.004143767528403408,0.458452724125589
+"Copperbelt and Marginal Agriculture, Sakania, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011949241013614992,0.458452724125589
+"Cowpea Belt Agropastoral, Hobyo, Mudug, Somalia",2024-02-01,0.0,3,0.9295737746789013,0.5271026686205084
+"Eastern Arid Plateaus, Gitega, Burundi",2024-02-01,0.0,3,0.005083685742460505,0.44997285088850586
+"Eastern Central Lowland Cassava Sorghum and Groundnut Zone, Dokolo, Northern, Uganda",2024-02-01,0.0,3,0.004143767528403408,0.458452724125589
+"Eastern Kalahari Sandveld Communal, Kwekwe Rural, Midlands, Zimbabwe",2024-02-01,1.0,3,0.41021703630878176,0.5265034374662987
+"Eastern Pastoral Zone, Balambala, Garissa Township, Garissa, Kenya",2024-02-01,0.0,3,0.850037678419565,0.5168678197083703
+"Eastern Pastoral Zone, Galbet, Garissa Township, Garissa, Kenya",2024-02-01,0.0,3,0.850037678419565,0.5168678197083703
+"Eastern Pastoral Zone, Iftin, Garissa Township, Garissa, Kenya",2024-02-01,0.0,3,0.9439406204438299,0.5168678197083703
+"Eastern Pastoral Zone, Sankuri, Garissa Township, Garissa, Kenya",2024-02-01,0.0,3,0.9197447284051682,0.5168678197083703
+"Eastern Pastoral Zone, Waberi, Garissa Township, Garissa, Kenya",2024-02-01,0.0,3,0.850037678419565,0.5168678197083703
+"Enderta, Southeast Tigray, Tigray, Ethiopia",2024-02-01,0.0,3,0.9889818947629331,0.5281849433669289
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.018290811667330795,0.458452724125589
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.009669778831632074,0.458452724125589
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Kole, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Lodja, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Equatorial Forest, Hunting, Fishing and Staple Crops, Lomela, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011949241013614992,0.458452724125589
+"Fishing and Staples Riverine, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.018290811667330795,0.458452724125589
+"Fishing and Staples Riverine, Ilebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05604796154509625,0.458452724125589
+"Fishing and Staples Riverine, Kole, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Fishing and Staples Riverine, Lodja, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Fishing and Staples Riverine, Lomela, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011949241013614992,0.458452724125589
+"Fishing and Staples Riverine, Luebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05282730368729832,0.458452724125589
+"Fishing and Staples Riverine, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Fishing and Staples Riverine, Mweka, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.10964308809928489,0.458452724125589
+"Forest Cultivation and Products, Aketi, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"Forest Cultivation and Products, Ango, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011949241013614992,0.458452724125589
+"Forest Cultivation and Products, Bafwasende, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Forest Cultivation and Products, Bambesa, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.013166101413729656,0.458452724125589
+"Forest Cultivation and Products, Banalia, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Forest Cultivation and Products, Basoko, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Forest Cultivation and Products, Bondo, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.009669778831632074,0.458452724125589
+"Forest Cultivation and Products, Buta, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011949241013614992,0.458452724125589
+"Forest Cultivation and Products, City of Kindu, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05083159992415203,0.458452724125589
+"Forest Cultivation and Products, City of Kisangani, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Forest Cultivation and Products, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9609546958329137,0.5420862775701015
+"Forest Cultivation and Products, Dungu, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Forest Cultivation and Products, Faradje, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"Forest Cultivation and Products, Irumu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9669595887856283,0.5420862775701015
+"Forest Cultivation and Products, Isangi, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Forest Cultivation and Products, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.6665324275844758,0.5302489373287932
+"Forest Cultivation and Products, Kailo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.04102064772806777,0.458452724125589
+"Forest Cultivation and Products, Kasongo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.05083159992415203,0.458452724125589
+"Forest Cultivation and Products, Lubero, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.8981690673648883,0.5302489373287932
+"Forest Cultivation and Products, Lubutu, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05083159992415203,0.458452724125589
+"Forest Cultivation and Products, Mambasa, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.1409931584218449,0.458452724125589
+"Forest Cultivation and Products, Niangara, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.012448896768828058,0.458452724125589
+"Forest Cultivation and Products, Opala, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Forest Cultivation and Products, Pangi, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05083159992415203,0.458452724125589
+"Forest Cultivation and Products, Poko, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"Forest Cultivation and Products, Punia, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Forest Cultivation and Products, Rungu, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.012448896768828058,0.458452724125589
+"Forest Cultivation and Products, Shabunda, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.154708249846619,0.458452724125589
+"Forest Cultivation and Products, Ubundu, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Forest Cultivation and Products, Walikale, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.42972814644577667,0.48945384467379677
+"Forest Cultivation and Products, Wamba, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.012448896768828058,0.458452724125589
+"Forest Cultivation and Products, Watsa, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"Forest Cultivation and Products, Yahuma, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Ginger and turmeric with maize, sorghum, yams, and acha (Digitaria), Kaduna, Nigeria",2024-02-01,0.0,3,0.17869949460125872,0.464015732603741
+"Guit, Unity, South Sudan",2024-02-01,1.0,3,0.9889818947629331,0.5238003062166333
+"Gumer, Gurage, Central Ethiopia, Ethiopia",2024-02-01,0.0,3,0.005083685742460505,0.45193312047416817
+"High Food Crop Production and Trading, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"High Food Crop Production and Trading, Lubao, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.013443447673259954,0.458452724125589
+"High Food Production and Surplus Trade, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.6665324275844758,0.5302489373287932
+"High Food Production and Surplus Trade, Kasongo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05083159992415203,0.458452724125589
+"High Food Production and Surplus Trade, Pangi, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05083159992415203,0.458452724125589
+"High Food Production and Surplus Trade, Shabunda, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.018204512484800463,0.458452724125589
+"High plateau Irish potatoes, maize, acha (Digitaria), and livestock, Bauchi, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.4588793352664077
+"High plateau Irish potatoes, maize, acha (Digitaria), and livestock, Plateau, Nigeria",2024-02-01,0.0,3,0.0900276831302279,0.4588793352664077
+"Humid Plateaus, Gitega, Burundi",2024-02-01,0.0,3,0.005083685742460505,0.44997285088850586
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, City of Mbuji-Mayi, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.03670224703514114,0.458452724125589
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, City of Tshikapa, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05299358220591154,0.458452724125589
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Dibaya, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.04641437340667466,0.458452724125589
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Dimbelenge, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05299358220591154,0.458452724125589
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kabeya-Kamwanga, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.05299358220591154,0.458452724125589
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.012448896768828058,0.458452724125589
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kamonia, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9003940517113319,0.5420862775701015
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kata, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.03670224703514114,0.458452724125589
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Kazumba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.050846307752004806,0.458452724125589
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Luiza, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.041708481468868505,0.458452724125589
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Lupatapata, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.05299358220591154,0.458452724125589
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.006513578567273152,0.458452724125589
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Miabi, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.04641437340667466,0.458452724125589
+"Intensive Artisanal Diamond Exploitation with Crop Cultivation, Tshilenge, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05299358220591154,0.458452724125589
+"Juba, Central Equatoria, South Sudan",2024-02-01,1.0,3,0.9429277391137801,0.5220973988100526
+"Kamalondo Depression, Bukama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.01431906836913184,0.458452724125589
+"Kamalondo Depression, Malemba-Nkulu, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.017300171040038892,0.458452724125589
+"Kamalondo Depression, Manono, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.10314330263415895,0.458452724125589
+"Kano-Katsina sahelian: millet, sorghum, sesame, and livestock, Dutsi, Katsina, Nigeria",2024-02-01,0.0,3,0.05137415869061395,0.45193312047416817
+"Kano-Katsina sahelian: millet, sorghum, sesame, and livestock, Dutsin-Ma, Katsina, Nigeria",2024-02-01,1.0,3,0.740156883524205,0.5220973988100526
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Danja, Katsina, Nigeria",2024-02-01,0.0,3,0.0554600121582971,0.46091087246567286
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Kaduna, Nigeria",2024-02-01,0.0,3,0.05145115424186271,0.4588793352664077
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Malumfashi, Katsina, Nigeria",2024-02-01,0.0,3,0.05145115424186271,0.4642625923454543
+"Kasungu Lilongwe Plain, Dowa, Central, Malawi",2024-02-01,0.0,3,0.017466093043494405,0.4495476409906293
+"Koch, Unity, South Sudan",2024-02-01,1.0,3,0.9889818947629331,0.5238003062166333
+"Kolfe - Keran, Region 14, Addis Ababa, Ethiopia",2024-02-01,0.0,3,0.009669778831632074,0.45310408393742047
+"Lagos Peri-urban: fishing, poultry, piggeries, market gardening, and coconuts, Lagos, Nigeria",2024-02-01,0.0,3,0.018290811667330795,0.4588793352664077
+"Lagos Peri-urban: fishing, poultry, piggeries, market gardening, and coconuts, Ogun, Nigeria",2024-02-01,0.0,3,0.018290811667330795,0.4588793352664077
+"Lakes Recessional Millet and Sorghum, Goundam, Tombouctou, Mali",2024-02-01,0.0,3,0.019508520804187045,0.45310408393742047
+"Lakeshore and Riverbank Fishing Zone, Dokolo, Northern, Uganda",2024-02-01,0.0,3,0.004143767528403408,0.458452724125589
+"Leer, Unity, South Sudan",2024-02-01,1.0,3,0.9889818947629331,0.5238003062166333
+"Lighter Forest with Rice and Cassava, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.018290811667330795,0.458452724125589
+"Lighter Forest with Rice and Cassava, Demba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.040718344049568984,0.458452724125589
+"Lighter Forest with Rice and Cassava, Dimbelenge, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.04102064772806777,0.458452724125589
+"Lighter Forest with Rice and Cassava, Ilebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05604796154509625,0.458452724125589
+"Lighter Forest with Rice and Cassava, Kamonia, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.8594298500792094,0.5302489373287932
+"Lighter Forest with Rice and Cassava, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.009669778831632074,0.458452724125589
+"Lighter Forest with Rice and Cassava, Kole, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Lighter Forest with Rice and Cassava, Lodja, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Lighter Forest with Rice and Cassava, Lubefu, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Lighter Forest with Rice and Cassava, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Lighter Forest with Rice and Cassava, Mweka, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.10964308809928489,0.458452724125589
+"Lusulu, Lupane and Southern Gokwe Mixed Agriculture, Kwekwe Rural, Midlands, Zimbabwe",2024-02-01,1.0,3,0.04518889903309832,0.4588793352664077
+"Mandera Riverine Zone, Township, Mandera East, Mandera, Kenya",2024-02-01,0.0,3,0.850037678419565,0.5168678197083703
+"Maniema Savannah Agriculture, Kabambare, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.6665324275844758,0.5302489373287932
+"Maniema Savannah Agriculture, Kasongo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.09144019595696906,0.458452724125589
+"Maniema Savannah Agriculture, Kibombo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.042393823744504844,0.458452724125589
+"Mayendit, Unity, South Sudan",2024-02-01,1.0,3,0.9889818947629331,0.5238003062166333
+"Mayom, Unity, South Sudan",2024-02-01,1.0,3,0.9889818947629331,0.5238003062166333
+"Mid North Simsim Maize Cassava Zone, Dokolo, Northern, Uganda",2024-02-01,0.0,3,0.004143767528403408,0.458452724125589
+"Midland Agricultural Savannah, City of Bukavu, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.033186230786514344,0.458452724125589
+"Midland Agricultural Savannah, Idjwi, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Midland Agricultural Savannah, Kabare, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.018290811667330795,0.458452724125589
+"Midland Agricultural Savannah, Kalehe, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.5777787018307493,0.5302489373287932
+"Midland Agricultural Savannah, Mwenga, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05723463978451496,0.458452724125589
+"Midland Agricultural Savannah, Walungu, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.2837493031797886,0.5072524148021914
+"Mountain Agropastoral, Fizi, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9077236636832763,0.5420862775701015
+"Mountain Agropastoral, Kalehe, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.6617810090268659,0.5302489373287932
+"Mountain Agropastoral, Lubero, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.8981690673648883,0.5302489373287932
+"Mountain Agropastoral, Masisi, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.7996300305275088,0.5302489373287932
+"Mountain Agropastoral, Mwenga, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05723463978451496,0.458452724125589
+"Mountain Agropastoral, Oicha, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9609546958329137,0.5420862775701015
+"Mountain Agropastoral, Rutshuru, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.7970261766540216,0.5302489373287932
+"Mountain Agropastoral, Shabunda, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.5629116673501455,0.5302489373287932
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Anambra, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.4642625923454543
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Benue, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.4642625923454543
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Delta, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.46091087246567286
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Demsa, Adamawa, Nigeria",2024-02-01,0.0,3,0.039486203735200905,0.4642625923454543
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Edo, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.4642625923454543
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Fufore, Adamawa, Nigeria",2024-02-01,0.0,3,0.042393823744504844,0.4642625923454543
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Gombi, Adamawa, Nigeria",2024-02-01,0.0,3,0.03906610913509919,0.46091087246567286
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Guyuk, Adamawa, Nigeria",2024-02-01,0.0,3,0.039486203735200905,0.4642625923454543
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Kogi, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.4642625923454543
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Kwara, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.4642625923454543
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Nasarawa, Nigeria",2024-02-01,0.0,3,0.024437849538327703,0.4642625923454543
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Niger, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.4642625923454543
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Numan, Adamawa, Nigeria",2024-02-01,0.0,3,0.1033285229468473,0.4642625923454543
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Taraba, Nigeria",2024-02-01,0.0,3,0.042205618017894776,0.4642625923454543
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Yola North, Adamawa, Nigeria",2024-02-01,0.0,3,0.042393823744504844,0.4642625923454543
+"Nomadism and Trans-Saharan Trade, Goundam, Tombouctou, Mali",2024-02-01,0.0,3,0.019508520804187045,0.45310408393742047
+"North-east maize dominant with rice, cowpeas, soybeans, and groundnuts, Damboa, Borno, Nigeria",2024-02-01,0.0,3,0.778310042004637,0.5331027246941465
+"North-east sahelian: millet, sesame, cowpeas, and livestock, Bauchi, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.45193312047416817
+"North-west and central maize dominant, with sorghum, sweet potatoes, and cowpeas, Bauchi, Nigeria",2024-02-01,0.0,3,0.04641437340667466,0.45193312047416817
+"North-west and central maize dominant, with sorghum, sweet potatoes, and cowpeas, Kaduna, Nigeria",2024-02-01,0.0,3,0.04102064772806777,0.45310408393742047
+"Northeast Highlands Agriculture, Aru, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.019508520804187045,0.458452724125589
+"Northeast Highlands Agriculture, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9609546958329137,0.5420862775701015
+"Northeast Highlands Agriculture, Faradje, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"Northeast Highlands Agriculture, Irumu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9669595887856283,0.5420862775701015
+"Northeast Highlands Agriculture, Mahagi, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.7250740517995022,0.5302489373287932
+"Northeast Highlands Agriculture, Oicha, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9609546958329137,0.5420862775701015
+"Northeast Highlands Agriculture, Watsa, Haut-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"Northeastern Agropastoral Zone, Moyale Township, Moyale, Marsabit, Kenya",2024-02-01,0.0,3,0.850037678419565,0.5168678197083703
+"Northeastern Pastoral Zone, Township, Wajir East, Wajir, Kenya",2024-02-01,0.0,3,0.850037678419565,0.5168678197083703
+"Northern Cattle and Cereal Farming, Kwekwe Rural, Midlands, Zimbabwe",2024-02-01,1.0,3,0.07696985424681815,0.4588793352664077
+"Northern Livestock, Goundam, Tombouctou, Mali",2024-02-01,0.0,3,0.019508520804187045,0.45310408393742047
+"Northern Pastoral Zone, Waso, Samburu East, Samburu, Kenya",2024-02-01,0.0,3,0.876115023123608,0.5424428013320086
+"Northern Tanganyika Midland Agriculture, Fizi, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9038430234803962,0.5420862775701015
+"Northern Tanganyika Midland Agriculture, Uvira, South Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.8504382626869588,0.5302489373287932
+"Northwestern Pastoral Zone, Lodwa Township, Turkana Central, Turkana, Kenya",2024-02-01,1.0,3,0.9001338152880116,0.5271026686205084
+"Not Zoned (Desert), Tchirozerine, Agadez, Niger",2024-02-01,0.0,3,0.05299358220591154,0.45310408393742047
+"Orientale Fishing with Agriculture, Aketi, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"Orientale Fishing with Agriculture, Ango, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011949241013614992,0.458452724125589
+"Orientale Fishing with Agriculture, Bambesa, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.013166101413729656,0.458452724125589
+"Orientale Fishing with Agriculture, Banalia, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Orientale Fishing with Agriculture, Basoko, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Orientale Fishing with Agriculture, Bondo, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.009669778831632074,0.458452724125589
+"Orientale Fishing with Agriculture, Buta, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011949241013614992,0.458452724125589
+"Orientale Fishing with Agriculture, City of Kisangani, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Orientale Fishing with Agriculture, Djugu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9609546958329137,0.5420862775701015
+"Orientale Fishing with Agriculture, Irumu, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9669595887856283,0.5420862775701015
+"Orientale Fishing with Agriculture, Isangi, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Orientale Fishing with Agriculture, Kailo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.04102064772806777,0.458452724125589
+"Orientale Fishing with Agriculture, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.009669778831632074,0.458452724125589
+"Orientale Fishing with Agriculture, Kibombo, Maniema, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.042393823744504844,0.458452724125589
+"Orientale Fishing with Agriculture, Lubao, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.013443447673259954,0.458452724125589
+"Orientale Fishing with Agriculture, Lubefu, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Orientale Fishing with Agriculture, Mahagi, Ituri, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.5713635952878583,0.5302489373287932
+"Orientale Fishing with Agriculture, Opala, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Orientale Fishing with Agriculture, Poko, Bas-Uele, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"Orientale Fishing with Agriculture, Ubundu, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Orientale Fishing with Agriculture, Yahuma, Tshopo, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Panyijiar, Unity, South Sudan",2024-02-01,1.0,3,0.9889818947629331,0.5238003062166333
+"Pariang, Unity, South Sudan",2024-02-01,1.0,3,0.9889818947629331,0.5238003062166333
+"Rubkona, Unity, South Sudan",2024-02-01,1.0,3,0.9889818947629331,0.5238003062166333
+"SANAGA-MBAM PLAIN: cocoa, plantain, pineapple, market gardening, cassava, yellow yams, smallstock, poultry, Mbam et Kim, Centre, Cameroon",2024-02-01,0.0,3,0.017466093043494405,0.4540009849040982
+"Savannah Cassava, Dilolo, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Savannah Cassava, Kamina, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.012448896768828058,0.458452724125589
+"Savannah Cassava, Kaniama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.017300171040038892,0.458452724125589
+"Savannah Cassava, Kapanga, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.004143767528403408,0.458452724125589
+"Savannah Cassava, Soa, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.004143767528403408,0.458452724125589
+"Savannah Surplus Maize, Bukama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.01431906836913184,0.458452724125589
+"Savannah Surplus Maize, Kabalo, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.7502815104213016,0.5072524148021914
+"Savannah Surplus Maize, Kabongo, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.015771778358310066,0.458452724125589
+"Savannah Surplus Maize, Kalemie, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.7265851514999323,0.5072524148021914
+"Savannah Surplus Maize, Kamina, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.012448896768828058,0.458452724125589
+"Savannah Surplus Maize, Kaniama, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.017300171040038892,0.458452724125589
+"Savannah Surplus Maize, Kasenga, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.013443447673259954,0.458452724125589
+"Savannah Surplus Maize, Kongolo, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.8049095466662689,0.5302489373287932
+"Savannah Surplus Maize, Lubudi, Lualaba, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.004143767528403408,0.458452724125589
+"Savannah Surplus Maize, Malemba-Nkulu, Haut-Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.017300171040038892,0.458452724125589
+"Savannah Surplus Maize, Manono, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.3562517995932984,0.48945384467379677
+"Savannah Surplus Maize, Mitwaba, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.5951009177831941,0.5302489373287932
+"Savannah Surplus Maize, Moba, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.09538674215499217,0.458452724125589
+"Savannah Surplus Maize, Nyunzu, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.6388555337755084,0.5302489373287932
+"Savannah Surplus Maize, Pweto, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.6016825382961692,0.5302489373287932
+"Savannah with Cassava and Cowpeas and Small Livestock, City of Kananga, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.039486203735200905,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Dekese, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.018290811667330795,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Demba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.040718344049568984,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Dibaya, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.040718344049568984,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Dimbelenge, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.04102064772806777,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Ilebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05604796154509625,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Kabinda, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.011018910223024326,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Kamiji, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.017300171040038892,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Kamonia, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.8594298500792094,0.5302489373287932
+"Savannah with Cassava and Cowpeas and Small Livestock, Katako-Kombe, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.009669778831632074,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Kazumba, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.042393823744504844,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Lubefu, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Luebo, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.05282730368729832,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Luilu, Lomami, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.013166101413729656,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Luiza, Kasai-Central, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.04641437340667466,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Lusambo, Sankuru, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.005083685742460505,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Miabi, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.04274676320261629,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Mweka, Kasai, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.10964308809928489,0.458452724125589
+"Savannah with Cassava and Cowpeas and Small Livestock, Tshilenge, Kasai-Oriental, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.04641437340667466,0.458452724125589
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Birnin Magaji, Zamfara, Nigeria",2024-02-01,1.0,3,0.822069695970509,0.5381549774586354
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Gusau, Zamfara, Nigeria",2024-02-01,0.0,3,0.15444940671989266,0.46091087246567286
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Kaura-Namoda, Zamfara, Nigeria",2024-02-01,0.0,3,0.1925647806667095,0.483376613264062
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Maru, Zamfara, Nigeria",2024-02-01,1.0,3,0.8313832499156956,0.5271026686205084
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Wamako, Sokoto, Nigeria",2024-02-01,0.0,3,0.06302227367287234,0.46091087246567286
+"South-east cassava, cereals, and oil palm with extensive off-farm work and trade, Anambra, Nigeria",2024-02-01,0.0,3,0.013443447673259954,0.46091087246567286
+"South-east cassava, cereals, and oil palm with extensive off-farm work and trade, Rivers, Nigeria",2024-02-01,0.0,3,0.01843608376148122,0.4642625923454543
+"South-east rice dominant with cassava, yams, and oil palm, Anambra, Nigeria",2024-02-01,0.0,3,0.01843608376148122,0.46091087246567286
+"South-west cocoa with oil palm, tubers, and cereals, Oyo, Nigeria",2024-02-01,0.0,3,0.008052806979389702,0.46091087246567286
+"South-west rice, cassava, and cattle with cross-border trade, Ogun, Nigeria",2024-02-01,0.0,3,0.005083685742460505,0.46091087246567286
+"Southern Coastal Rishing, Manioc, and Maize, Boane, Maputo, Mozambique",2024-02-01,0.0,3,0.02008894194876114,0.4588793352664077
+"Southern Coastal Rishing, Manioc, and Maize, Cidade Da Matola, Maputo, Mozambique",2024-02-01,0.0,3,0.018290811667330795,0.4588793352664077
+"Southern Coastal Rishing, Manioc, and Maize, Cidade De Maputo, Maputo City, Mozambique",2024-02-01,0.0,3,0.018464018406170627,0.4588793352664077
+"Southern Coastal Rishing, Manioc, and Maize, Manhiça, Maputo, Mozambique",2024-02-01,0.0,3,0.018464018406170627,0.4588793352664077
+"Southern Coastal Rishing, Manioc, and Maize, Marracuene, Maputo, Mozambique",2024-02-01,0.0,3,0.011018910223024326,0.4588793352664077
+"Southern Coastal Rishing, Manioc, and Maize, Matutuine, Maputo, Mozambique",2024-02-01,0.0,3,0.011018910223024326,0.4588793352664077
+"Southern Highland Cattle and Mixed Cropping, Boane, Maputo, Mozambique",2024-02-01,0.0,3,0.02008894194876114,0.4588793352664077
+"Southern Highland Cattle and Mixed Cropping, Magude, Maputo, Mozambique",2024-02-01,1.0,3,0.019508520804187045,0.4588793352664077
+"Southern Highland Cattle and Mixed Cropping, Matutuine, Maputo, Mozambique",2024-02-01,0.0,3,0.011018910223024326,0.4588793352664077
+"Southern Highland Cattle and Mixed Cropping, Moamba, Maputo, Mozambique",2024-02-01,0.0,3,0.011018910223024326,0.4588793352664077
+"Southern Highland Cattle and Mixed Cropping, Namaacha, Maputo, Mozambique",2024-02-01,0.0,3,0.011018910223024326,0.4588793352664077
+"Southern Highlands, Gitega, Burundi",2024-02-01,0.0,3,0.005083685742460505,0.44997285088850586
+"Southern Tanganyika-Mwero Fishing, Kalemie, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.9372733987343698,0.5302489373287932
+"Southern Tanganyika-Mwero Fishing, Kasenga, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.1312918763266635,0.458452724125589
+"Southern Tanganyika-Mwero Fishing, Moba, Tanganyika, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.09538674215499217,0.458452724125589
+"Southern Tanganyika-Mwero Fishing, Pweto, Haut-Katanga, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.701758458254147,0.5072524148021914
+"Tenta, South Wollo, Amhara, Ethiopia",2024-02-01,0.0,3,0.0554600121582971,0.46091087246567286
+"Transhumant and Nomad Pastoralism, Tchirozerine, Agadez, Niger",2024-02-01,0.0,3,0.05299358220591154,0.45310408393742047
+"Turkwell Riverine Zone, Lodwa Township, Turkana Central, Turkana, Kenya",2024-02-01,1.0,3,0.9001338152880116,0.5271026686205084
+"Urban, Chitungwiza, Harare, Zimbabwe",2024-02-01,1.0,3,0.042393823744504844,0.45310408393742047
+"Urban, Epworth, Harare, Zimbabwe",2024-02-01,1.0,3,0.04218008103302266,0.45310408393742047
+"Urban, Harare Urban, Harare, Zimbabwe",2024-02-01,1.0,3,0.04218008103302266,0.45310408393742047
+"Urban, Kwekwe Urban, Midlands, Zimbabwe",2024-02-01,1.0,3,0.04518889903309832,0.4588793352664077
+"Virunga Volcanic Soils Agriculture, Goma and Rutshuru, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,0.0,3,0.9669595887856283,0.5420862775701015
+"Virunga Volcanic Soils Agriculture, Masisi, North Kivu, Democratic Republic of the Congo, Congo, The Democratic Republic of the",2024-02-01,1.0,3,0.439232032865198,0.5302489373287932
+"West cereals and remittances, Passore, Nord, Burkina Faso",2024-02-01,0.0,3,0.018290811667330795,0.4495476409906293
+"Western Agropastoral Zone, Waso, Samburu East, Samburu, Kenya",2024-02-01,0.0,3,0.876115023123608,0.5424428013320086

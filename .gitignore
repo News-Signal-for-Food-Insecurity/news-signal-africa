@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Large intermediate files
+DATA/raw/ml_dataset_monthly.parquet
+DATA/raw/stage1_features.parquet
+
+# CatBoost model binaries (large)
+results/*/models/*.cbm
+
+# CatBoost training logs (auto-generated)
+catboost_info/
+
+# Temporary files
+*.tmp
+*.log
+temp_*
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+.claude/
