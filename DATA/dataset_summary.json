@@ -1,9 +1,9 @@
 {
-  "n_rows": 3269,
-  "n_districts": 402,
+  "n_rows": 3905,
+  "n_districts": 533,
   "n_countries": 18,
-  "crisis_prevalence_pct": 21.35,
-  "period_start_min": "2021-06-01",
+  "crisis_prevalence_pct": 21.2,
+  "period_start_min": "2020-10-01",
   "period_start_max": "2024-02-01",
   "strict_districts": 586,
   "ar_features": [

@@ -13,14 +13,14 @@ news-signal-africa/
 │   └── build_dataset.py          # Reconstructs DATA/dataset.parquet from raw sources
 ├── DATA/
 │   ├── raw/
-│   │   ├── stage1_features.parquet        # IPC + spatial lag (34,707 district-periods)
-│   │   └── ml_dataset_monthly.parquet     # GDELT monthly news counts (234,405 rows)
+│   │   ├── stage1_features.parquet        # IPC + spatial lag (44,435 district-periods; 2020-2024)
+│   │   └── ml_dataset_monthly.parquet     # GDELT monthly news counts (234,405 rows; 2021-2024)
 │   ├── filtering/
 │   │   ├── strict_filtered_districts.csv  # 586 districts, >= 200 articles/month
 │   │   └── district_coverage_stats.csv    # Full coverage statistics
 │   ├── modelling/
 │   │   └── monthly_gdelt_features.parquet # Monthly news for fold-aware z-score CV
-│   ├── dataset.parquet                    # Final modelling dataset (3,269 rows)
+│   ├── dataset.parquet                    # Final modelling dataset (3,905 rows, 533 districts)
 │   └── dataset_summary.json               # Dataset metadata
 ├── 01_train_models.py            # Primary 2-year rolling CV (AR + Combined)
 ├── 02_rolling_cv_train.py        # Window sensitivity check
@@ -112,7 +112,7 @@ Results are written to `results/` and figures to `figures/`.
 | Source | Description | Coverage |
 |--------|-------------|----------|
 | FEWSNET IPC | Food security phase classifications | 24 countries, 2015–2024 |
-| GDELT GKG | Global Knowledge Graph news event data | Africa, 2021–2024 |
+| GDELT GKG | Global Knowledge Graph news event data | Africa, 2020–2024 |
 | GADM v4.1 | Administrative boundaries (ADM2) | Africa |
 
 Raw GDELT articles (47 GB CSV) are not included. The pre-processed district-level aggregations in `DATA/raw/` are sufficient to reproduce all results.
@@ -123,11 +123,13 @@ Raw GDELT articles (47 GB CSV) are not included. The pre-processed district-leve
 
 | Model | Mean PR-AUC | Mean ROC-AUC | Mean F1 |
 |-------|-------------|--------------|---------|
-| AR-only | 0.765 ± 0.055 | — | — |
-| Combined | 0.769 ± 0.110 | — | — |
-| Delta | +0.004 | — | — |
+| AR-only | 0.816 ± 0.077 | 0.920 ± 0.035 | 0.756 ± 0.073 |
+| Combined | 0.835 ± 0.075 | 0.928 ± 0.032 | 0.755 ± 0.070 |
+| Delta | +0.019 | — | — |
 
-Operational impact: **+6 net district-period saves** (2.17% of crises) at threshold 0.5 under the 2-year rolling CV window.
+**Null test:** permutation p-value = 0.00 (100 permutations; null mean PR-AUC = 0.758 ± 0.009).
+
+Dataset: 3,905 district-period observations, 533 districts, 18 countries, 2020–2024 (crisis prevalence 21.2%).
 
 ---
 

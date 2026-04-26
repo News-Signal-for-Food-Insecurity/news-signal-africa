@@ -22,12 +22,12 @@ Strategic typology breakdown:
   N_STABLE  : no current crisis, no history
   N_RECOVERY: no current crisis, but history present
 
-Outputs (results_rolling_cv/):
-  - operational_impact_2yr.csv         : per-fold impact (2-year window)
-  - operational_impact_3yr.csv         : per-fold impact (3-year window)
-  - operational_impact_summary.json    : aggregate summary (both windows)
-  - operational_type_breakdown_2yr.csv : breakdown by strategic type
-  - operational_type_breakdown_3yr.csv
+Outputs (results/):
+  - operational_impact_2yr.csv              : per-fold impact (primary 2-year window)
+  - operational_impact_sensitivity.csv      : per-fold impact (sensitivity window)
+  - operational_impact_summary.json         : aggregate summary (both windows)
+  - operational_type_breakdown_2yr.csv      : breakdown by strategic type
+  - operational_type_breakdown_sensitivity.csv
 
 Figures (figures_rolling_cv/):
   - FIGURE_6_operational_impact.png   : 6-panel composite figure
@@ -144,14 +144,14 @@ def compute_type_breakdown(pred_df: pd.DataFrame, dataset: pd.DataFrame, thresho
 # Figure 6: 6-panel operational impact
 # ---------------------------------------------------------------------------
 
-def plot_figure_6(fold_2yr, fold_3yr, summary, type_2yr, type_3yr, country_stats, cfg: Config):
+def plot_figure_6(fold_2yr, fold_sens, summary, type_2yr, type_sens, country_stats, cfg: Config):
     """
     6-panel composite operational impact figure.
 
     Panel A (top-left)  : per-fold net saves, 2yr window
-    Panel B (top-right) : per-fold net saves, 3yr window
+    Panel B (top-right) : per-fold net saves, sensitivity window
     Panel C (mid-left)  : crisis fate stacked bar by fold, 2yr
-    Panel D (mid-right) : crisis fate stacked bar by fold, 3yr
+    Panel D (mid-right) : crisis fate stacked bar by fold, sensitivity
     Panel E (bot-left)  : strategic type breakdown (both windows)
     Panel F (bot-right) : country-level net saves (2yr), horizontal bars
     """
@@ -174,14 +174,14 @@ def plot_figure_6(fold_2yr, fold_3yr, summary, type_2yr, type_3yr, country_stats
     ax_A.set_ylabel("Net saves (crises)")
     ax_A.set_xticks(fold_2yr["fold_id"])
 
-    # --- Panel B: per-fold net saves (3yr) ---
-    colors_B = [cfg.COLOR_NET if v >= 0 else cfg.COLOR_AR for v in fold_3yr["net_saves"]]
-    ax_B.bar(fold_3yr["fold_id"], fold_3yr["net_saves"], color=colors_B, edgecolor="white")
+    # --- Panel B: per-fold net saves (sensitivity window) ---
+    colors_B = [cfg.COLOR_NET if v >= 0 else cfg.COLOR_AR for v in fold_sens["net_saves"]]
+    ax_B.bar(fold_sens["fold_id"], fold_sens["net_saves"], color=colors_B, edgecolor="white")
     ax_B.axhline(0, color="black", linewidth=0.8, linestyle="--")
-    ax_B.set_title("B. Net saves per fold (3-year window)", fontsize=11, fontweight="bold")
+    ax_B.set_title("B. Net saves per fold (sensitivity window)", fontsize=11, fontweight="bold")
     ax_B.set_xlabel("Fold")
     ax_B.set_ylabel("Net saves (crises)")
-    ax_B.set_xticks(fold_3yr["fold_id"])
+    ax_B.set_xticks(fold_sens["fold_id"])
 
     # --- Panel C: stacked bar, crisis fate (2yr) ---
     folds_c = fold_2yr["fold_id"].values
@@ -200,18 +200,18 @@ def plot_figure_6(fold_2yr, fold_3yr, summary, type_2yr, type_3yr, country_stats
     ax_C.set_xticks(folds_c)
     ax_C.legend(fontsize=8, loc="upper right")
 
-    # --- Panel D: stacked bar, crisis fate (3yr) ---
-    folds_d = fold_3yr["fold_id"].values
-    ax_D.bar(folds_d, fold_3yr["both_detect"], label="Both detect", color="#4c72b0")
-    ax_D.bar(folds_d, fold_3yr["full_only"],   bottom=fold_3yr["both_detect"],
+    # --- Panel D: stacked bar, crisis fate (sensitivity window) ---
+    folds_d = fold_sens["fold_id"].values
+    ax_D.bar(folds_d, fold_sens["both_detect"], label="Both detect", color="#4c72b0")
+    ax_D.bar(folds_d, fold_sens["full_only"],   bottom=fold_sens["both_detect"],
              label="Full only (net gain)", color=cfg.COLOR_FULL)
-    ax_D.bar(folds_d, fold_3yr["ar_only"],
-             bottom=fold_3yr["both_detect"] + fold_3yr["full_only"],
+    ax_D.bar(folds_d, fold_sens["ar_only"],
+             bottom=fold_sens["both_detect"] + fold_sens["full_only"],
              label="AR only (net loss)", color=cfg.COLOR_AR)
-    ax_D.bar(folds_d, fold_3yr["neither"],
-             bottom=fold_3yr["both_detect"] + fold_3yr["full_only"] + fold_3yr["ar_only"],
+    ax_D.bar(folds_d, fold_sens["neither"],
+             bottom=fold_sens["both_detect"] + fold_sens["full_only"] + fold_sens["ar_only"],
              label="Neither", color="#d3d3d3")
-    ax_D.set_title("D. Crisis fate breakdown (3-year window)", fontsize=11, fontweight="bold")
+    ax_D.set_title("D. Crisis fate breakdown (sensitivity window)", fontsize=11, fontweight="bold")
     ax_D.set_xlabel("Fold")
     ax_D.set_ylabel("Crisis count")
     ax_D.set_xticks(folds_d)
@@ -223,11 +223,11 @@ def plot_figure_6(fold_2yr, fold_3yr, summary, type_2yr, type_3yr, country_stats
     _empty  = pd.Series(0, index=cfg.STRATEGIC_TYPES)
     type_2yr_dict = (type_2yr.set_index("strategic_type")["net_saves"].reindex(cfg.STRATEGIC_TYPES, fill_value=0)
                      if not type_2yr.empty else _empty)
-    type_3yr_dict = (type_3yr.set_index("strategic_type")["net_saves"].reindex(cfg.STRATEGIC_TYPES, fill_value=0)
-                     if not type_3yr.empty else _empty)
+    type_sens_dict = (type_sens.set_index("strategic_type")["net_saves"].reindex(cfg.STRATEGIC_TYPES, fill_value=0)
+                      if not type_sens.empty else _empty)
 
     ax_E.bar(x_pos - w/2, type_2yr_dict.values, width=w, label="2-year window", color=cfg.COLOR_FULL)
-    ax_E.bar(x_pos + w/2, type_3yr_dict.values, width=w, label="3-year window", color=cfg.COLOR_AR, alpha=0.8)
+    ax_E.bar(x_pos + w/2, type_sens_dict.values, width=w, label="Sensitivity window", color=cfg.COLOR_AR, alpha=0.8)
     ax_E.axhline(0, color="black", linewidth=0.8, linestyle="--")
     ax_E.set_xticks(x_pos)
     ax_E.set_xticklabels(cfg.STRATEGIC_TYPES, rotation=15, fontsize=9)
@@ -249,12 +249,16 @@ def plot_figure_6(fold_2yr, fold_3yr, summary, type_2yr, type_3yr, country_stats
                   ha="center", va="center", transform=ax_F.transAxes, fontsize=12)
         ax_F.set_title("F. Country-level net saves (2-year window)", fontsize=11, fontweight="bold")
 
+    sens_label = (
+        f"sensitivity window: net saves = {int(fold_sens['net_saves'].sum())} "
+        f"({fold_sens['pct_net_saves'].mean():.1f}% of crises)"
+        if not fold_sens.empty else "sensitivity window: n/a"
+    )
     fig.suptitle(
         "Operational Impact: Combined vs AR-Only Model\n"
         f"2yr window: net saves = {int(fold_2yr['net_saves'].sum())} "
         f"({fold_2yr['pct_net_saves'].mean():.1f}% of crises) | "
-        f"3yr window: net saves = {int(fold_3yr['net_saves'].sum())} "
-        f"({fold_3yr['pct_net_saves'].mean():.1f}% of crises)",
+        f"{sens_label}",
         fontsize=13, fontweight="bold", y=0.98,
     )
 
@@ -315,7 +319,7 @@ def main():
         print(f"ERROR: {cfg.PRED_2YR} not found. Run 01_train_models.py first.")
         return
     if not cfg.PRED_3YR.exists():
-        print(f"WARNING: {cfg.PRED_3YR} not found. Run 02_rolling_cv_train.py first.")
+        print(f"WARNING: {cfg.PRED_3YR} not found. Run 02_rolling_cv_train.py first (sensitivity window).")
 
     pred_2yr = pd.read_csv(cfg.PRED_2YR)
     pred_2yr["ipc_period_start"] = pd.to_datetime(pred_2yr["ipc_period_start"])
@@ -327,24 +331,24 @@ def main():
     print(f"  2yr net saves: {fold_2yr['net_saves'].sum()} total "
           f"({fold_2yr['net_saves'].sum() / fold_2yr['n_crises'].sum() * 100:.2f}% of crises)")
 
-    pred_3yr = None
-    fold_3yr = pd.DataFrame(columns=fold_2yr.columns)
+    pred_sens = None
+    fold_sens = pd.DataFrame(columns=fold_2yr.columns)
     if cfg.PRED_3YR.exists():
-        pred_3yr = pd.read_csv(cfg.PRED_3YR)
-        pred_3yr["ipc_period_start"] = pd.to_datetime(pred_3yr["ipc_period_start"])
-        fold_3yr = compute_operational_impact(pred_3yr, cfg.THRESHOLD, cfg.TARGET)
-        print(f"  3yr net saves: {fold_3yr['net_saves'].sum()} total "
-              f"({fold_3yr['net_saves'].sum() / fold_3yr['n_crises'].sum() * 100:.2f}% of crises)")
+        pred_sens = pd.read_csv(cfg.PRED_3YR)
+        pred_sens["ipc_period_start"] = pd.to_datetime(pred_sens["ipc_period_start"])
+        fold_sens = compute_operational_impact(pred_sens, cfg.THRESHOLD, cfg.TARGET)
+        print(f"  Sensitivity net saves: {fold_sens['net_saves'].sum()} total "
+              f"({fold_sens['net_saves'].sum() / fold_sens['n_crises'].sum() * 100:.2f}% of crises)")
 
     # Strategic type breakdown
     print("\nComputing strategic type breakdown...")
     type_2yr = pd.DataFrame()
-    type_3yr = pd.DataFrame()
+    type_sens = pd.DataFrame()
 
     if "strategic_type" in dataset.columns:
         type_2yr = compute_type_breakdown(pred_2yr, dataset, cfg.THRESHOLD)
-        if pred_3yr is not None:
-            type_3yr = compute_type_breakdown(pred_3yr, dataset, cfg.THRESHOLD)
+        if pred_sens is not None:
+            type_sens = compute_type_breakdown(pred_sens, dataset, cfg.THRESHOLD)
 
     # Country-level
     country_stats = compute_country_impact(pred_2yr, dataset, cfg.THRESHOLD)
@@ -352,11 +356,11 @@ def main():
     # Save CSVs
     cfg.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     fold_2yr.to_csv(cfg.RESULTS_DIR / "operational_impact_2yr.csv", index=False)
-    fold_3yr.to_csv(cfg.RESULTS_DIR / "operational_impact_3yr.csv", index=False)
+    fold_sens.to_csv(cfg.RESULTS_DIR / "operational_impact_sensitivity.csv", index=False)
     if not type_2yr.empty:
         type_2yr.to_csv(cfg.RESULTS_DIR / "operational_type_breakdown_2yr.csv", index=False)
-    if not type_3yr.empty:
-        type_3yr.to_csv(cfg.RESULTS_DIR / "operational_type_breakdown_3yr.csv", index=False)
+    if not type_sens.empty:
+        type_sens.to_csv(cfg.RESULTS_DIR / "operational_type_breakdown_sensitivity.csv", index=False)
     if country_stats is not None:
         country_stats.to_csv(cfg.RESULTS_DIR / "country_impact_2yr.csv", index=False)
 
@@ -372,10 +376,10 @@ def main():
             "total_neither":       int(fold_2yr["neither"].sum()),
         },
         "window_sensitivity": {
-            "total_net_saves":     int(fold_3yr["net_saves"].sum()) if not fold_3yr.empty else None,
-            "total_crises":        int(fold_3yr["n_crises"].sum())  if not fold_3yr.empty else None,
-            "pct_net_saves":       float(fold_3yr["net_saves"].sum() / fold_3yr["n_crises"].sum() * 100)
-                                   if not fold_3yr.empty and fold_3yr["n_crises"].sum() > 0 else None,
+            "total_net_saves":     int(fold_sens["net_saves"].sum()) if not fold_sens.empty else None,
+            "total_crises":        int(fold_sens["n_crises"].sum())  if not fold_sens.empty else None,
+            "pct_net_saves":       float(fold_sens["net_saves"].sum() / fold_sens["n_crises"].sum() * 100)
+                                   if not fold_sens.empty and fold_sens["n_crises"].sum() > 0 else None,
         },
     }
     with open(cfg.RESULTS_DIR / "operational_impact_summary.json", "w") as f:
@@ -384,15 +388,15 @@ def main():
 
     # Generate Figure 6
     print("\nGenerating Figure 6...")
-    plot_figure_6(fold_2yr, fold_3yr, summary, type_2yr, type_3yr, country_stats, cfg)
+    plot_figure_6(fold_2yr, fold_sens, summary, type_2yr, type_sens, country_stats, cfg)
 
     print("\n" + "=" * 60)
     print("Summary:")
     print(f"  2yr window: {summary['window_2yr']['total_net_saves']} net saves "
           f"({summary['window_2yr']['pct_net_saves']:.2f}% of crises)")
     if summary["window_sensitivity"]["total_net_saves"] is not None:
-        print(f"  3yr window: {summary['window_3yr']['total_net_saves']} net saves "
-              f"({summary['window_3yr']['pct_net_saves']:.2f}% of crises)")
+        print(f"  Sensitivity window: {summary['window_sensitivity']['total_net_saves']} net saves "
+              f"({summary['window_sensitivity']['pct_net_saves']:.2f}% of crises)")
     print("Done.")
 
 

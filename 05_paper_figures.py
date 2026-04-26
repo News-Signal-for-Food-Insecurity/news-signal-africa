@@ -7,7 +7,7 @@ Generates six supplementary figures and one summary table for the paper:
 
 PREREQUISITES (run these scripts first):
   1. scripts/01_train_models.py       -> results_rolling_cv/window_2yr/
-  2. scripts/02_rolling_cv_train.py   -> results_rolling_cv/window_3yr/
+  2. scripts/02_rolling_cv_train.py   -> results/window_sensitivity/
   3. scripts/03_news_only_model.py    -> results_rolling_cv/news_only/
   4. scripts/04_temporal_shuffle_test.py -> results_rolling_cv/shuffle_test/
 

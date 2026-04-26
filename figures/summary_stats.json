@@ -1,14 +1,14 @@
 {
-  "ar_only_mean_pr_auc": 0.7333,
-  "combined_mean_pr_auc": 0.718,
-  "delta_pr_auc": -0.0153,
+  "ar_only_mean_pr_auc": 0.8162,
+  "combined_mean_pr_auc": 0.8354,
+  "delta_pr_auc": 0.0191,
   "figure_b": {},
   "figure_c": {
     "null_mean": 0.7585,
     "null_std": 0.0085,
     "null_min": 0.7262,
     "null_max": 0.7769,
-    "real_mean_pr_auc": 0.718,
-    "p_value": 1.0
+    "real_mean_pr_auc": 0.8354,
+    "p_value": 0.0
   }
 }

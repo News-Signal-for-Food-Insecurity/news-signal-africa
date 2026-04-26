@@ -1,0 +1,16 @@
+{
+  "window_2yr": {
+    "total_net_saves": 18,
+    "total_crises": 576,
+    "pct_net_saves": 3.125,
+    "total_full_only": 23,
+    "total_ar_only": 5,
+    "total_both_detect": 383,
+    "total_neither": 165
+  },
+  "window_sensitivity": {
+    "total_net_saves": -6,
+    "total_crises": 447,
+    "pct_net_saves": -1.342281879194631
+  }
+}

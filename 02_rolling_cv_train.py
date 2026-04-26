@@ -3,15 +3,13 @@
 ======================
 Rolling stratified spatial cross-validation -- sensitivity check window.
 
-Identical architecture to 01_train_models.py. Uses the same 24-month training
-window given the dataset range (2021-2024); outputs go to window_3yr/ for
-comparison against the primary window_2yr results.
+Identical architecture to 01_train_models.py. Uses a 28-month training
+window (vs. the primary 20-month window) for window-sensitivity comparison.
 
-This allows the paper to compare window sensitivity:
-  - window_2yr: ~40 net operational saves (3.99% of crises)
-  - window_3yr: ~4 net operational saves (0.69% of crises)
+Primary (01_train_models.py): TRAIN_WINDOW_MONTHS=20, 6 folds
+Sensitivity (this script):    TRAIN_WINDOW_MONTHS=28, fewer folds
 
-Outputs (results_rolling_cv/window_3yr/):
+Outputs (results/window_sensitivity/):
   - fold_results.csv
   - fold_predictions.csv
   - feature_importance.csv
@@ -50,9 +48,9 @@ class Config3Yr:
     DATASET_PATH        = DATA_DIR / "dataset.parquet"
     MONTHLY_GDELT_PATH  = DATA_DIR / "modelling" / "monthly_gdelt_features.parquet"
 
-    TRAIN_WINDOW_MONTHS  = 24   # 2 years (same as primary window for this dataset range)
+    TRAIN_WINDOW_MONTHS  = 28   # longer window for sensitivity check
     IPC_PERIOD_MONTHS    = 4
-    MONTHLY_DATA_START   = pd.Timestamp("2021-01-01")
+    MONTHLY_DATA_START   = pd.Timestamp("2020-02-01")
 
     STRICT_DISTRICTS_PATH = DATA_DIR / "filtering" / "strict_filtered_districts.csv"
 
@@ -307,7 +305,7 @@ def save_models(model_pairs, models_dir):
 def main():
     cfg = Config3Yr()
     print("=" * 60)
-    print("Rolling CV: AR + Combined models  (window_3yr sensitivity)")
+    print("Rolling CV: AR + Combined models  (window_sensitivity)")
     print("=" * 60)
 
     print("\nLoading data...")
@@ -352,7 +350,7 @@ def main():
     save_models(model_pairs, cfg.RESULTS_DIR / "models")
 
     print("\n" + "=" * 60)
-    print("Summary (3-year window):")
+    print("Summary (sensitivity window):")
     print(f"  AR    mean PR-AUC : {fold_df['ar_pr_auc'].mean():.4f} +/- {fold_df['ar_pr_auc'].std():.4f}")
     print(f"  Full  mean PR-AUC : {fold_df['full_pr_auc'].mean():.4f} +/- {fold_df['full_pr_auc'].std():.4f}")
     print(f"  Delta mean        : {fold_df['delta_pr_auc'].mean():+.4f}")

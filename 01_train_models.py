@@ -8,10 +8,10 @@ Two CatBoost classifiers per fold:
   - Combined   : 4 AR + 18 news features (fold-aware z-scores)
 
 Fold structure:
-  - Training window : 2 years (24 months)
+  - Training window : 20 months
   - Test horizon    : 2 IPC periods (8 months ahead, L=2)
   - Step            : 1 period
-  - Folds 1-6
+  - Folds 1-6 (test dates 2022-02 to 2023-10)
 
 Outputs (results_rolling_cv/window_2yr/):
   - fold_results.csv        : per-fold metrics for both models
@@ -53,12 +53,12 @@ class Config:
     MONTHLY_GDELT_PATH   = DATA_DIR / "modelling" / "monthly_gdelt_features.parquet"
 
     # Window / horizon
-    TRAIN_WINDOW_MONTHS  = 24
+    TRAIN_WINDOW_MONTHS  = 20
     TEST_HORIZON_PERIODS = 2
     IPC_PERIOD_MONTHS    = 4
 
     # Minimum training data start (align with GDELT availability)
-    MONTHLY_DATA_START = pd.Timestamp("2021-01-01")
+    MONTHLY_DATA_START = pd.Timestamp("2020-02-01")
 
     # District filter
     STRICT_DISTRICTS_PATH = DATA_DIR / "filtering" / "strict_filtered_districts.csv"

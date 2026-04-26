@@ -30,8 +30,8 @@
     "loss_function": "Logloss",
     "eval_metric": "PRAUC"
   },
-  "real_mean_pr_auc": 0.7689771497619257,
+  "real_mean_pr_auc": 0.8259985692098033,
   "null_mean_pr_auc": 0.7584736327942116,
   "null_std_pr_auc": 0.008513520013003243,
-  "p_value": 0.1
+  "p_value": 0.0
 }

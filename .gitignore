@@ -16,9 +16,21 @@ build/
 .DS_Store
 Thumbs.db
 
-# Large intermediate files
+# Large data files excluded from git (download / copy separately)
 DATA/raw/ml_dataset_monthly.parquet
 DATA/raw/stage1_features.parquet
+DATA/raw/ipcFic_fews_2020_2024.csv
+DATA/raw/spatial_weights.parquet
+DATA/raw/african_gkg_locations_2021_2024.parquet
+
+# GADM shapefile (64 MB — copy from C:\GDELT_Africa_Extract\data\gadm\)
+DATA/gadm/
+
+# Raw GDELT daily GKG parquets (~40GB — download via data_preparation/download_gdelt_gkg_2020.py)
+DATA/gdelt_2020/
+
+# Intermediate stage2 processing files
+DATA/interim/
 
 # CatBoost model binaries (large)
 results/*/models/*.cbm

@@ -3,10 +3,10 @@ build_dataset.py
 ================
 Reconstructs the three pipeline inputs from the two raw source files:
 
-  DATA/raw/stage1_features.parquet       (34,707 district-period rows; IPC phases,
+  DATA/raw/stage1_features.parquet       (44,435 district-period rows; IPC phases 2020-2024,
                                           temporal lag Lt, spatial lag Ls, y_h8 target)
   DATA/raw/ml_dataset_monthly.parquet    (234,405 district-month rows; 9 news-theme
-                                          category counts, article_count for filtering)
+                                          category counts, article_count for filtering; 2021-2024)
 
 Outputs (DATA/):
   filtering/strict_filtered_districts.csv  -- districts with >= 200 mean articles/month
