@@ -194,6 +194,29 @@ def _regression_annotation(ax, x_arr, y_arr, fs=9):
 # FIGURE 1 — Choropleth maps (ADM2)
 # ---------------------------------------------------------------------------
 
+def _build_district_gid2_bridge() -> "pd.DataFrame":
+    """Return a DataFrame mapping district_id -> GID_2 via stage1 primary_gadm2."""
+    import geopandas as gpd
+    shp = gpd.read_file(SHAPEFILE)
+    s1  = pd.read_parquet(DATA_DIR / "raw" / "stage1_features.parquet")
+
+    shp["_dname"] = shp["district_name"].str.strip().str.lower()
+    shp["_cname"] = shp["country_name"].str.strip().str.lower()
+
+    s1["district_id"] = s1["ipc_geographic_unit_full"].str.strip()
+    bridge = (s1[["district_id", "ipc_country", "primary_gadm2"]]
+              .drop_duplicates()
+              .dropna(subset=["primary_gadm2"]))
+    bridge["_dname"] = bridge["primary_gadm2"].str.strip().str.lower()
+    bridge["_cname"] = bridge["ipc_country"].str.strip().str.lower()
+
+    bridge = bridge.merge(shp[["GID_2", "_dname", "_cname"]],
+                          on=["_dname", "_cname"], how="left")
+    bridge = (bridge.dropna(subset=["GID_2"])
+              .drop_duplicates("district_id")[["district_id", "GID_2"]])
+    return bridge
+
+
 def figure_1() -> None:
     print("\n[Fig 1] Choropleth maps (ADM2)...")
     try:
@@ -207,113 +230,143 @@ def figure_1() -> None:
 
     gdf = gpd.read_file(SHAPEFILE)
 
-    # Identify geometry join key
-    join_key = "GID_2" if "GID_2" in gdf.columns else "NAME_2"
+    # Build GID_2 join bridge (99 % coverage across all 353 districts)
+    bridge = _build_district_gid2_bridge()
+    print(f"  GID_2 bridge: {len(bridge)} district -> GID_2 pairs")
 
     ds = pd.read_parquet(DATA_DIR / "dataset.parquet")
     ds["ipc_period_start"] = pd.to_datetime(ds["ipc_period_start"])
 
-    # Last observed IPC state per district (ipc_lag_1 = binary crisis indicator)
-    last = (ds.sort_values("ipc_period_start")
-              .groupby("district_id")[["ipc_lag_1", "spatial_lag"]]
-              .last()
-              .reset_index())
-    # spatial_lag is IDW-weighted neighbour IPC phase — clip to 1–4 for ordinal display
-    last["ipc_phase"] = last["spatial_lag"].clip(1, 4).round().astype(int)
+    # ── IPC crisis prevalence per district (% of periods in crisis) ──────
+    # More informative than a single snapshot: shows chronic vs acute burden
+    ipc_prev = (ds.groupby("district_id")["target_crisis_binary"]
+                  .mean()
+                  .reset_index()
+                  .rename(columns={"target_crisis_binary": "crisis_prev"}))
+    ipc_prev["crisis_prev_pct"] = (ipc_prev["crisis_prev"] * 100).round(1)
 
-    # Cumulative article count per district from monthly features file
+    # ── Cumulative article count per district ────────────────────────────
     if MONTHLY_PATH.exists():
         mg = pd.read_parquet(MONTHLY_PATH)
         art_agg = (mg.groupby("district_id")["article_count"]
-                     .sum()
-                     .reset_index()
+                     .sum().reset_index()
                      .rename(columns={"article_count": "total_articles"}))
     else:
         art_agg = pd.DataFrame(columns=["district_id", "total_articles"])
 
-    # --- helper: colour districts on a GeoDataFrame ---
-    def _plot_choropleth(gdf_base, df_val, val_col, cmap_listed, bins,
-                         legend_labels, title_str, fig_name):
-        # Try to merge on NAME_2 or GID_2 using the last comma token of district_id
-        df_val = df_val.copy()
-        df_val["_name_key"] = df_val["district_id"].apply(
-            lambda x: x.split(",")[-2].strip() if len(x.split(",")) >= 2 else x.strip()
-        )
-        gdf_m = gdf_base.copy()
-        # Try NAME_2 substring match (best-effort)
-        gdf_m[val_col] = np.nan
-        name_col = "NAME_2" if "NAME_2" in gdf_m.columns else join_key
-        val_dict = df_val.set_index("district_id")[val_col].to_dict()
-        # Secondary lookup by partial name
-        name_dict = df_val.set_index("_name_key")[val_col].to_dict()
+    # ── Attach GID_2 to both value tables ───────────────────────────────
+    ipc_prev = ipc_prev.merge(bridge, on="district_id", how="left")
+    art_agg  = art_agg.merge(bridge, on="district_id", how="left")
 
-        def _lookup(row):
-            for key_col in (name_col,):
-                v = val_dict.get(row.get(key_col, ""), np.nan)
-                if not np.isnan(v):
-                    return v
-            n2 = row.get("NAME_2", "")
-            return name_dict.get(n2, np.nan)
+    # Aggregate to GID_2 (multiple livelihood zones can share one ADM2 polygon)
+    ipc_gid = (ipc_prev.dropna(subset=["GID_2"])
+                        .groupby("GID_2")["crisis_prev_pct"].mean()
+                        .reset_index())
+    art_gid = (art_agg.dropna(subset=["GID_2"])
+                       .groupby("GID_2")["total_articles"].sum()
+                       .reset_index())
 
-        gdf_m[val_col] = gdf_m.apply(lambda r: _lookup(r), axis=1)
+    print(f"  IPC: {len(ipc_gid)} GID_2 polygons with data")
+    print(f"  News: {len(art_gid)} GID_2 polygons with data")
 
-        norm = BoundaryNorm(bins, cmap_listed.N)
-        fig, ax = plt.subplots(figsize=(8, 9))
-        # Background (no data)
-        gdf_m[gdf_m[val_col].isna()].plot(
-            ax=ax, color="#E8E8E8", linewidth=0.25, edgecolor="white")
-        # Data districts
-        gdf_has = gdf_m[~gdf_m[val_col].isna()]
-        if len(gdf_has):
-            gdf_has.plot(ax=ax, column=val_col, cmap=cmap_listed, norm=norm,
-                         linewidth=0.25, edgecolor="white")
+    # ── Cartographic helper ──────────────────────────────────────────────
+    def _draw_map(ax, gdf_all, gdf_data, col, cmap_listed, norm,
+                  legend_patches, panel_label):
+        """Plot one choropleth panel on ax."""
+        # Continent background in very light grey
+        gdf_all.plot(ax=ax, color="#F2F2F2", linewidth=0.15,
+                     edgecolor="#BBBBBB", zorder=1)
+        # Districts without data slightly darker
+        no_data = gdf_all[~gdf_all["GID_2"].isin(gdf_data["GID_2"])]
+        no_data.plot(ax=ax, color="#DDDDDD", linewidth=0.15,
+                     edgecolor="#BBBBBB", zorder=2)
+        # Districts with data
+        gdf_data.plot(ax=ax, column=col, cmap=cmap_listed, norm=norm,
+                      linewidth=0.25, edgecolor="white", zorder=3)
+
         ax.set_axis_off()
-        ax.set_xlim(-20, 52); ax.set_ylim(-35, 22)
+        ax.set_xlim(-20, 52)
+        ax.set_ylim(-35, 23)
 
-        # North arrow (cartographic style)
-        ax.annotate("", xy=(0.06, 0.17), xytext=(0.06, 0.11),
+        # Panel label (a) / (b)
+        ax.text(0.02, 0.98, panel_label, transform=ax.transAxes,
+                fontsize=13, fontweight="bold", va="top", ha="left",
+                color="#222222")
+
+        # North arrow
+        ax.annotate("", xy=(0.08, 0.19), xytext=(0.08, 0.12),
                     xycoords="axes fraction",
-                    arrowprops=dict(arrowstyle="-|>", color="black",
-                                    lw=2, mutation_scale=14))
-        ax.text(0.06, 0.09, "N", transform=ax.transAxes, ha="center",
-                va="top", fontsize=11, fontweight="bold")
+                    arrowprops=dict(arrowstyle="-|>", color="#333333",
+                                    lw=1.8, mutation_scale=13))
+        ax.text(0.08, 0.10, "N", transform=ax.transAxes,
+                ha="center", va="top", fontsize=10, fontweight="bold",
+                color="#333333")
 
-        # Manual legend
-        patches = [mpatches.Patch(color=cmap_listed.colors[i], label=legend_labels[i])
-                   for i in range(len(legend_labels))]
-        patches.append(mpatches.Patch(color="#E8E8E8", label="No data"))
-        ax.legend(handles=patches, loc="lower left", fontsize=8,
-                  title=title_str, title_fontsize=8.5,
-                  framealpha=0.95, edgecolor="#CCCCCC")
-        fig.tight_layout(pad=0.3)
-        save_pdf(fig, fig_name)
+        # Legend
+        legend_patches.append(
+            mpatches.Patch(facecolor="#DDDDDD", edgecolor="#BBBBBB",
+                           label="Not in study"))
+        ax.legend(handles=legend_patches, loc="lower left", fontsize=7.5,
+                  framealpha=0.96, edgecolor="#CCCCCC",
+                  handlelength=1.2, handleheight=1.0,
+                  borderpad=0.7, labelspacing=0.4)
 
-    # Fig 1a — IPC phase (proxy via spatial_lag)
-    ipc_cmap = ListedColormap(["#2ECC71", "#F1C40F", "#E67E22", "#E74C3C"])
-    ipc_bins  = [0.5, 1.5, 2.5, 3.5, 4.5]
-    ipc_labels = ["Phase 1 (Minimal)", "Phase 2 (Stressed)",
-                  "Phase 3 (Crisis)", "Phase 4+ (Emergency)"]
-    _plot_choropleth(gdf, last, "ipc_phase", ipc_cmap, ipc_bins,
-                     ipc_labels, "IPC Phase", "fig1a_ipc_choropleth")
+    # ── Fig 1a — IPC crisis prevalence (%) ──────────────────────────────
+    ipc_bins   = [0, 10, 25, 50, 75, 100]   # 5 quintile-inspired breaks
+    ipc_colors = ["#FFF7BC", "#FED976", "#FC4E2A", "#BD0026", "#67000D"]
+    ipc_cmap   = ListedColormap(ipc_colors)
+    ipc_norm   = BoundaryNorm(ipc_bins, ipc_cmap.N)
+    ipc_labels = ["0-10 %", "10-25 %", "25-50 %", "50-75 %", "75-100 %"]
+    ipc_patches = [mpatches.Patch(facecolor=ipc_colors[i], edgecolor="#999999",
+                                  linewidth=0.4, label=ipc_labels[i])
+                   for i in range(len(ipc_labels))]
+    # Add title patch as first item
+    ipc_patches.insert(0, mpatches.Patch(visible=False,
+                                          label="Crisis prevalence\n(% of periods)"))
 
-    # Fig 1b — cumulative news articles
-    if len(art_agg):
-        news_vals  = art_agg["total_articles"].dropna()
-        qs_news    = np.nanpercentile(news_vals, [0, 20, 40, 60, 80, 100])
-        news_bins  = sorted(set(qs_news.tolist()))
-        n_news_bins = len(news_bins) - 1
-        news_cmap   = ListedColormap(
-            ["#EFF3FF", "#BDD7E7", "#6BAED6", "#2171B5", "#08306B"][:n_news_bins])
-        news_labels = [f"{int(qs_news[i]/1e3)}k - {int(qs_news[i+1]/1e3)}k"
-                       for i in range(n_news_bins)]
-        art_agg["total_articles_binned"] = pd.cut(
-            art_agg["total_articles"], bins=news_bins,
-            labels=range(n_news_bins), include_lowest=True
-        ).astype(float)
-        _plot_choropleth(gdf, art_agg.rename(
-            columns={"total_articles_binned": "total_articles"}),
-            "total_articles", news_cmap, list(range(n_news_bins + 1)),
-            news_labels, "Articles (cumulative)", "fig1b_news_choropleth")
+    gdf_ipc = gdf.merge(ipc_gid, on="GID_2", how="inner")
+
+    fig1a, ax1a = plt.subplots(figsize=(7.5, 9))
+    _draw_map(ax1a, gdf, gdf_ipc, "crisis_prev_pct",
+              ipc_cmap, ipc_norm, ipc_patches, "(a)")
+    fig1a.tight_layout(pad=0.2)
+    save_pdf(fig1a, "fig1a_ipc_choropleth")
+
+    # ── Fig 1b — cumulative news articles ────────────────────────────────
+    if len(art_gid):
+        news_vals = art_gid["total_articles"].dropna()
+        # Quintile breaks, deduplicated
+        raw_qs    = np.nanpercentile(news_vals, [0, 20, 40, 60, 80, 100])
+        news_bins = sorted(set(int(v) for v in raw_qs))
+        # Ensure at least 2 distinct bins
+        if len(news_bins) < 3:
+            news_bins = [int(news_vals.min()), int(news_vals.median()),
+                         int(news_vals.max()) + 1]
+        n_bins     = len(news_bins) - 1
+        blues      = ["#EFF3FF", "#BDD7E7", "#6BAED6", "#2171B5", "#08306B"][:n_bins]
+        news_cmap  = ListedColormap(blues)
+        news_norm  = BoundaryNorm(news_bins, news_cmap.N)
+
+        def _fmt_k(v):
+            return f"{v//1000}k" if v >= 1000 else str(v)
+        news_labels  = [f"{_fmt_k(news_bins[i])}-{_fmt_k(news_bins[i+1])}"
+                        for i in range(n_bins)]
+        news_patches = [mpatches.Patch(facecolor=blues[i], edgecolor="#999999",
+                                       linewidth=0.4, label=news_labels[i])
+                        for i in range(n_bins)]
+        news_patches.insert(0, mpatches.Patch(visible=False,
+                                               label="Cumulative articles\n(2021-2024)"))
+
+        art_gid["total_articles_clipped"] = art_gid["total_articles"].clip(
+            upper=news_bins[-1] - 1)
+        gdf_news = gdf.merge(art_gid[["GID_2","total_articles_clipped"]],
+                             on="GID_2", how="inner")
+
+        fig1b, ax1b = plt.subplots(figsize=(7.5, 9))
+        _draw_map(ax1b, gdf, gdf_news, "total_articles_clipped",
+                  news_cmap, news_norm, news_patches, "(b)")
+        fig1b.tight_layout(pad=0.2)
+        save_pdf(fig1b, "fig1b_news_choropleth")
     else:
         print("  Monthly features not found — skipping fig1b.")
 
