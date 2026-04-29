@@ -221,6 +221,7 @@ def figure_1() -> None:
     print("\n[Fig 1] Choropleth maps (ADM2)...")
     try:
         import geopandas as gpd
+        from shapely.geometry import Point
     except ImportError:
         print("  geopandas not installed — skipping Fig 1.")
         return
@@ -228,46 +229,80 @@ def figure_1() -> None:
         print(f"  Shapefile not found at {SHAPEFILE} — skipping Fig 1.")
         return
 
+    import warnings
     gdf = gpd.read_file(SHAPEFILE)
-
-    # Build GID_2 join bridge (99 % coverage across all 353 districts)
-    bridge = _build_district_gid2_bridge()
-    print(f"  GID_2 bridge: {len(bridge)} district -> GID_2 pairs")
 
     ds = pd.read_parquet(DATA_DIR / "dataset.parquet")
     ds["ipc_period_start"] = pd.to_datetime(ds["ipc_period_start"])
+    s1 = pd.read_parquet(DATA_DIR / "raw" / "stage1_features.parquet")
+    s1["district_id"] = s1["ipc_geographic_unit_full"].str.strip()
 
-    # ── IPC crisis prevalence per district (% of periods in crisis) ──────
-    # More informative than a single snapshot: shows chronic vs acute burden
-    ipc_prev = (ds.groupby("district_id")["target_crisis_binary"]
-                  .mean()
-                  .reset_index()
-                  .rename(columns={"target_crisis_binary": "crisis_prev"}))
-    ipc_prev["crisis_prev_pct"] = (ipc_prev["crisis_prev"] * 100).round(1)
+    # Study countries (normalise DRC name to match shapefile)
+    CNAME_FIX = {"The Democratic Republic of the": "Democratic Republic of the Congo"}
+    study_ctry = set(CNAME_FIX.get(c, c) for c in ds["ipc_country"].unique())
+    study_shp  = gdf[gdf["country_name"].isin(study_ctry)].copy()
 
-    # ── Cumulative article count per district ────────────────────────────
+    # ── Build zone-centroid GeoDataFrame (avg_lat/lon from stage1) ───────
+    s1_coords = (s1[["district_id", "avg_latitude", "avg_longitude"]]
+                 .dropna()
+                 .query("avg_latitude != 0 or avg_longitude != 0"))
+    zone_coords = (s1_coords.groupby("district_id")[["avg_latitude", "avg_longitude"]]
+                   .mean().reset_index())
+
+    # ── IPC crisis prevalence per livelihood zone ─────────────────────────
+    ipc_zone = (ds.groupby("district_id")["target_crisis_binary"]
+                  .mean().mul(100).round(1)
+                  .rename("crisis_prev_pct").reset_index())
+
+    zone_ipc = zone_coords.merge(ipc_zone, on="district_id", how="inner")
+
+    # ── Cumulative articles per livelihood zone ───────────────────────────
     if MONTHLY_PATH.exists():
         mg = pd.read_parquet(MONTHLY_PATH)
-        art_agg = (mg.groupby("district_id")["article_count"]
-                     .sum().reset_index()
-                     .rename(columns={"article_count": "total_articles"}))
+        art_zone = (mg.groupby("district_id")["article_count"]
+                      .sum().rename("total_articles").reset_index())
     else:
-        art_agg = pd.DataFrame(columns=["district_id", "total_articles"])
+        art_zone = pd.DataFrame(columns=["district_id", "total_articles"])
 
-    # ── Attach GID_2 to both value tables ───────────────────────────────
-    ipc_prev = ipc_prev.merge(bridge, on="district_id", how="left")
-    art_agg  = art_agg.merge(bridge, on="district_id", how="left")
+    zone_art = zone_coords.merge(art_zone, on="district_id", how="inner")
 
-    # Aggregate to GID_2 (multiple livelihood zones can share one ADM2 polygon)
-    ipc_gid = (ipc_prev.dropna(subset=["GID_2"])
-                        .groupby("GID_2")["crisis_prev_pct"].mean()
-                        .reset_index())
-    art_gid = (art_agg.dropna(subset=["GID_2"])
-                       .groupby("GID_2")["total_articles"].sum()
-                       .reset_index())
+    # ── GeoDataFrame of zone centroids ───────────────────────────────────
+    def _zone_gdf(df, val_col):
+        return gpd.GeoDataFrame(
+            df,
+            geometry=[Point(lon, lat)
+                      for lat, lon in zip(df["avg_latitude"], df["avg_longitude"])],
+            crs="EPSG:4326"
+        )
 
-    print(f"  IPC: {len(ipc_gid)} GID_2 polygons with data")
-    print(f"  News: {len(art_gid)} GID_2 polygons with data")
+    gdf_ipc_zones = _zone_gdf(zone_ipc, "crisis_prev_pct")
+    gdf_art_zones = _zone_gdf(zone_art, "total_articles")
+
+    # ── Nearest-neighbour join: assign each study ADM2 the value of its
+    #    closest livelihood-zone centroid (fills all 2634 study ADM2s) ─────
+    adm2_pts = study_shp.copy()
+    adm2_pts["geometry"] = study_shp.geometry.centroid  # ADM2 centroid for matching
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        ipc_nn  = gpd.sjoin_nearest(
+            adm2_pts[["GID_2", "geometry"]],
+            gdf_ipc_zones[["crisis_prev_pct", "geometry"]],
+            how="left"
+        )[["GID_2", "crisis_prev_pct"]].drop_duplicates("GID_2")
+
+        art_nn  = gpd.sjoin_nearest(
+            adm2_pts[["GID_2", "geometry"]],
+            gdf_art_zones[["total_articles", "geometry"]],
+            how="left"
+        )[["GID_2", "total_articles"]].drop_duplicates("GID_2")
+
+    # Re-attach geometry for plotting
+    gdf_ipc_plot = study_shp.merge(ipc_nn,  on="GID_2", how="left")
+    gdf_art_plot = study_shp.merge(art_nn,  on="GID_2", how="left")
+
+    print(f"  IPC: {gdf_ipc_plot['crisis_prev_pct'].notna().sum()} / {len(study_shp)} ADM2 polygons filled")
+    print(f"  News: {gdf_art_plot['total_articles'].notna().sum()} / {len(study_shp)} ADM2 polygons filled")
 
     # ── Dissolve ADM2 to country boundaries for basemap ──────────────────
     countries_gdf = gdf.dissolve(by="country_name").reset_index()
@@ -308,23 +343,27 @@ def figure_1() -> None:
     # ── Cartographic helper ──────────────────────────────────────────────
     def _draw_map(ax, gdf_all, gdf_data, col, cmap_listed, norm,
                   legend_patches, panel_label):
-        """Plot one choropleth panel on ax."""
-        # Layer 1 — all ADM2 polygons as light grey base (study region context)
-        gdf_all.plot(ax=ax, color="#EFEFEF", linewidth=0.0,
-                     edgecolor="none", zorder=1)
-        # Layer 2 — country borders (thicker, dark) drawn on top of ADM2 fill
-        countries_gdf.plot(ax=ax, color="none", linewidth=0.7,
-                           edgecolor="#555555", zorder=4)
-        # Layer 3 — ADM2 polygons outside study set (no data)
-        no_data = gdf_all[~gdf_all["GID_2"].isin(gdf_data["GID_2"])]
-        no_data.plot(ax=ax, color="#D8D8D8", linewidth=0.15,
-                     edgecolor="#CCCCCC", zorder=2)
-        # Layer 4 — study ADM2 polygons with choropleth colour
-        gdf_data.plot(ax=ax, column=col, cmap=cmap_listed, norm=norm,
-                      linewidth=0.2, edgecolor="white", zorder=3)
-        # Layer 5 — country borders again on very top (over choropleth fill)
-        countries_gdf.plot(ax=ax, color="none", linewidth=0.8,
-                           edgecolor="#444444", zorder=5)
+        """Plot one choropleth panel on ax.
+
+        gdf_all  — full ADM2 shapefile (continent backdrop)
+        gdf_data — study-country ADM2 polygons with col values (all filled
+                   via nearest-neighbour; NaNs shown as no-data grey)
+        """
+        # Layer 1 — full continent backdrop (non-study countries, very light)
+        out_of_study = gdf_all[~gdf_all["GID_2"].isin(gdf_data["GID_2"])]
+        out_of_study.plot(ax=ax, color="#F0F0F0", linewidth=0.0,
+                          edgecolor="none", zorder=1)
+        # Layer 2 — study-country ADM2 with choropleth colour
+        gdf_has = gdf_data[gdf_data[col].notna()].copy()
+        gdf_nos = gdf_data[gdf_data[col].isna()].copy()
+        if len(gdf_nos):
+            gdf_nos.plot(ax=ax, color="#D8D8D8", linewidth=0.15,
+                         edgecolor="#CCCCCC", zorder=2)
+        gdf_has.plot(ax=ax, column=col, cmap=cmap_listed, norm=norm,
+                     linewidth=0.15, edgecolor="white", zorder=3)
+        # Layer 3 — country borders on top
+        countries_gdf.plot(ax=ax, color="none", linewidth=0.9,
+                           edgecolor="#333333", zorder=4)
 
         ax.set_axis_off()
         ax.set_xlim(-20, 52)
@@ -357,7 +396,7 @@ def figure_1() -> None:
                   borderpad=0.7, labelspacing=0.4)
 
     # ── Fig 1a — IPC crisis prevalence (%) ──────────────────────────────
-    ipc_bins   = [0, 10, 25, 50, 75, 100]   # 5 quintile-inspired breaks
+    ipc_bins   = [0, 10, 25, 50, 75, 100]
     ipc_colors = ["#FFF7BC", "#FED976", "#FC4E2A", "#BD0026", "#67000D"]
     ipc_cmap   = ListedColormap(ipc_colors)
     ipc_norm   = BoundaryNorm(ipc_bins, ipc_cmap.N)
@@ -365,32 +404,27 @@ def figure_1() -> None:
     ipc_patches = [mpatches.Patch(facecolor=ipc_colors[i], edgecolor="#999999",
                                   linewidth=0.4, label=ipc_labels[i])
                    for i in range(len(ipc_labels))]
-    # Add title patch as first item
     ipc_patches.insert(0, mpatches.Patch(visible=False,
                                           label="Crisis prevalence\n(% of periods)"))
 
-    gdf_ipc = gdf.merge(ipc_gid, on="GID_2", how="inner")
-
     fig1a, ax1a = plt.subplots(figsize=(7.5, 9))
-    _draw_map(ax1a, gdf, gdf_ipc, "crisis_prev_pct",
+    _draw_map(ax1a, gdf, gdf_ipc_plot, "crisis_prev_pct",
               ipc_cmap, ipc_norm, ipc_patches, "(a)")
     fig1a.tight_layout(pad=0.2)
     save_pdf(fig1a, "fig1a_ipc_choropleth")
 
     # ── Fig 1b — cumulative news articles ────────────────────────────────
-    if len(art_gid):
-        news_vals = art_gid["total_articles"].dropna()
-        # Quintile breaks, deduplicated
+    if gdf_art_plot["total_articles"].notna().sum() > 0:
+        news_vals = gdf_art_plot["total_articles"].dropna()
         raw_qs    = np.nanpercentile(news_vals, [0, 20, 40, 60, 80, 100])
         news_bins = sorted(set(int(v) for v in raw_qs))
-        # Ensure at least 2 distinct bins
         if len(news_bins) < 3:
             news_bins = [int(news_vals.min()), int(news_vals.median()),
                          int(news_vals.max()) + 1]
-        n_bins     = len(news_bins) - 1
-        blues      = ["#EFF3FF", "#BDD7E7", "#6BAED6", "#2171B5", "#08306B"][:n_bins]
-        news_cmap  = ListedColormap(blues)
-        news_norm  = BoundaryNorm(news_bins, news_cmap.N)
+        n_bins    = len(news_bins) - 1
+        blues     = ["#EFF3FF", "#BDD7E7", "#6BAED6", "#2171B5", "#08306B"][:n_bins]
+        news_cmap = ListedColormap(blues)
+        news_norm = BoundaryNorm(news_bins, news_cmap.N)
 
         def _fmt_k(v):
             return f"{v//1000}k" if v >= 1000 else str(v)
@@ -402,13 +436,11 @@ def figure_1() -> None:
         news_patches.insert(0, mpatches.Patch(visible=False,
                                                label="Cumulative articles\n(2021-2024)"))
 
-        art_gid["total_articles_clipped"] = art_gid["total_articles"].clip(
+        gdf_art_plot["total_articles_plot"] = gdf_art_plot["total_articles"].clip(
             upper=news_bins[-1] - 1)
-        gdf_news = gdf.merge(art_gid[["GID_2","total_articles_clipped"]],
-                             on="GID_2", how="inner")
 
         fig1b, ax1b = plt.subplots(figsize=(7.5, 9))
-        _draw_map(ax1b, gdf, gdf_news, "total_articles_clipped",
+        _draw_map(ax1b, gdf, gdf_art_plot, "total_articles_plot",
                   news_cmap, news_norm, news_patches, "(b)")
         fig1b.tight_layout(pad=0.2)
         save_pdf(fig1b, "fig1b_news_choropleth")
