@@ -269,24 +269,69 @@ def figure_1() -> None:
     print(f"  IPC: {len(ipc_gid)} GID_2 polygons with data")
     print(f"  News: {len(art_gid)} GID_2 polygons with data")
 
+    # ── Dissolve ADM2 to country boundaries for basemap ──────────────────
+    countries_gdf = gdf.dissolve(by="country_name").reset_index()
+
+    # Manual label nudges for overlapping/small countries (lon_offset, lat_offset)
+    LABEL_NUDGE = {
+        "Burundi":                       ( 1.5,  0.0),
+        "Rwanda":                        ( 1.5,  0.5),
+        "Malawi":                        ( 1.2,  0.0),
+        "Swaziland":                     ( 1.5,  0.0),
+        "South Sudan":                   ( 0.0,  0.5),
+        "Democratic Republic of the Congo": (-1.5, -1.5),
+        "Central African Republic":      ( 0.0,  0.5),
+        "Mauritania":                    ( 0.0,  0.5),
+    }
+    # Short display names for cramped countries
+    LABEL_SHORT = {
+        "Democratic Republic of the Congo": "DR Congo",
+        "Central African Republic":         "C.A.R.",
+    }
+
+    def _add_country_labels(ax):
+        """Draw country name labels at centroid positions."""
+        for _, row in countries_gdf.iterrows():
+            name = row["country_name"]
+            centroid = row.geometry.centroid
+            cx, cy   = centroid.x, centroid.y
+            dx, dy   = LABEL_NUDGE.get(name, (0.0, 0.0))
+            label    = LABEL_SHORT.get(name, name)
+            ax.text(cx + dx, cy + dy, label,
+                    fontsize=5.5, ha="center", va="center",
+                    color="#333333", fontweight="normal",
+                    fontstyle="italic",
+                    bbox=dict(boxstyle="round,pad=0.15", facecolor="white",
+                              alpha=0.55, edgecolor="none"),
+                    zorder=6, clip_on=True)
+
     # ── Cartographic helper ──────────────────────────────────────────────
     def _draw_map(ax, gdf_all, gdf_data, col, cmap_listed, norm,
                   legend_patches, panel_label):
         """Plot one choropleth panel on ax."""
-        # Continent background in very light grey
-        gdf_all.plot(ax=ax, color="#F2F2F2", linewidth=0.15,
-                     edgecolor="#BBBBBB", zorder=1)
-        # Districts without data slightly darker
+        # Layer 1 — all ADM2 polygons as light grey base (study region context)
+        gdf_all.plot(ax=ax, color="#EFEFEF", linewidth=0.0,
+                     edgecolor="none", zorder=1)
+        # Layer 2 — country borders (thicker, dark) drawn on top of ADM2 fill
+        countries_gdf.plot(ax=ax, color="none", linewidth=0.7,
+                           edgecolor="#555555", zorder=4)
+        # Layer 3 — ADM2 polygons outside study set (no data)
         no_data = gdf_all[~gdf_all["GID_2"].isin(gdf_data["GID_2"])]
-        no_data.plot(ax=ax, color="#DDDDDD", linewidth=0.15,
-                     edgecolor="#BBBBBB", zorder=2)
-        # Districts with data
+        no_data.plot(ax=ax, color="#D8D8D8", linewidth=0.15,
+                     edgecolor="#CCCCCC", zorder=2)
+        # Layer 4 — study ADM2 polygons with choropleth colour
         gdf_data.plot(ax=ax, column=col, cmap=cmap_listed, norm=norm,
-                      linewidth=0.25, edgecolor="white", zorder=3)
+                      linewidth=0.2, edgecolor="white", zorder=3)
+        # Layer 5 — country borders again on very top (over choropleth fill)
+        countries_gdf.plot(ax=ax, color="none", linewidth=0.8,
+                           edgecolor="#444444", zorder=5)
 
         ax.set_axis_off()
         ax.set_xlim(-20, 52)
         ax.set_ylim(-35, 23)
+
+        # Country name labels
+        _add_country_labels(ax)
 
         # Panel label (a) / (b)
         ax.text(0.02, 0.98, panel_label, transform=ax.transAxes,
@@ -304,7 +349,7 @@ def figure_1() -> None:
 
         # Legend
         legend_patches.append(
-            mpatches.Patch(facecolor="#DDDDDD", edgecolor="#BBBBBB",
+            mpatches.Patch(facecolor="#D8D8D8", edgecolor="#CCCCCC",
                            label="Not in study"))
         ax.legend(handles=legend_patches, loc="lower left", fontsize=7.5,
                   framealpha=0.96, edgecolor="#CCCCCC",
