@@ -67,12 +67,13 @@ class Config3Yr:
     NEWS_FEATURES = (
         [f"{t}_relative_coverage" for t in NEWS_THEMES]
         + [f"{t}_zscore" for t in NEWS_THEMES]
+        + ["article_count_zscore"]
     )
-    COMBINED_FEATURES = AR_FEATURES + NEWS_FEATURES
+    COMBINED_FEATURES = AR_FEATURES + ["ipc_country"] + NEWS_FEATURES
     TARGET = "target_crisis_binary"
 
     CATBOOST_PARAMS_AR = dict(
-        iterations=200,
+        iterations=300,
         depth=6,
         learning_rate=0.05,
         loss_function="Logloss",
@@ -82,16 +83,17 @@ class Config3Yr:
         early_stopping_rounds=30,
     )
     CATBOOST_PARAMS_FULL = dict(
-        iterations=300,
-        depth=7,
+        iterations=500,
+        depth=6,
         learning_rate=0.03,
         loss_function="Logloss",
-        eval_metric="AUC",
+        eval_metric="PRAUC",
+        auto_class_weights="Balanced",
         random_seed=42,
         verbose=0,
-        early_stopping_rounds=30,
+        early_stopping_rounds=50,
     )
-    VALIDATION_FRACTION = 0.20
+    VALIDATION_FRACTION = 0.40
     THRESHOLD = 0.5
 
 
@@ -138,29 +140,32 @@ def generate_rolling_folds(df: pd.DataFrame, cfg):
 
 
 def compute_fold_news_features(df_train, df_test, monthly_gdelt, train_end, cfg):
-    baseline_start = train_end - pd.DateOffset(months=12)
-    baseline_gdelt = monthly_gdelt[
-        (monthly_gdelt["month"] >= baseline_start)
-        & (monthly_gdelt["month"] <= train_end)
-    ].copy()
-
+    baseline_gdelt = monthly_gdelt[monthly_gdelt["month"] <= train_end].copy()
     cov_cols = [f"{t}_relative_coverage" for t in cfg.NEWS_THEMES]
+    all_stat_cols = cov_cols + ["article_count"]
     district_stats = (
-        baseline_gdelt.groupby("district_id")[cov_cols]
+        baseline_gdelt.groupby("district_id")[all_stat_cols]
         .agg(["mean", "std"])
     )
     district_stats.columns = [f"{c[0]}__{c[1]}" for c in district_stats.columns]
 
     def apply_zscore(df_split):
         df_out = df_split.copy()
+        stats = district_stats.reindex(df_out["district_id"].values)
         for theme in cfg.NEWS_THEMES:
             cov_col    = f"{theme}_relative_coverage"
             zscore_col = f"{theme}_zscore"
-            stats = district_stats.reindex(df_out["district_id"])
             means = stats[f"{cov_col}__mean"].values
             stds  = stats[f"{cov_col}__std"].values
-            stds  = np.where(stds < 1e-6, 1.0, stds)
-            df_out[zscore_col] = (df_out[cov_col].values - means) / stds
+            valid = np.isfinite(means) & np.isfinite(stds) & (stds > 1e-6)
+            raw   = df_out[cov_col].values.astype(float)
+            df_out[zscore_col] = np.where(valid, (raw - means) / stds, 0.0)
+        log_count = np.log1p(df_out["article_count"].values.astype(float)) if "article_count" in df_out.columns else np.zeros(len(df_out))
+        ac_means = stats["article_count__mean"].values
+        ac_stds  = stats["article_count__std"].values
+        log_ac_means = np.log1p(np.where(np.isfinite(ac_means) & (ac_means >= 0), ac_means, 0.0))
+        valid_ac = np.isfinite(ac_means) & np.isfinite(ac_stds) & (ac_stds > 1e-6)
+        df_out["article_count_zscore"] = np.where(valid_ac, (log_count - log_ac_means) / ac_stds, 0.0)
         return df_out
 
     return apply_zscore(df_train), apply_zscore(df_test)
@@ -204,6 +209,8 @@ def run_single_fold(fold_info, df, monthly_gdelt, cfg):
     def prep_X(df_subset, features):
         X = df_subset[features].copy()
         X["ipc_period"] = X["ipc_period"].astype(str)
+        if "ipc_country" in X.columns:
+            X["ipc_country"] = X["ipc_country"].astype(str)
         return X
 
     cat_idx_ar = [cfg.AR_FEATURES.index("ipc_period")]
@@ -216,7 +223,8 @@ def run_single_fold(fold_info, df, monthly_gdelt, cfg):
     prob_ar = model_ar.predict_proba(prep_X(df_test, cfg.AR_FEATURES))[:, 1]
     m_ar    = compute_metrics(y_test, prob_ar, cfg.THRESHOLD)
 
-    cat_idx_full = [cfg.COMBINED_FEATURES.index("ipc_period")]
+    cat_idx_full = [cfg.COMBINED_FEATURES.index("ipc_period"),
+                    cfg.COMBINED_FEATURES.index("ipc_country")]
     model_full = CatBoostClassifier(**cfg.CATBOOST_PARAMS_FULL, cat_features=cat_idx_full)
     model_full.fit(
         prep_X(df_fit, cfg.COMBINED_FEATURES), y_fit,

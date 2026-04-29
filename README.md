@@ -168,13 +168,23 @@ Raw GDELT articles (47 GB) are not included. Pre-processed district-level aggreg
 
 | Model | Mean PR-AUC | Mean ROC-AUC | Mean F1 |
 |-------|-------------|--------------|---------|
-| AR-only | 0.799 ± 0.085 | — | — |
-| Combined | 0.803 ± 0.075 | — | — |
-| Delta | +0.003 | — | — |
+| AR-only | 0.800 ± 0.095 | — | — |
+| Combined | 0.823 ± 0.073 | — | — |
+| Delta | +0.023 | — | — |
 
-**Window sensitivity (28-month window, 5 folds):** AR 0.759 ± 0.077, Combined 0.796 ± 0.062, Delta +0.037
+**Window sensitivity (28-month window, 5 folds):** AR 0.775 ± 0.102, Combined 0.796 ± 0.084, Delta +0.021
+
+Combined model outperforms AR-only in 5/7 primary folds and 4/5 sensitivity folds.
 
 Dataset: 3,245 district-period observations, 353 districts, 18 countries, 2021–2024.
+
+**Model improvements vs. baseline:**
+- `auto_class_weights="Balanced"` on Combined model: corrects 28% crisis class imbalance
+- `eval_metric="PRAUC"` for Combined early stopping: directly targets paper's primary metric
+- `ipc_country` as categorical feature: country-level baseline crisis rates and media patterns
+- `article_count_zscore`: fold-aware volume anomaly feature (total article spike signal)
+- Full training-window z-score baseline (vs. last-12-months only): more stable per-district stats
+- Z-score fallback changed from corrupted std=1.0 to neutral z=0 for low-coverage districts
 
 ---
 

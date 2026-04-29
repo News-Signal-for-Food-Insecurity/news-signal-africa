@@ -268,16 +268,25 @@ def build_final_dataset(ar_df: pd.DataFrame, df_monthly: pd.DataFrame,
         sig = grp.transform(lambda x: x.rolling(12, min_periods=6).std().shift(1))
         df[f"{theme}_zscore"] = ((df[f"{theme}_log"] - mu) / (sig + EPSILON)).fillna(0)
 
-    # Aggregate monthly -> 4-month IPC period (mean)
+    # Aggregate monthly -> 4-month IPC period (mean for coverage/zscore, sum for article count)
     news_cols = (
         [f"{t}_relative_coverage" for t in THEMES] +
         [f"{t}_zscore" for t in THEMES]
     )
-    news_period = (
+    news_period_coverage = (
         df.groupby(["ipc_geographic_unit_full", "ipc_period_start"])[news_cols]
         .mean()
         .reset_index()
     )
+    article_count_period = (
+        df.groupby(["ipc_geographic_unit_full", "ipc_period_start"])["article_count"]
+        .sum()
+        .reset_index()
+        .rename(columns={"article_count": "article_count"})
+    )
+    news_period = news_period_coverage.merge(article_count_period,
+                                             on=["ipc_geographic_unit_full", "ipc_period_start"],
+                                             how="left")
 
     # Merge AR + news on district × period
     merged = ar_df.merge(
@@ -298,7 +307,7 @@ def build_final_dataset(ar_df: pd.DataFrame, df_monthly: pd.DataFrame,
     # Final column order
     id_cols    = ["district_id", "ipc_country", "ipc_district", "ipc_period_start"]
     ar_feats   = ["ipc_lag_1", "ipc_persistence_2yr", "spatial_lag", "ipc_period"]
-    news_feats = news_cols
+    news_feats = news_cols + ["article_count"]
     target_col = ["target_crisis_binary"]
 
     final = merged[id_cols + ar_feats + news_feats + target_col].copy()
