@@ -5,7 +5,7 @@ Reconstructs the three pipeline inputs from the two raw source files:
 
   DATA/raw/stage1_features.parquet       (44,435 district-period rows; IPC phases 2020-2024,
                                           temporal lag Lt, spatial lag Ls, y_h8 target)
-  DATA/raw/ml_dataset_monthly.parquet    (234,405 district-month rows; 9 news-theme
+  DATA/raw/ml_dataset_monthly.parquet    (district-month rows; 9 news-theme
                                           category counts, article_count for filtering; 2021-2024)
 
 Outputs (DATA/):
@@ -49,7 +49,7 @@ BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "DATA"
 RAW_DIR  = DATA_DIR / "raw"
 
-STRICT_THRESHOLD   = 200   # mean articles/month
+STRICT_THRESHOLD   = 100   # mean articles/month (computed over non-zero months)
 THEMES = [
     "conflict", "displacement", "economic", "food_security",
     "governance", "health", "humanitarian", "weather", "other",
@@ -84,6 +84,19 @@ def build_district_filter(df_monthly: pd.DataFrame) -> list[str]:
 
     out_dir = DATA_DIR / "filtering"
     out_dir.mkdir(parents=True, exist_ok=True)
+
+    # Coverage threshold sensitivity table
+    sensitivity_rows = []
+    for t in [50, 75, 100, 125, 150, 200]:
+        n = int((stats["mean_articles_per_month"] >= t).sum())
+        sensitivity_rows.append({"threshold": t, "n_districts": n})
+    sens_df = pd.DataFrame(sensitivity_rows)
+    print(f"\n   Coverage threshold sensitivity:")
+    for _, r in sens_df.iterrows():
+        marker = " <-- active" if r["threshold"] == STRICT_THRESHOLD else ""
+        print(f"     >= {int(r['threshold']):3d}/month: {int(r['n_districts']):4d} districts{marker}")
+    sens_df.to_csv(out_dir / "coverage_threshold_sensitivity.csv", index=False)
+    print(f"   Saved  filtering/coverage_threshold_sensitivity.csv")
 
     strict[["district", "mean_articles_per_month", "n_months_observed"]].to_csv(
         out_dir / "strict_filtered_districts.csv", index=False
@@ -134,7 +147,10 @@ def build_ar_features(df_s1: pd.DataFrame, strict_districts: list[str]) -> pd.Da
         lambda x: x.shift(1).rolling(window=6, min_periods=3).mean()
     )
 
-    # spatial_lag: use Ls directly (pre-computed IDW, 300 km, contemporaneous)
+    # spatial_lag: Ls is the IDW-weighted IPC phase of neighbours within 300 km,
+    # computed at the SAME period as the observation. This is not leakage: the model
+    # predicts crisis 8 months ahead (y_h8), and Ls reflects currently observed
+    # neighbour conditions — analogous to ipc_lag_1 but in the spatial dimension.
     df["spatial_lag"] = df["Ls"]
 
     # ipc_period: quarter as string categorical (Q1 / Q2 / Q3 / Q4)

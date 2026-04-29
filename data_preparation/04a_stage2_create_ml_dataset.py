@@ -99,12 +99,12 @@ def main():
     if missing_critical:
         raise ValueError(f"CRITICAL ERROR: Missing essential merge keys: {missing_critical}")
 
-    # Create merged dataset (outer join to preserve all data)
+    # Create merged dataset (left join from articles — preserves only districts with news)
     print("\n4. Creating merged monthly dataset...")
     df_merged = articles.merge(
         locations,
         on=actual_merge_keys,
-        how='outer',
+        how='left',
         suffixes=('_articles', '_locations')
     )
 
@@ -189,19 +189,23 @@ def main():
     print("Alignment with Stage 1")
     print("=" * 80)
 
-    stage1_articles = pd.read_parquet(DISTRICT_DATA_DIR / 'articles_aggregated.parquet')
-    stage1_districts = set(stage1_articles['ipc_geographic_unit_full'].unique())
-    stage2_districts = set(df_merged['ipc_geographic_unit_full'].unique())
+    stage1_art_path = Path('C:/GDELT_Africa_Extract/data/district_level/stage1/articles_aggregated.parquet')
+    if not stage1_art_path.exists():
+        print("  Skipping alignment check: Stage 1 articles_aggregated.parquet not distributed with repo")
+    else:
+        stage1_articles = pd.read_parquet(stage1_art_path)
+        stage1_districts = set(stage1_articles['ipc_geographic_unit_full'].unique())
+        stage2_districts = set(df_merged['ipc_geographic_unit_full'].unique())
 
-    overlap = stage1_districts & stage2_districts
-    only_stage1 = stage1_districts - stage2_districts
-    only_stage2 = stage2_districts - stage1_districts
+        overlap = stage1_districts & stage2_districts
+        only_stage1 = stage1_districts - stage2_districts
+        only_stage2 = stage2_districts - stage1_districts
 
-    print(f"\nStage 1 districts: {len(stage1_districts):,}")
-    print(f"Stage 2 districts: {len(stage2_districts):,}")
-    print(f"Overlap: {len(overlap):,} ({100*len(overlap)/len(stage1_districts):.1f}% of Stage 1)")
-    print(f"Only in Stage 1: {len(only_stage1):,}")
-    print(f"Only in Stage 2: {len(only_stage2):,}")
+        print(f"\nStage 1 districts: {len(stage1_districts):,}")
+        print(f"Stage 2 districts: {len(stage2_districts):,}")
+        print(f"Overlap: {len(overlap):,} ({100*len(overlap)/len(stage1_districts):.1f}% of Stage 1)")
+        print(f"Only in Stage 1: {len(only_stage1):,}")
+        print(f"Only in Stage 2: {len(only_stage2):,}")
 
     if len(only_stage1) > 0 and len(only_stage1) <= 10:
         print(f"\nDistricts only in Stage 1:")

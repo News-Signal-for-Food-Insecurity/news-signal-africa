@@ -58,7 +58,7 @@ class Config:
     IPC_PERIOD_MONTHS    = 4
 
     # Minimum training data start (align with GDELT availability)
-    MONTHLY_DATA_START = pd.Timestamp("2020-02-01")
+    MONTHLY_DATA_START = pd.Timestamp("2021-01-01")
 
     # District filter
     STRICT_DISTRICTS_PATH = DATA_DIR / "filtering" / "strict_filtered_districts.csv"
@@ -81,7 +81,9 @@ class Config:
     COMBINED_FEATURES = AR_FEATURES + NEWS_FEATURES
     TARGET = "target_crisis_binary"
 
-    # CatBoost params
+    # CatBoost params — AR uses lower capacity (4 features) to avoid overfitting;
+    # Combined uses higher capacity (22 features) to exploit richer feature space.
+    # Intentional asymmetry: matching capacity to feature count, not equalising for comparison.
     CATBOOST_PARAMS_AR = dict(
         iterations=200,
         depth=6,
@@ -261,11 +263,21 @@ def run_single_fold(fold_info: dict, df: pd.DataFrame, monthly_gdelt: pd.DataFra
         "fold_id":    fold_id,
     })
 
-    # Predictions
-    pred_df = df_test[["district_id", "ipc_period_start", cfg.TARGET]].copy()
+    # Predictions + crisis regime labelling
+    # Regime requires ipc_lag_1 (current period binary) to determine prior state.
+    # Onset: crisis now, no crisis prior; Chronic: crisis both; Recovery: no crisis now, crisis prior; Stable: no crisis either.
+    pred_df = df_test[["district_id", "ipc_period_start", cfg.TARGET, "ipc_lag_1"]].copy()
     pred_df["fold_id"]       = fold_id
     pred_df["prob_ar"]       = prob_ar
     pred_df["prob_combined"] = prob_full
+
+    y_now  = pred_df[cfg.TARGET].astype(int)
+    y_prev = pred_df["ipc_lag_1"].fillna(0).astype(int)
+    pred_df["regime"] = "stable"
+    pred_df.loc[(y_now == 1) & (y_prev == 0), "regime"] = "onset"
+    pred_df.loc[(y_now == 1) & (y_prev == 1), "regime"] = "chronic"
+    pred_df.loc[(y_now == 0) & (y_prev == 1), "regime"] = "recovery"
+    pred_df = pred_df.drop(columns=["ipc_lag_1"])
 
     fold_result = {
         "fold_id":        fold_id,
@@ -296,7 +308,7 @@ def run_single_fold(fold_info: dict, df: pd.DataFrame, monthly_gdelt: pd.DataFra
 # Save results
 # ---------------------------------------------------------------------------
 
-def save_results(fold_records, all_preds, all_fi, cfg: Config):
+def save_results(fold_records, all_preds, all_fi, cfg: Config, monthly_gdelt=None):
     cfg.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
     fold_df = pd.DataFrame(fold_records)
@@ -326,7 +338,50 @@ def save_results(fold_records, all_preds, all_fi, cfg: Config):
         json.dump(summary, f, indent=2)
     print(f"  Saved metrics_summary.json")
 
+    # District-level metrics for Figure 7 (volatility, delta PR-AUC, etc.)
+    _compute_district_metrics(pred_df, cfg, monthly_gdelt)
+
     return fold_df, pred_df, fi_mean
+
+
+def _compute_district_metrics(pred_df: pd.DataFrame, cfg: Config, monthly_gdelt: pd.DataFrame = None):
+    from sklearn.metrics import average_precision_score
+    rows = []
+    for district, grp in pred_df.groupby("district_id"):
+        y = grp[cfg.TARGET].values
+        if y.sum() == 0 or y.sum() == len(y):
+            continue
+        try:
+            prauc_ar   = average_precision_score(y, grp["prob_ar"].values)
+            prauc_full = average_precision_score(y, grp["prob_combined"].values)
+        except Exception:
+            continue
+        # volatility: fraction of consecutive period pairs with regime change (onset or recovery)
+        regimes = grp.sort_values("ipc_period_start")["regime"].tolist()
+        transitions = sum(1 for a, b in zip(regimes, regimes[1:]) if a != b)
+        volatility = transitions / max(len(regimes) - 1, 1)
+        onset_chronic = int((grp["regime"].isin(["onset", "chronic"])).sum())
+        rows.append({
+            "district_id": district,
+            "prauc_ar": prauc_ar,
+            "prauc_combined": prauc_full,
+            "delta_prauc": prauc_full - prauc_ar,
+            "volatility": volatility,
+            "onset_chronic_count": onset_chronic,
+            "n_obs": len(grp),
+        })
+    if rows:
+        dist_df = pd.DataFrame(rows)
+        # Add mean articles/month from monthly GDELT (for Figure 7a)
+        if monthly_gdelt is not None and "article_count" in monthly_gdelt.columns:
+            art_mean = (
+                monthly_gdelt.groupby("district_id")["article_count"].mean()
+                .reset_index()
+                .rename(columns={"article_count": "mean_articles_month"})
+            )
+            dist_df = dist_df.merge(art_mean, on="district_id", how="left")
+        dist_df.to_csv(cfg.RESULTS_DIR / "district_level_metrics.csv", index=False)
+        print(f"  Saved district_level_metrics.csv  ({len(dist_df)} districts)")
 
 
 def save_models(model_pairs: list, models_dir: Path):
@@ -385,7 +440,7 @@ def main():
               f"Delta: {result['delta_pr_auc']:+.4f}")
 
     print("\nSaving results...")
-    fold_df, pred_df, fi_mean = save_results(fold_records, all_preds, all_fi, cfg)
+    fold_df, pred_df, fi_mean = save_results(fold_records, all_preds, all_fi, cfg, monthly_gdelt)
     save_models(model_pairs, cfg.RESULTS_DIR / "models")
 
     print("\n" + "=" * 60)

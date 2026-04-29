@@ -1,0 +1,72 @@
+district_id,prauc_ar,prauc_combined,delta_prauc,volatility,onset_chronic_count,n_obs,mean_articles_month
+"Beitbridge South Western Lowveld Communal, Beitbridge Rural, Matabeleland South, Zimbabwe",0.6388888888888888,0.8055555555555556,0.16666666666666674,0.6666666666666666,3,4,169.75862068965517
+"Benue river sugar cane, rice, and sugar estate labor, Lamurde, Adamawa, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,205.08333333333334
+"Bikita-Zaka Highlands Communal, Bikita, Masvingo, Zimbabwe",0.25,0.5,0.25,1.0,1,4,142.17241379310346
+"Bikita-Zaka Highlands Communal, Masvingo Rural, Masvingo, Zimbabwe",0.25,1.0,0.75,0.3333333333333333,1,4,142.17241379310346
+"Bikita-Zaka Highlands Communal, Zaka, Masvingo, Zimbabwe",0.25,0.5,0.25,1.0,1,4,142.17241379310346
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Bauchi, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,523.3125
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Fika, Yobe, Nigeria",1.0,1.0,0.0,0.6666666666666666,1,4,535.3958333333334
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Fune, Yobe, Nigeria",1.0,1.0,0.0,0.6666666666666666,1,4,701.8333333333334
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Jakusko, Yobe, Nigeria",1.0,1.0,0.0,0.6666666666666666,1,4,523.625
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Kaga, Borno, Nigeria",0.5,0.5,0.0,1.0,2,4,524.3333333333334
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Konduga, Borno, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,580.3541666666666
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Kukawa, Borno, Nigeria",1.0,1.0,0.0,0.6666666666666666,2,4,523.4166666666666
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Monguno, Borno, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,523.3541666666666
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Nangere, Yobe, Nigeria",1.0,1.0,0.0,0.6666666666666666,1,4,524.6666666666666
+"Borno-Yobe-Bauchi millet, cowpeas, groundnuts, and sesame, Tarmuwa, Yobe, Nigeria",1.0,1.0,0.0,0.6666666666666666,1,4,523.4791666666666
+"Cassava dominant with maize, yams, and tree-crops, Benue, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,204.95833333333334
+"Central and Northern Semi Intensive Farming, Gutu, Masvingo, Zimbabwe",0.25,0.3333333333333333,0.08333333333333331,0.6666666666666666,1,4,128.79310344827587
+"Central sorghum, maize, groundnuts, cowpeas, and sesame, Bauchi, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,523.2916666666666
+"Central sorghum, maize, groundnuts, cowpeas, and sesame, Kaduna, Nigeria",0.6388888888888888,1.0,0.36111111111111116,0.3333333333333333,3,4,201.29166666666666
+"Central yams and maize belt, with cassava, rice, and soybeans, Kaduna, Nigeria",1.0,1.0,0.0,1.0,1,4,201.29166666666666
+"Cheringoma and Muanza Maize and Cassava, Cheringoma, Sofala, Mozambique",0.25,1.0,0.75,0.3333333333333333,1,4,834.1875
+"Cheringoma and Muanza Maize and Cassava, Muanza, Sofala, Mozambique",0.25,1.0,0.75,0.3333333333333333,1,4,834.1875
+"Cowpea Belt Agropastoral, Hobyo, Mudug, Somalia",0.3333333333333333,0.3333333333333333,0.0,0.3333333333333333,1,4,1205.9583333333333
+"Eastern Pastoral Zone, Balambala, Garissa Township, Garissa, Kenya",0.41666666666666663,0.8333333333333333,0.41666666666666663,0.3333333333333333,2,4,371.0833333333333
+"Eastern Pastoral Zone, Galbet, Garissa Township, Garissa, Kenya",0.41666666666666663,0.8333333333333333,0.41666666666666663,0.3333333333333333,2,4,371.0833333333333
+"Eastern Pastoral Zone, Iftin, Garissa Township, Garissa, Kenya",0.41666666666666663,0.8333333333333333,0.41666666666666663,0.3333333333333333,2,4,371.125
+"Eastern Pastoral Zone, Sankuri, Garissa Township, Garissa, Kenya",0.41666666666666663,0.8333333333333333,0.41666666666666663,0.3333333333333333,2,4,371.2708333333333
+"Eastern Pastoral Zone, Waberi, Garissa Township, Garissa, Kenya",0.41666666666666663,0.8333333333333333,0.41666666666666663,0.3333333333333333,2,4,371.1458333333333
+"Enderta, Southeast Tigray, Tigray, Ethiopia",0.5,1.0,0.5,1.0,1,2,1249.9791666666667
+"Ginger and turmeric with maize, sorghum, yams, and acha (Digitaria), Kaduna, Nigeria",1.0,1.0,0.0,0.6666666666666666,1,4,29360.041666666668
+"High plateau Irish potatoes, maize, acha (Digitaria), and livestock, Plateau, Nigeria",1.0,1.0,0.0,0.6666666666666666,1,4,29219.541666666668
+"Highveld Prime Cereal and Cash Crop Resettlement, Chegutu Rural, Mashonaland West, Zimbabwe",0.25,1.0,0.75,0.3333333333333333,1,4,108.86206896551724
+"Kano-Katsina sahelian: millet, sorghum, sesame, and livestock, Sandamu, Katsina, Nigeria",0.8055555555555556,0.8055555555555556,0.0,0.3333333333333333,3,4,161.25
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Dandume, Katsina, Nigeria",1.0,1.0,0.0,0.6666666666666666,1,4,171.22916666666666
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Funtua, Katsina, Nigeria",0.8055555555555556,0.8055555555555556,0.0,0.3333333333333333,3,4,184.375
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Kafur, Katsina, Nigeria",0.8055555555555556,0.8055555555555556,0.0,0.3333333333333333,3,4,169.0625
+"Kano-Katsina sudanian: sorghum, maize, rice, and groundnuts, Kankara, Katsina, Nigeria",0.9166666666666665,0.9166666666666665,0.0,1.0,3,4,167.83333333333334
+"Lusulu, Lupane and Southern Gokwe Mixed Agriculture, Kwekwe Rural, Midlands, Zimbabwe",0.25,1.0,0.75,0.3333333333333333,1,4,2449.972222222222
+"Mandera Riverine Zone, Township, Mandera East, Mandera, Kenya",0.41666666666666663,0.8333333333333333,0.41666666666666663,0.3333333333333333,2,4,371.2291666666667
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Benue, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,477.3541666666667
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Demsa, Adamawa, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,480.3125
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Fufore, Adamawa, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,492.875
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Gombi, Adamawa, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,577.9375
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Guyuk, Adamawa, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,477.6666666666667
+"Niger and Benue rivers flood plain rice with maize, vegetables, and livestock, Numan, Adamawa, Nigeria",1.0,1.0,0.0,0.6666666666666666,1,4,477.6875
+"North-east maize dominant with rice, cowpeas, soybeans, and groundnuts, Chibok, Borno, Nigeria",1.0,1.0,0.0,0.6666666666666666,1,4,109.9375
+"North-east maize dominant with rice, cowpeas, soybeans, and groundnuts, Damboa, Borno, Nigeria",0.6388888888888888,0.9166666666666665,0.2777777777777777,0.6666666666666666,3,4,304.0208333333333
+"North-east sahelian: millet, sesame, cowpeas, and livestock, Bauchi, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,523.2916666666666
+"North-west and central maize dominant, with sorghum, sweet potatoes, and cowpeas, Kaduna, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,201.29166666666666
+"Northeastern Agropastoral Zone, Moyale Township, Moyale, Marsabit, Kenya",0.41666666666666663,0.8333333333333333,0.41666666666666663,0.3333333333333333,2,4,371.2083333333333
+"Northeastern Pastoral Zone, Township, Wajir East, Wajir, Kenya",0.41666666666666663,0.8333333333333333,0.41666666666666663,0.3333333333333333,2,4,371.4375
+"Northern Cattle and Cereal Farming, Gutu, Masvingo, Zimbabwe",0.25,1.0,0.75,0.3333333333333333,1,4,128.79310344827587
+"Northern Cattle and Cereal Farming, Kwekwe Rural, Midlands, Zimbabwe",0.25,1.0,0.75,0.3333333333333333,1,4,2441.777777777778
+"Northern Pastoral Zone, Waso, Samburu East, Samburu, Kenya",0.3333333333333333,0.3333333333333333,0.0,0.3333333333333333,1,4,15710.583333333334
+"Northwestern Pastoral Zone, Lodwa Township, Turkana Central, Turkana, Kenya",0.8055555555555556,0.8055555555555556,0.0,0.6666666666666666,3,4,381.3541666666667
+"Sokoto millet, cowpeas, groundnuts, and livestock, Kaura-Namoda, Zamfara, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,190.22916666666666
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Bakura, Zamfara, Nigeria",1.0,1.0,0.0,0.6666666666666666,1,4,121.66666666666667
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Bungudu, Zamfara, Nigeria",0.41666666666666663,0.8333333333333333,0.41666666666666663,0.3333333333333333,2,4,118.70833333333333
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Bursari, Yobe, Nigeria",1.0,1.0,0.0,0.6666666666666666,1,4,109.125
+"Sokoto-Rima-Kano riverine flood plain rice and fishing, Kaura-Namoda, Zamfara, Nigeria",0.3333333333333333,0.3333333333333333,0.0,0.6666666666666666,1,4,283.9166666666667
+"Southern Cattle and Cereal Farming, Beitbridge Rural, Matabeleland South, Zimbabwe",0.41666666666666663,0.5,0.08333333333333337,0.6666666666666666,2,4,170.0
+"Southern Highland Cattle and Mixed Cropping, Magude, Maputo, Mozambique",0.25,1.0,0.75,0.3333333333333333,1,4,240.3125
+"Tenta, South Wollo, Amhara, Ethiopia",1.0,0.5,-0.5,1.0,1,2,529.4583333333334
+"Turkwell Riverine Zone, Lodwa Township, Turkana Central, Turkana, Kenya",0.8055555555555556,0.8055555555555556,0.0,0.6666666666666666,3,4,381.3541666666667
+"Urban, Bikita, Masvingo, Zimbabwe",0.25,1.0,0.75,0.3333333333333333,1,4,141.55172413793105
+"Urban, Bulawayo, Bulawayo, Zimbabwe",0.25,1.0,0.75,0.3333333333333333,1,4,205.7
+"Urban, Chitungwiza, Harare, Zimbabwe",0.25,1.0,0.75,0.3333333333333333,1,4,2956.676470588235
+"Urban, Epworth, Harare, Zimbabwe",0.25,1.0,0.75,0.3333333333333333,1,4,2940.823529411765
+"Urban, Harare Urban, Harare, Zimbabwe",0.25,1.0,0.75,0.3333333333333333,1,4,2940.764705882353
+"Urban, Kwekwe Urban, Midlands, Zimbabwe",0.25,1.0,0.75,0.3333333333333333,1,4,2441.75
+"Western Agropastoral Zone, Waso, Samburu East, Samburu, Kenya",0.3333333333333333,0.3333333333333333,0.0,0.3333333333333333,1,4,15710.583333333334

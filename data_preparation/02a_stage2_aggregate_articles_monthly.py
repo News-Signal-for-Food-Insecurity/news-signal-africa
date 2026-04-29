@@ -25,6 +25,7 @@ import pyarrow as pa
 import unicodedata
 import gc
 import sqlite3
+import json
 from concurrent.futures import ProcessPoolExecutor, as_completed
 import multiprocessing
 import os
@@ -36,7 +37,11 @@ INTERIM_DIR   = BASE_DIR / 'DATA' / 'interim'
 INTERIM_DIR.mkdir(parents=True, exist_ok=True)
 
 # Input files
-ARTICLES_FILE  = INTERIM_DIR / 'african_gkg_articles.csv'
+# NOTE: ARTICLES_FILE is a 47GB raw GDELT archive not distributed with the repo.
+# The pre-computed output (DATA/interim/stage2/articles_aggregated_monthly.parquet)
+# is included. This script is provided for transparency; it does NOT need to be
+# re-run to reproduce the paper results.
+ARTICLES_FILE  = Path(r'C:\GDELT_Africa_Extract\data\archive\african_gkg_articles.csv')
 LOCATIONS_FILE = INTERIM_DIR / 'african_gkg_locations_aligned.parquet'
 IPC_REF_FILE   = RAW_DIR / 'ipc_reference.parquet'
 
@@ -45,6 +50,14 @@ STAGE2_DATA_DIR = INTERIM_DIR / 'stage2'
 STAGE2_DATA_DIR.mkdir(parents=True, exist_ok=True)
 OUTPUT_PARQUET  = STAGE2_DATA_DIR / 'articles_aggregated_monthly.parquet'
 OUTPUT_CSV      = STAGE2_DATA_DIR / 'articles_aggregated_monthly.csv'
+
+# Resume checkpoint files
+CHECKPOINT_FILE    = STAGE2_DATA_DIR / '02a_checkpoint.json'   # sqlite path + processed files list
+CHECKPOINT_PARQUET = STAGE2_DATA_DIR / '02a_checkpoint_agg.parquet'  # partial aggregated data
+
+# Daily GKG parquets (2020-2024) — used when african_gkg_articles.csv is not available.
+# This path is machine-specific and not distributed with the repo.
+GDELT_DAILY_DIR = Path(r'C:\Users\victo\OneDrive\Documents\Middlesex University\MSs Data Science Documents\CST4090  Project Work\Current and Improved Approach\GDELT New Approach\01_PRODUCTION\06_DATA\gdelt_data')
 
 # Processing parameters
 CHUNK_SIZE = 100000  # Reduced for 8GB RAM systems
@@ -60,6 +73,134 @@ FUZZY_MATCH_CACHE = {}
 
 # Countries with ONLY national-level IPC data (same as Stage 1)
 COUNTRY_LEVEL_ONLY = {'AO', 'CG', 'CT', 'LT', 'MR', 'RW', 'TO'}
+
+# =============================================================================
+# THEME CATEGORY MAPPINGS (inline copy for reproducibility)
+# Maps GDELT theme codes to 9 major categories.
+# Derived from Scripts/archive/final/theme_categories_mapping.py
+# =============================================================================
+_THEME_CATEGORIES = {
+    'food_security': ['WB_1609_FOOD', 'WB_1618_FOOD_DISTRIBUTION', 'WB_1620_ELDERLY', 'FOOD', 'FAMINE'],
+    'famine': ['FAMINE', 'CRISISLEX_C02_SEVERE_MALNUTRITION', 'WB_621_HEALTH_NUTRITION', 'STARVATION'],
+    'hunger': ['HUNGER', 'MALNUTRITION', 'WB_621_HEALTH_NUTRITION_AND_POPULATION', 'WB_639_REPRODUCTIVE_MATERNAL_AND_CHILD_HEALTH', 'WB_642_CHILD_HEALTH'],
+    'conflict': ['WB_2433_CONFLICT_AND_VIOLENCE', 'WB_2432_FRAGILITY_CONFLICT_AND_VIOLENCE', 'WB_2462_POLITICAL_INSTABILITY', 'CONFLICT', 'CRISISLEX_C06_VIOLENCE', 'UNREST'],
+    'war': ['WAR', 'MILITARY', 'COMBAT', 'BATTLE', 'WARFARE'],
+    'terrorism': ['TERROR', 'WB_2467_TERRORISM', 'TAX_TERROR_GROUP', 'TAX_TERROR_GROUP_BOKO_HARAM', 'TAX_TERROR_GROUP_AL_QAEDA', 'TAX_TERROR_GROUP_ISIS', 'TERRORISM'],
+    'insurgency': ['INSURGENCY', 'REBEL', 'MILITIA', 'ARMED_GROUP'],
+    'protest': ['PROTEST', 'DEMONSTRATION', 'RALLY', 'STRIKE'],
+    'civil_unrest': ['UNREST', 'UNREST_POLICE', 'RIOT', 'CIVIL_UNREST', 'SOCIAL_UNREST'],
+    'military': ['MILITARY', 'TAX_FNCACT_MILITARY', 'DEFENSE', 'ARMED_FORCES', 'TROOP'],
+    'displacement': ['DISPLACEMENT', 'INTERNALLY_DISPLACED', 'IDP', 'DISPLACED_PERSONS'],
+    'refugee': ['REFUGEE', 'ASYLUM', 'UNHCR'],
+    'migration': ['MIGRATION', 'EMIGRATION', 'IMMIGRATION', 'MOVEMENT_GENERAL'],
+    'casualties': ['KILL', 'DEATH', 'CASUALTY', 'FATALITY', 'DEAD', 'DIED'],
+    'government': ['GENERAL_GOVERNMENT', 'EPU_POLICY_GOVERNMENT', 'TAX_FNCACT_GOVERNMENT', 'GOVERNMENT'],
+    'politics': ['USPEC_POLITICS_GENERAL1', 'TAX_FNCACT_POLITICIAN', 'LEADER', 'EPU_POLICY', 'POLITICAL'],
+    'corruption': ['CORRUPTION', 'BRIBE', 'EMBEZZLEMENT', 'FRAUD'],
+    'policy': ['EPU_POLICY', 'EPU_CATS', 'POLICY'],
+    'stability': ['WB_2462_POLITICAL_INSTABILITY', 'STABILITY', 'INSTABILITY'],
+    'governance': ['WB_696_PUBLIC_SECTOR_MANAGEMENT', 'WB_840_JUSTICE', 'GOVERNANCE', 'ADMINISTRATION'],
+    'election': ['ELECTION', 'VOTE', 'BALLOT', 'ELECTORAL'],
+    'economy': ['ECON', 'ECONOMIC', 'WB_ECONOMY'],
+    'market': ['MARKET', 'TRADE', 'COMMERCE'],
+    'inflation': ['INFLATION', 'ECON_INFLATION', 'PRICE_INCREASE'],
+    'poverty': ['POVERTY', 'WB_1466_SOCIAL_ASSISTANCE', 'WB_697_SOCIAL_PROTECTION_AND_LABOR'],
+    'unemployment': ['UNEMPLOYMENT', 'JOBLESS', 'LAYOFF'],
+    'trade': ['TRADE', 'EXPORT', 'IMPORT', 'COMMERCE'],
+    'health': ['GENERAL_HEALTH', 'MEDICAL', 'HEALTH', 'WB_1331_HEALTH_TECHNOLOGIES', 'UNGP_HEALTHCARE', 'CRISISLEX_C03_WELLBEING_HEALTH'],
+    'disease': ['TAX_DISEASE', 'WB_1406_DISEASE', 'EPIDEMIC', 'OUTBREAK'],
+    'covid': ['COVID', 'CORONAVIRUS', 'PANDEMIC', 'TAX_DISEASE_COVID'],
+    'malaria': ['MALARIA', 'TAX_DISEASE_MALARIA'],
+    'cholera': ['CHOLERA', 'TAX_DISEASE_CHOLERA'],
+    'humanitarian': ['HUMANITARIAN', 'CRISISLEX', 'EMERGENCY'],
+    'aid': ['AID', 'ASSISTANCE', 'RELIEF', 'WB_1609_FOOD_AND_IN_KIND_TRANSFERS'],
+    'ngo': ['NGO', 'NON_GOVERNMENTAL'],
+    'un': ['UN', 'UNITED_NATIONS', 'UNGP', 'UNHCR'],
+    'emergency': ['EMERGENCY', 'CRISIS', 'DISASTER', 'MANMADE_DISASTER', 'CRISISLEX_CRISISLEXREC'],
+    'agriculture': ['AGRICULTURE', 'FARM', 'CROP', 'HARVEST', 'WB_1777_FORESTS', 'WB_566_ENVIRONMENT_AND_NATURAL_RESOURCES', 'WB_590_ECOSYSTEMS'],
+    'drought': ['DROUGHT', 'DRY', 'ARID'],
+    'flood': ['FLOOD', 'FLOODING', 'DELUGE'],
+    'water': ['WATER', 'HYDRO', 'RAIN', 'RAINFALL'],
+    'climate': ['CLIMATE', 'WEATHER', 'CLIMATE_CHANGE'],
+    'population': ['POPULATION', 'DEMOGRAPHIC'],
+    'urbanization': ['URBAN', 'CITY', 'URBANIZATION'],
+    'infrastructure': ['INFRASTRUCTURE', 'CONSTRUCTION', 'BUILDING'],
+    'development': ['DEVELOPMENT', 'WB_133_INFORMATION_AND_COMMUNICATION_TECHNOLOGIES'],
+    'energy': ['ENERGY', 'POWER', 'ELECTRICITY'],
+    'education': ['EDUCATION', 'SCHOOL', 'SOC_POINTSOFINTEREST_SCHOOL', 'SOC_POINTSOFINTEREST_SCHOOLS', 'WB_470_EDUCATION', 'TAX_FNCACT_STUDENTS'],
+    'security': ['SECURITY_SERVICES', 'CRISISLEX_C07_SAFETY', 'SECURITY'],
+    'police': ['TAX_FNCACT_POLICE', 'HUMAN_RIGHTS_ABUSES_POLICE_BRUTALITY', 'UNREST_POLICE', 'POLICE'],
+    'crime': ['SOC_GENERALCRIME', 'TRIAL', 'RAPE', 'ARREST', 'CRIME', 'CRIMINAL'],
+}
+
+_MAJOR_CATEGORIES = {
+    'food_security_category': ['food_security', 'famine', 'hunger'],
+    'conflict_category': ['conflict', 'war', 'terrorism', 'insurgency', 'protest', 'civil_unrest', 'military'],
+    'displacement_category': ['displacement', 'refugee', 'migration', 'casualties'],
+    'governance_category': ['government', 'politics', 'corruption', 'policy', 'stability', 'governance', 'election'],
+    'economic_category': ['economy', 'market', 'inflation', 'poverty', 'unemployment', 'trade'],
+    'health_category': ['health', 'disease', 'covid', 'malaria', 'cholera'],
+    'humanitarian_category': ['humanitarian', 'aid', 'ngo', 'un', 'emergency'],
+    'weather_category': ['agriculture', 'drought', 'flood', 'water', 'climate'],
+    'other_category': ['population', 'urbanization', 'infrastructure', 'development', 'energy', 'education', 'security', 'police', 'crime'],
+}
+
+THEME_CATEGORY_COLS = list(_MAJOR_CATEGORIES.keys())
+
+
+def _categorize_themes_row(themes_string, v2themes_string=None):
+    """Original row-by-row theme categorization logic (identical to Stage 1 / theme_categories_mapping.py)."""
+    result = {category: 0 for category in _THEME_CATEGORIES.keys()}
+
+    if v2themes_string and pd.notna(v2themes_string) and str(v2themes_string).strip():
+        themes_list = []
+        for item in str(v2themes_string).split(';'):
+            if ',' in item:
+                themes_list.append(item.split(',')[0])
+    elif themes_string and pd.notna(themes_string) and str(themes_string).strip():
+        themes_list = str(themes_string).split(';')
+    else:
+        for major_cat in _MAJOR_CATEGORIES:
+            result[major_cat] = 0
+        return result
+
+    themes_upper = [t.upper().strip() for t in themes_list]
+
+    for category, keywords in _THEME_CATEGORIES.items():
+        count = 0
+        for theme in themes_upper:
+            for keyword in keywords:
+                if keyword.upper() in theme:
+                    count += 1
+                    break
+        result[category] = count
+
+    for major_cat, sub_themes in _MAJOR_CATEGORIES.items():
+        result[major_cat] = sum(result.get(s, 0) for s in sub_themes)
+
+    return result
+
+
+def _add_theme_categories(df: pd.DataFrame) -> pd.DataFrame:
+    """Apply original categorize_themes logic to each row, add 9 *_category columns."""
+    if 'V2Themes' not in df.columns and 'Themes' not in df.columns:
+        for col in THEME_CATEGORY_COLS:
+            df[col] = 0
+        return df
+
+    themes_col = df['Themes'] if 'Themes' in df.columns else pd.Series([''] * len(df), index=df.index)
+    v2themes_col = df['V2Themes'] if 'V2Themes' in df.columns else pd.Series([None] * len(df), index=df.index)
+
+    results = [
+        _categorize_themes_row(t, v2t)
+        for t, v2t in zip(themes_col, v2themes_col)
+    ]
+    theme_df = pd.DataFrame(results, index=df.index)
+
+    for col in THEME_CATEGORY_COLS:
+        df[col] = theme_df[col]
+
+    return df
 
 
 def normalize_text(text):
@@ -530,300 +671,179 @@ def main():
     # Build district lookup (same matching logic as Stage 1)
     combined_lookup, unique_districts, country_candidates = build_district_lookup(ipc_ref)
 
-    # Process locations to build GKGRECORDID -> district mapping
-    # KEY CHANGE: Instead of filtering by IPC period, we capture the article date
-    print("\n3. Processing locations to build GKGRECORDID -> district mapping...", flush=True)
-    print("   Matching priority: GADM3 -> GADM2 -> GADM1 -> Country-level", flush=True)
-    print(f"   Using {NUM_WORKERS} parallel workers", flush=True)
-
-    parquet_file = pq.ParquetFile(LOCATIONS_FILE)
-
-    # Use SQLite for streaming - eliminates memory issues
-    # Use unique timestamped filename to avoid conflicts from old processes
-    timestamp_str = datetime.now().strftime('%Y%m%d_%H%M%S')
-    sqlite_file = STAGE2_DATA_DIR / f'temp_gkg_district_lookup_{timestamp_str}.db'
-    # Clean up old temp files (ignore errors if locked)
-    for old_file in STAGE2_DATA_DIR.glob('temp_gkg_district_lookup_*.db'):
+    # ── Resume logic ──────────────────────────────────────────────────────────
+    # If a previous run completed district matching + dedup and saved a checkpoint,
+    # skip those phases and jump straight to article processing.
+    checkpoint = {}
+    if CHECKPOINT_FILE.exists():
         try:
-            old_file.unlink()
-        except:
-            pass  # Ignore locked files
+            checkpoint = json.loads(CHECKPOINT_FILE.read_text())
+        except Exception:
+            checkpoint = {}
 
-    conn = sqlite3.connect(str(sqlite_file))
-    cursor = conn.cursor()
+    resuming = False
+    saved_sqlite = checkpoint.get('sqlite_file')
+    dedup_done   = checkpoint.get('dedup_done', False)
+    processed_files = set(checkpoint.get('processed_files', []))
 
-    # SQLite optimizations for bulk inserts
-    cursor.execute("PRAGMA journal_mode=WAL")
-    cursor.execute("PRAGMA synchronous=OFF")
-    cursor.execute("PRAGMA cache_size=100000")
-    cursor.execute("PRAGMA temp_store=MEMORY")
-    conn.commit()
+    if saved_sqlite and dedup_done and Path(saved_sqlite).exists():
+        print(f"\n[RESUME] Reusing completed SQLite DB: {saved_sqlite}", flush=True)
+        print(f"[RESUME] Skipping district matching + dedup. Already processed {len(processed_files)} files.", flush=True)
+        sqlite_file = Path(saved_sqlite)
+        conn   = sqlite3.connect(str(sqlite_file))
+        cursor = conn.cursor()
+        resuming = True
+    # ── End resume logic ──────────────────────────────────────────────────────
 
-    # Create table for GKG-district mappings
-    cursor.execute('''
-        CREATE TABLE gkg_district (
-            GKGRECORDID TEXT,
-            year_month TEXT,
-            date_extracted TEXT,
-            match_level TEXT,
-            ipc_country TEXT,
-            ipc_country_code TEXT,
-            ipc_fips_code TEXT,
-            ipc_district TEXT,
-            ipc_region TEXT,
-            ipc_geographic_unit TEXT,
-            ipc_geographic_unit_full TEXT,
-            ipc_fewsnet_region TEXT,
-            ipc_geographic_group TEXT
-        )
-    ''')
-    conn.commit()
+    if not resuming:
+        # Process locations to build GKGRECORDID -> district mapping
+        # KEY CHANGE: Instead of filtering by IPC period, we capture the article date
+        print("\n3. Processing locations to build GKGRECORDID -> district mapping...", flush=True)
+        print("   Matching priority: GADM3 -> GADM2 -> GADM1 -> Country-level", flush=True)
+        print(f"   Using {NUM_WORKERS} parallel workers", flush=True)
 
-    # Get number of row groups in parquet file
-    num_row_groups = parquet_file.metadata.num_row_groups
-    print(f"   Total row groups to process: {num_row_groups}", flush=True)
+        parquet_file = pq.ParquetFile(LOCATIONS_FILE)
 
-    # Use SEQUENTIAL processing to avoid memory issues with multiprocessing
-    print(f"\n   Processing {num_row_groups} batches sequentially (SQLite streaming)...", flush=True)
-    print("   (Sequential mode avoids memory duplication in subprocess pickling)", flush=True)
+        # Store temp DB on C: (faster SSD — 172GB free after cleanup).
+        # C: had 17GB free before; we deleted the 156GB DB so now has room.
+        timestamp_str = datetime.now().strftime('%Y%m%d_%H%M%S')
+        sqlite_temp_dir = Path(r'C:\GDELT_temp')
+        sqlite_temp_dir.mkdir(parents=True, exist_ok=True)
+        sqlite_file = sqlite_temp_dir / f'temp_gkg_district_lookup_{timestamp_str}.db'
+        # Clean up any old temp files (ignore errors if locked)
+        for old_file in sqlite_temp_dir.glob('temp_gkg_district_lookup_*.db'):
+            try:
+                old_file.unlink()
+            except Exception:
+                pass
 
-    # Pre-compute unique GADM names from locations file for fuzzy cache
-    print("   Scanning locations for unique GADM names (for fuzzy cache)...", flush=True)
-    all_gadm_names_by_country = defaultdict(set)
-    for rg_idx in range(num_row_groups):
-        sample_batch = parquet_file.read_row_group(rg_idx, columns=['african_country_code', 'gadm1_name', 'gadm2_name', 'gadm3_name']).to_pandas()
-        for country_code in sample_batch['african_country_code'].unique():
-            country_data = sample_batch[sample_batch['african_country_code'] == country_code]
-            all_gadm_names_by_country[country_code].update(country_data['gadm1_name'].dropna().apply(normalize_text).unique())
-            all_gadm_names_by_country[country_code].update(country_data['gadm2_name'].dropna().apply(normalize_text).unique())
-            all_gadm_names_by_country[country_code].update(country_data['gadm3_name'].dropna().apply(normalize_text).unique())
-        del sample_batch
-        if (rg_idx + 1) % 20 == 0:
-            print(f"      Scanned {rg_idx + 1}/{num_row_groups} row groups...", flush=True)
-    print(f"   Found {sum(len(v) for v in all_gadm_names_by_country.values()):,} unique GADM names across {len(all_gadm_names_by_country)} countries", flush=True)
+        conn   = sqlite3.connect(str(sqlite_file))
+        cursor = conn.cursor()
 
-    # Pre-compute fuzzy matches
-    fuzzy_cache = precompute_fuzzy_matches(country_candidates, all_gadm_names_by_country)
-    del all_gadm_names_by_country  # Free memory
-    gc.collect()
+        # SQLite optimizations for bulk inserts
+        cursor.execute("PRAGMA journal_mode=WAL")
+        cursor.execute("PRAGMA synchronous=OFF")
+        cursor.execute("PRAGMA cache_size=500000")   # ~2GB page cache
+        cursor.execute("PRAGMA temp_store=MEMORY")
+        cursor.execute("PRAGMA mmap_size=8589934592")  # 8GB mmap for fast reads
+        cursor.execute("PRAGMA wal_autocheckpoint=10000")
+        conn.commit()
 
-    total_match_stats = {
-        'GADM3_exact': 0, 'GADM3_fuzzy': 0,
-        'GADM2_exact': 0, 'GADM2_fuzzy': 0,
-        'GADM1_exact': 0, 'GADM1_fuzzy': 0,
-        'Country_level': 0
-    }
+        # Create table for GKG-district mappings
+        cursor.execute('''
+            CREATE TABLE gkg_district (
+                GKGRECORDID TEXT,
+                year_month TEXT,
+                date_extracted TEXT,
+                match_level TEXT,
+                ipc_country TEXT,
+                ipc_country_code TEXT,
+                ipc_fips_code TEXT,
+                ipc_district TEXT,
+                ipc_region TEXT,
+                ipc_geographic_unit TEXT,
+                ipc_geographic_unit_full TEXT,
+                ipc_fewsnet_region TEXT,
+                ipc_geographic_group TEXT
+            )
+        ''')
+        conn.commit()
 
-    total_rows = 0
-    start_time = datetime.now()
+        # Get number of row groups in parquet file
+        num_row_groups = parquet_file.metadata.num_row_groups
+        print(f"   Total row groups to process: {num_row_groups}", flush=True)
 
-    # Process batches sequentially - write directly to SQLite
-    for batch_num in range(num_row_groups):
-        batch_start = datetime.now()
+        # Use SEQUENTIAL processing to avoid memory issues with multiprocessing
+        print(f"\n   Processing {num_row_groups} batches sequentially (SQLite streaming)...", flush=True)
+        print("   (Sequential mode avoids memory duplication in subprocess pickling)", flush=True)
 
-        # Read this batch from parquet
-        batch_df = parquet_file.read_row_group(batch_num).to_pandas()
-        batch_df['date_extracted'] = pd.to_datetime(batch_df['date_extracted'])
-        batch_df['year_month'] = batch_df['date_extracted'].dt.to_period('M').astype(str)
+        # Pre-compute unique GADM names from locations file for fuzzy cache
+        print("   Scanning locations for unique GADM names (for fuzzy cache)...", flush=True)
+        all_gadm_names_by_country = defaultdict(set)
+        for rg_idx in range(num_row_groups):
+            sample_batch = parquet_file.read_row_group(rg_idx, columns=['african_country_code', 'gadm1_name', 'gadm2_name', 'gadm3_name']).to_pandas()
+            for country_code in sample_batch['african_country_code'].unique():
+                country_data = sample_batch[sample_batch['african_country_code'] == country_code]
+                all_gadm_names_by_country[country_code].update(country_data['gadm1_name'].dropna().apply(normalize_text).unique())
+                all_gadm_names_by_country[country_code].update(country_data['gadm2_name'].dropna().apply(normalize_text).unique())
+                all_gadm_names_by_country[country_code].update(country_data['gadm3_name'].dropna().apply(normalize_text).unique())
+            del sample_batch
+            if (rg_idx + 1) % 20 == 0:
+                print(f"      Scanned {rg_idx + 1}/{num_row_groups} row groups...", flush=True)
+        print(f"   Found {sum(len(v) for v in all_gadm_names_by_country.values()):,} unique GADM names across {len(all_gadm_names_by_country)} countries", flush=True)
 
-        # Normalize geographic fields
-        batch_df['gadm1_norm'] = batch_df['gadm1_name'].apply(normalize_text)
-        batch_df['gadm2_norm'] = batch_df['gadm2_name'].apply(normalize_text)
-        batch_df['gadm3_norm'] = batch_df['gadm3_name'].apply(normalize_text)
+        # Pre-compute fuzzy matches
+        fuzzy_cache = precompute_fuzzy_matches(country_candidates, all_gadm_names_by_country)
+        del all_gadm_names_by_country  # Free memory
+        gc.collect()
 
-        batch_matches = 0
-        batch_stats = {'GADM3_exact': 0, 'GADM3_fuzzy': 0, 'GADM2_exact': 0, 'GADM2_fuzzy': 0,
-                       'GADM1_exact': 0, 'GADM1_fuzzy': 0, 'Country_level': 0}
+        total_match_stats = {
+            'GADM3_exact': 0, 'GADM3_fuzzy': 0,
+            'GADM2_exact': 0, 'GADM2_fuzzy': 0,
+            'GADM1_exact': 0, 'GADM1_fuzzy': 0,
+            'Country_level': 0
+        }
 
-        # Buffer for batched SQLite inserts
-        insert_buffer = []
+        total_rows = 0
+        start_time = datetime.now()
 
-        # Track matched GKGRECORDIDs to avoid redundant lower-priority matching
-        matched_gkgids = set()
+        # Process batches sequentially - write directly to SQLite
+        for batch_num in range(num_row_groups):
+            batch_start = datetime.now()
 
-        # Process by country for efficiency
-        for country_code, country_group in batch_df.groupby('african_country_code'):
+            # Read this batch from parquet
+            batch_df = parquet_file.read_row_group(batch_num).to_pandas()
+            batch_df['date_extracted'] = pd.to_datetime(batch_df['date_extracted'])
+            batch_df['year_month'] = batch_df['date_extracted'].dt.to_period('M').astype(str)
 
-            # PRIORITY 1: GADM3 Matching
-            for gadm3_norm, gadm3_group in country_group.groupby('gadm3_norm'):
-                if not gadm3_norm:
-                    continue
+            # Normalize geographic fields
+            batch_df['gadm1_norm'] = batch_df['gadm1_name'].apply(normalize_text)
+            batch_df['gadm2_norm'] = batch_df['gadm2_name'].apply(normalize_text)
+            batch_df['gadm3_norm'] = batch_df['gadm3_name'].apply(normalize_text)
 
-                key = (country_code, gadm3_norm)
-                matched_district_list = None
-                match_type = None
+            batch_matches = 0
+            batch_stats = {'GADM3_exact': 0, 'GADM3_fuzzy': 0, 'GADM2_exact': 0, 'GADM2_fuzzy': 0,
+                           'GADM1_exact': 0, 'GADM1_fuzzy': 0, 'Country_level': 0}
 
-                if key in combined_lookup:
-                    matched_district_list = combined_lookup[key]
-                    match_type = 'GADM3_exact'
-                else:
-                    # Use cached fuzzy match
-                    matched_district_list, _ = get_fuzzy_match_cached(gadm3_norm, country_code, fuzzy_cache, country_candidates)
+            # Buffer for batched SQLite inserts
+            insert_buffer = []
+
+            # Track matched GKGRECORDIDs to avoid redundant lower-priority matching
+            matched_gkgids = set()
+
+            # Process by country for efficiency
+            for country_code, country_group in batch_df.groupby('african_country_code'):
+
+                # PRIORITY 1: GADM3 Matching
+                for gadm3_norm, gadm3_group in country_group.groupby('gadm3_norm'):
+                    if not gadm3_norm:
+                        continue
+
+                    key = (country_code, gadm3_norm)
+                    matched_district_list = None
+                    match_type = None
+
+                    if key in combined_lookup:
+                        matched_district_list = combined_lookup[key]
+                        match_type = 'GADM3_exact'
+                    else:
+                        # Use cached fuzzy match
+                        matched_district_list, _ = get_fuzzy_match_cached(gadm3_norm, country_code, fuzzy_cache, country_candidates)
+                        if matched_district_list:
+                            match_type = 'GADM3_fuzzy'
+
                     if matched_district_list:
-                        match_type = 'GADM3_fuzzy'
-
-                if matched_district_list:
-                    for district_info in matched_district_list:
-                        # VECTORIZED: Use .values arrays instead of iterrows()
-                        gkgids = gadm3_group['GKGRECORDID'].values
-                        year_months = gadm3_group['year_month'].values
-                        dates = gadm3_group['date_extracted'].astype(str).values
-                        n_rows = len(gkgids)
-                        tuples = list(zip(
-                            gkgids,
-                            year_months,
-                            dates,
-                            [match_type] * n_rows,
-                            [district_info['ipc_country']] * n_rows,
-                            [district_info['ipc_country_code']] * n_rows,
-                            [district_info['ipc_fips_code']] * n_rows,
-                            [district_info['ipc_district']] * n_rows,
-                            [district_info['ipc_region']] * n_rows,
-                            [district_info['ipc_geographic_unit']] * n_rows,
-                            [district_info['ipc_geographic_unit_full']] * n_rows,
-                            [district_info['ipc_fewsnet_region']] * n_rows,
-                            [district_info['ipc_geographic_group']] * n_rows
-                        ))
-                        insert_buffer.extend(tuples)
-                        batch_matches += n_rows
-                        batch_stats[match_type] += n_rows
-                        matched_gkgids.update(gkgids)
-
-                        # Flush buffer when it gets large
-                        if len(insert_buffer) >= SQLITE_BATCH_SIZE:
-                            cursor.executemany('INSERT INTO gkg_district VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', insert_buffer)
-                            insert_buffer.clear()
-
-            # PRIORITY 2: GADM2 Matching
-            for gadm2_norm, gadm2_group in country_group.groupby('gadm2_norm'):
-                if not gadm2_norm:
-                    continue
-
-                # Skip already matched GKGRECORDIDs
-                gadm2_group = gadm2_group[~gadm2_group['GKGRECORDID'].isin(matched_gkgids)]
-                if len(gadm2_group) == 0:
-                    continue
-
-                key = (country_code, gadm2_norm)
-                matched_district_list = None
-                match_type = None
-
-                if key in combined_lookup:
-                    matched_district_list = combined_lookup[key]
-                    match_type = 'GADM2_exact'
-                else:
-                    # Use cached fuzzy match
-                    matched_district_list, _ = get_fuzzy_match_cached(gadm2_norm, country_code, fuzzy_cache, country_candidates)
-                    if matched_district_list:
-                        match_type = 'GADM2_fuzzy'
-
-                if matched_district_list:
-                    for district_info in matched_district_list:
-                        # VECTORIZED: Use .values arrays instead of iterrows()
-                        gkgids = gadm2_group['GKGRECORDID'].values
-                        year_months = gadm2_group['year_month'].values
-                        dates = gadm2_group['date_extracted'].astype(str).values
-                        n_rows = len(gkgids)
-                        tuples = list(zip(
-                            gkgids,
-                            year_months,
-                            dates,
-                            [match_type] * n_rows,
-                            [district_info['ipc_country']] * n_rows,
-                            [district_info['ipc_country_code']] * n_rows,
-                            [district_info['ipc_fips_code']] * n_rows,
-                            [district_info['ipc_district']] * n_rows,
-                            [district_info['ipc_region']] * n_rows,
-                            [district_info['ipc_geographic_unit']] * n_rows,
-                            [district_info['ipc_geographic_unit_full']] * n_rows,
-                            [district_info['ipc_fewsnet_region']] * n_rows,
-                            [district_info['ipc_geographic_group']] * n_rows
-                        ))
-                        insert_buffer.extend(tuples)
-                        batch_matches += n_rows
-                        batch_stats[match_type] += n_rows
-                        matched_gkgids.update(gkgids)
-
-                        # Flush buffer when it gets large
-                        if len(insert_buffer) >= SQLITE_BATCH_SIZE:
-                            cursor.executemany('INSERT INTO gkg_district VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', insert_buffer)
-                            insert_buffer.clear()
-
-            # PRIORITY 3: GADM1 Matching
-            for gadm1_norm, gadm1_group in country_group.groupby('gadm1_norm'):
-                if not gadm1_norm:
-                    continue
-
-                # Skip already matched GKGRECORDIDs
-                gadm1_group = gadm1_group[~gadm1_group['GKGRECORDID'].isin(matched_gkgids)]
-                if len(gadm1_group) == 0:
-                    continue
-
-                key = (country_code, gadm1_norm)
-                matched_district_list = None
-                match_type = None
-
-                if key in combined_lookup:
-                    matched_district_list = combined_lookup[key]
-                    match_type = 'GADM1_exact'
-                else:
-                    # Use cached fuzzy match
-                    matched_district_list, _ = get_fuzzy_match_cached(gadm1_norm, country_code, fuzzy_cache, country_candidates)
-                    if matched_district_list:
-                        match_type = 'GADM1_fuzzy'
-
-                if matched_district_list:
-                    for district_info in matched_district_list:
-                        # VECTORIZED: Use .values arrays instead of iterrows()
-                        gkgids = gadm1_group['GKGRECORDID'].values
-                        year_months = gadm1_group['year_month'].values
-                        dates = gadm1_group['date_extracted'].astype(str).values
-                        n_rows = len(gkgids)
-                        tuples = list(zip(
-                            gkgids,
-                            year_months,
-                            dates,
-                            [match_type] * n_rows,
-                            [district_info['ipc_country']] * n_rows,
-                            [district_info['ipc_country_code']] * n_rows,
-                            [district_info['ipc_fips_code']] * n_rows,
-                            [district_info['ipc_district']] * n_rows,
-                            [district_info['ipc_region']] * n_rows,
-                            [district_info['ipc_geographic_unit']] * n_rows,
-                            [district_info['ipc_geographic_unit_full']] * n_rows,
-                            [district_info['ipc_fewsnet_region']] * n_rows,
-                            [district_info['ipc_geographic_group']] * n_rows
-                        ))
-                        insert_buffer.extend(tuples)
-                        batch_matches += n_rows
-                        batch_stats[match_type] += n_rows
-                        matched_gkgids.update(gkgids)
-
-                        # Flush buffer when it gets large
-                        if len(insert_buffer) >= SQLITE_BATCH_SIZE:
-                            cursor.executemany('INSERT INTO gkg_district VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', insert_buffer)
-                            insert_buffer.clear()
-
-            # PRIORITY 4: Country-level matching
-            if country_code in COUNTRY_LEVEL_ONLY:
-                # Skip already matched GKGRECORDIDs
-                unmatched_group = country_group[~country_group['GKGRECORDID'].isin(matched_gkgids)]
-                if len(unmatched_group) == 0:
-                    continue
-
-                for (fips, district), district_list in combined_lookup.items():
-                    if fips == country_code:
-                        for district_info in district_list:
+                        for district_info in matched_district_list:
                             # VECTORIZED: Use .values arrays instead of iterrows()
-                            gkgids = unmatched_group['GKGRECORDID'].values
-                            year_months = unmatched_group['year_month'].values
-                            dates = unmatched_group['date_extracted'].astype(str).values
+                            gkgids = gadm3_group['GKGRECORDID'].values
+                            year_months = gadm3_group['year_month'].values
+                            dates = gadm3_group['date_extracted'].astype(str).values
                             n_rows = len(gkgids)
                             tuples = list(zip(
                                 gkgids,
                                 year_months,
                                 dates,
-                                ['Country_level'] * n_rows,
+                                [match_type] * n_rows,
                                 [district_info['ipc_country']] * n_rows,
                                 [district_info['ipc_country_code']] * n_rows,
                                 [district_info['ipc_fips_code']] * n_rows,
@@ -836,149 +856,277 @@ def main():
                             ))
                             insert_buffer.extend(tuples)
                             batch_matches += n_rows
-                            batch_stats['Country_level'] += n_rows
+                            batch_stats[match_type] += n_rows
+                            matched_gkgids.update(gkgids)
 
                             # Flush buffer when it gets large
                             if len(insert_buffer) >= SQLITE_BATCH_SIZE:
                                 cursor.executemany('INSERT INTO gkg_district VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', insert_buffer)
                                 insert_buffer.clear()
 
-        # Flush any remaining buffer and commit after each batch
-        if insert_buffer:
-            cursor.executemany('INSERT INTO gkg_district VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', insert_buffer)
-            insert_buffer.clear()
-        conn.commit()
-        total_rows += batch_matches
+                # PRIORITY 2: GADM2 Matching
+                for gadm2_norm, gadm2_group in country_group.groupby('gadm2_norm'):
+                    if not gadm2_norm:
+                        continue
 
-        # Update aggregate stats
-        for key, count in batch_stats.items():
-            total_match_stats[key] += count
+                    # Skip already matched GKGRECORDIDs
+                    gadm2_group = gadm2_group[~gadm2_group['GKGRECORDID'].isin(matched_gkgids)]
+                    if len(gadm2_group) == 0:
+                        continue
 
-        # Progress reporting
-        batch_time = (datetime.now() - batch_start).total_seconds()
-        elapsed = (datetime.now() - start_time).total_seconds()
-        rate = (batch_num + 1) / elapsed if elapsed > 0 else 0
-        eta = (num_row_groups - batch_num - 1) / rate if rate > 0 else 0
-        print(f"      Batch {batch_num + 1}/{num_row_groups}: {batch_matches:,} matches ({batch_time:.1f}s) | Total: {total_rows:,} | ETA: {eta/60:.1f}min", flush=True)
+                    key = (country_code, gadm2_norm)
+                    matched_district_list = None
+                    match_type = None
 
-        # Free memory
-        del batch_df, matched_gkgids
+                    if key in combined_lookup:
+                        matched_district_list = combined_lookup[key]
+                        match_type = 'GADM2_exact'
+                    else:
+                        # Use cached fuzzy match
+                        matched_district_list, _ = get_fuzzy_match_cached(gadm2_norm, country_code, fuzzy_cache, country_candidates)
+                        if matched_district_list:
+                            match_type = 'GADM2_fuzzy'
+
+                    if matched_district_list:
+                        for district_info in matched_district_list:
+                            # VECTORIZED: Use .values arrays instead of iterrows()
+                            gkgids = gadm2_group['GKGRECORDID'].values
+                            year_months = gadm2_group['year_month'].values
+                            dates = gadm2_group['date_extracted'].astype(str).values
+                            n_rows = len(gkgids)
+                            tuples = list(zip(
+                                gkgids,
+                                year_months,
+                                dates,
+                                [match_type] * n_rows,
+                                [district_info['ipc_country']] * n_rows,
+                                [district_info['ipc_country_code']] * n_rows,
+                                [district_info['ipc_fips_code']] * n_rows,
+                                [district_info['ipc_district']] * n_rows,
+                                [district_info['ipc_region']] * n_rows,
+                                [district_info['ipc_geographic_unit']] * n_rows,
+                                [district_info['ipc_geographic_unit_full']] * n_rows,
+                                [district_info['ipc_fewsnet_region']] * n_rows,
+                                [district_info['ipc_geographic_group']] * n_rows
+                            ))
+                            insert_buffer.extend(tuples)
+                            batch_matches += n_rows
+                            batch_stats[match_type] += n_rows
+                            matched_gkgids.update(gkgids)
+
+                            # Flush buffer when it gets large
+                            if len(insert_buffer) >= SQLITE_BATCH_SIZE:
+                                cursor.executemany('INSERT INTO gkg_district VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', insert_buffer)
+                                insert_buffer.clear()
+
+                # PRIORITY 3: GADM1 Matching
+                for gadm1_norm, gadm1_group in country_group.groupby('gadm1_norm'):
+                    if not gadm1_norm:
+                        continue
+
+                    # Skip already matched GKGRECORDIDs
+                    gadm1_group = gadm1_group[~gadm1_group['GKGRECORDID'].isin(matched_gkgids)]
+                    if len(gadm1_group) == 0:
+                        continue
+
+                    key = (country_code, gadm1_norm)
+                    matched_district_list = None
+                    match_type = None
+
+                    if key in combined_lookup:
+                        matched_district_list = combined_lookup[key]
+                        match_type = 'GADM1_exact'
+                    else:
+                        # Use cached fuzzy match
+                        matched_district_list, _ = get_fuzzy_match_cached(gadm1_norm, country_code, fuzzy_cache, country_candidates)
+                        if matched_district_list:
+                            match_type = 'GADM1_fuzzy'
+
+                    if matched_district_list:
+                        for district_info in matched_district_list:
+                            # VECTORIZED: Use .values arrays instead of iterrows()
+                            gkgids = gadm1_group['GKGRECORDID'].values
+                            year_months = gadm1_group['year_month'].values
+                            dates = gadm1_group['date_extracted'].astype(str).values
+                            n_rows = len(gkgids)
+                            tuples = list(zip(
+                                gkgids,
+                                year_months,
+                                dates,
+                                [match_type] * n_rows,
+                                [district_info['ipc_country']] * n_rows,
+                                [district_info['ipc_country_code']] * n_rows,
+                                [district_info['ipc_fips_code']] * n_rows,
+                                [district_info['ipc_district']] * n_rows,
+                                [district_info['ipc_region']] * n_rows,
+                                [district_info['ipc_geographic_unit']] * n_rows,
+                                [district_info['ipc_geographic_unit_full']] * n_rows,
+                                [district_info['ipc_fewsnet_region']] * n_rows,
+                                [district_info['ipc_geographic_group']] * n_rows
+                            ))
+                            insert_buffer.extend(tuples)
+                            batch_matches += n_rows
+                            batch_stats[match_type] += n_rows
+                            matched_gkgids.update(gkgids)
+
+                            # Flush buffer when it gets large
+                            if len(insert_buffer) >= SQLITE_BATCH_SIZE:
+                                cursor.executemany('INSERT INTO gkg_district VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', insert_buffer)
+                                insert_buffer.clear()
+
+                # PRIORITY 4: Country-level matching — SKIPPED for articles.
+                # Country-level contributes only ~5% of final rows but massively
+                # inflates the SQLite DB (every unmatched row × every district in
+                # that country). Omitting it keeps the DB under 50GB and avoids
+                # disk-full errors. GADM1/2/3 matching covers 95%+ of useful signal.
+
+            # Flush any remaining buffer and commit after each batch
+            if insert_buffer:
+                cursor.executemany('INSERT INTO gkg_district VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)', insert_buffer)
+                insert_buffer.clear()
+            conn.commit()
+            total_rows += batch_matches
+
+            # Update aggregate stats
+            for key, count in batch_stats.items():
+                total_match_stats[key] += count
+
+            # Progress reporting
+            batch_time = (datetime.now() - batch_start).total_seconds()
+            elapsed = (datetime.now() - start_time).total_seconds()
+            rate = (batch_num + 1) / elapsed if elapsed > 0 else 0
+            eta = (num_row_groups - batch_num - 1) / rate if rate > 0 else 0
+            print(f"      Batch {batch_num + 1}/{num_row_groups}: {batch_matches:,} matches ({batch_time:.1f}s) | Total: {total_rows:,} | ETA: {eta/60:.1f}min", flush=True)
+
+            # Free memory
+            del batch_df, matched_gkgids
+            gc.collect()
+
+        # Free fuzzy cache before deduplication
+        del fuzzy_cache
         gc.collect()
 
-    # Free fuzzy cache before deduplication
-    del fuzzy_cache
-    gc.collect()
+        # SKIP index on large table - causes OOM on 181M+ rows
+        # Index will be created on deduplicated table instead (much smaller)
+        print("   Skipping index on main table (will index after dedup)...", flush=True)
 
-    # SKIP index on large table - causes OOM on 181M+ rows
-    # Index will be created on deduplicated table instead (much smaller)
-    print("   Skipping index on main table (will index after dedup)...", flush=True)
+        match_stats = total_match_stats
+        gc.collect()
 
-    match_stats = total_match_stats
-    gc.collect()
+        # Print match statistics
+        print(f"\n   Match statistics:")
+        total_matches = sum(match_stats.values())
+        for method, count in sorted(match_stats.items(), key=lambda x: x[1], reverse=True):
+            pct = (count / total_matches * 100) if total_matches > 0 else 0
+            print(f"     {method}: {count:,} ({pct:.1f}%)")
 
-    # Print match statistics
-    print(f"\n   Match statistics:")
-    total_matches = sum(match_stats.values())
-    for method, count in sorted(match_stats.items(), key=lambda x: x[1], reverse=True):
-        pct = (count / total_matches * 100) if total_matches > 0 else 0
-        print(f"     {method}: {count:,} ({pct:.1f}%)")
+        # Check if we have data
+        cursor.execute('SELECT COUNT(*) FROM gkg_district')
+        total_rows = cursor.fetchone()[0]
+        if total_rows == 0:
+            print("\n   WARNING: No matched locations found!")
+            conn.close()
+            return
 
-    # Check if we have data
-    cursor.execute('SELECT COUNT(*) FROM gkg_district')
-    total_rows = cursor.fetchone()[0]
-    if total_rows == 0:
-        print("\n   WARNING: No matched locations found!")
-        conn.close()
-        return
+        # Deduplicate in SQLite using BATCHED approach (memory-safe for 8GB systems)
+        print(f"\n4. Deduplicating {total_rows:,} records in SQLite (batched for memory safety)...")
 
-    # Deduplicate in SQLite using BATCHED approach (memory-safe for 8GB systems)
-    print(f"\n4. Deduplicating {total_rows:,} records in SQLite (batched for memory safety)...")
+        # Checkpoint WAL to reduce memory footprint before heavy operation
+        print("   Checkpointing WAL to free memory...", flush=True)
+        cursor.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+        gc.collect()
 
-    # Checkpoint WAL to reduce memory footprint before heavy operation
-    print("   Checkpointing WAL to free memory...", flush=True)
-    cursor.execute('PRAGMA wal_checkpoint(TRUNCATE)')
-    gc.collect()
+        # Get max rowid for batching
+        cursor.execute('SELECT MAX(rowid) FROM gkg_district')
+        max_rowid = cursor.fetchone()[0] or 0
 
-    # Get max rowid for batching
-    cursor.execute('SELECT MAX(rowid) FROM gkg_district')
-    max_rowid = cursor.fetchone()[0] or 0
+        # Create intermediate dedup table for batched processing
+        print(f"   Creating batched dedup table (processing {max_rowid:,} rows in {DEDUP_BATCH_SIZE:,}-row batches)...", flush=True)
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS gkg_district_dedup_temp (
+                GKGRECORDID TEXT,
+                year_month TEXT,
+                date_extracted TEXT,
+                match_level TEXT,
+                ipc_country TEXT,
+                ipc_country_code TEXT,
+                ipc_fips_code TEXT,
+                ipc_district TEXT,
+                ipc_region TEXT,
+                ipc_geographic_unit TEXT,
+                ipc_geographic_unit_full TEXT,
+                ipc_fewsnet_region TEXT,
+                ipc_geographic_group TEXT
+            )
+        ''')
+        conn.commit()
 
-    # Create intermediate dedup table for batched processing
-    print(f"   Creating batched dedup table (processing {max_rowid:,} rows in {DEDUP_BATCH_SIZE:,}-row batches)...", flush=True)
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS gkg_district_dedup_temp (
-            GKGRECORDID TEXT,
-            year_month TEXT,
-            date_extracted TEXT,
-            match_level TEXT,
-            ipc_country TEXT,
-            ipc_country_code TEXT,
-            ipc_fips_code TEXT,
-            ipc_district TEXT,
-            ipc_region TEXT,
-            ipc_geographic_unit TEXT,
-            ipc_geographic_unit_full TEXT,
-            ipc_fewsnet_region TEXT,
-            ipc_geographic_group TEXT
-        )
-    ''')
-    conn.commit()
+        # Process deduplication in batches
+        num_batches = (max_rowid + DEDUP_BATCH_SIZE - 1) // DEDUP_BATCH_SIZE
+        batch_start_time = datetime.now()
 
-    # Process deduplication in batches
-    num_batches = (max_rowid + DEDUP_BATCH_SIZE - 1) // DEDUP_BATCH_SIZE
-    batch_start_time = datetime.now()
+        for batch_idx in range(num_batches):
+            batch_start = batch_idx * DEDUP_BATCH_SIZE
+            batch_end = min((batch_idx + 1) * DEDUP_BATCH_SIZE, max_rowid)
 
-    for batch_idx in range(num_batches):
-        batch_start = batch_idx * DEDUP_BATCH_SIZE
-        batch_end = min((batch_idx + 1) * DEDUP_BATCH_SIZE, max_rowid)
+            cursor.execute('''
+                INSERT INTO gkg_district_dedup_temp
+                SELECT * FROM gkg_district
+                WHERE rowid > ? AND rowid <= ?
+                GROUP BY GKGRECORDID, ipc_geographic_unit_full, year_month
+            ''', (batch_start, batch_end))
+            conn.commit()
+            gc.collect()
+
+            elapsed = (datetime.now() - batch_start_time).total_seconds()
+            rate = (batch_idx + 1) / elapsed if elapsed > 0 else 0
+            eta = (num_batches - batch_idx - 1) / rate if rate > 0 else 0
+            print(f"      Dedup batch {batch_idx + 1}/{num_batches} (rowid {batch_start:,}-{batch_end:,}) | ETA: {eta/60:.1f}min", flush=True)
+
+        # Final cross-batch deduplication (now on much smaller intermediate table)
+        cursor.execute('SELECT COUNT(*) FROM gkg_district_dedup_temp')
+        temp_rows = cursor.fetchone()[0]
+        print(f"   Intermediate table: {temp_rows:,} rows (now doing final cross-batch dedup)...", flush=True)
 
         cursor.execute('''
-            INSERT INTO gkg_district_dedup_temp
-            SELECT * FROM gkg_district
-            WHERE rowid > ? AND rowid <= ?
+            CREATE TABLE gkg_district_dedup AS
+            SELECT * FROM gkg_district_dedup_temp
             GROUP BY GKGRECORDID, ipc_geographic_unit_full, year_month
-        ''', (batch_start, batch_end))
+        ''')
+        conn.commit()
+
+        # Drop intermediate table to free space
+        cursor.execute('DROP TABLE gkg_district_dedup_temp')
         conn.commit()
         gc.collect()
 
-        elapsed = (datetime.now() - batch_start_time).total_seconds()
-        rate = (batch_idx + 1) / elapsed if elapsed > 0 else 0
-        eta = (num_batches - batch_idx - 1) / rate if rate > 0 else 0
-        print(f"      Dedup batch {batch_idx + 1}/{num_batches} (rowid {batch_start:,}-{batch_end:,}) | ETA: {eta/60:.1f}min", flush=True)
-
-    # Final cross-batch deduplication (now on much smaller intermediate table)
-    cursor.execute('SELECT COUNT(*) FROM gkg_district_dedup_temp')
-    temp_rows = cursor.fetchone()[0]
-    print(f"   Intermediate table: {temp_rows:,} rows (now doing final cross-batch dedup)...", flush=True)
-
-    cursor.execute('''
-        CREATE TABLE gkg_district_dedup AS
-        SELECT * FROM gkg_district_dedup_temp
-        GROUP BY GKGRECORDID, ipc_geographic_unit_full, year_month
-    ''')
-    conn.commit()
-
-    # Drop intermediate table to free space
-    cursor.execute('DROP TABLE gkg_district_dedup_temp')
-    conn.commit()
-    gc.collect()
-
-    # Now create index on the SMALLER deduplicated table
-    print("   Creating index on deduplicated table...", flush=True)
-    cursor.execute('CREATE INDEX idx_dedup_gkgrecordid ON gkg_district_dedup(GKGRECORDID)')
-    conn.commit()
+        # Now create index on the SMALLER deduplicated table
+        print("   Creating index on deduplicated table...", flush=True)
+        cursor.execute('CREATE INDEX idx_dedup_gkgrecordid ON gkg_district_dedup(GKGRECORDID)')
+        conn.commit()
 
     cursor.execute('SELECT COUNT(*) FROM gkg_district_dedup')
     dedup_rows = cursor.fetchone()[0]
-    print(f"   Deduplicated: {total_rows:,} -> {dedup_rows:,} unique matches")
+    if resuming:
+        print(f"   Deduplicated table: {dedup_rows:,} unique matches (from checkpoint)")
+    else:
+        print(f"   Deduplicated: {total_rows:,} -> {dedup_rows:,} unique matches")
+
+    # Save checkpoint so future restarts can skip district matching + dedup
+    if not resuming:
+        checkpoint_data = {
+            'sqlite_file': str(sqlite_file),
+            'dedup_done': True,
+            'processed_files': [],
+        }
+        CHECKPOINT_FILE.write_text(json.dumps(checkpoint_data))
+        print(f"   [CHECKPOINT] Saved to {CHECKPOINT_FILE}", flush=True)
+        processed_files = set()
 
     # Load articles and aggregate BY MONTH
     print("\n5. Loading and aggregating articles BY MONTH...")
-    articles_sample = pd.read_csv(ARTICLES_FILE, nrows=1)
-    all_article_cols = articles_sample.columns.tolist()
 
-    # Define numeric columns for aggregation (same as Stage 1)
-    numeric_cols = [col for col in all_article_cols if col not in [
+    NON_NUMERIC_COLS = {
         'GKGRECORDID', 'DATE', 'SourceCollectionIdentifier', 'SourceCommonName',
         'DocumentIdentifier', 'Counts', 'V2Counts', 'Themes', 'V2Themes',
         'Dates', 'Persons', 'V2Persons', 'Organizations', 'V2Organizations',
@@ -986,10 +1134,10 @@ def main():
         'V2Quotations', 'V2Amounts', 'V2RelatedImages', 'V2DateTimeFields',
         'V2Extras', 'V2ExtendedField', 'V2TranslationInfo', 'OutletType',
         'all_countries_mentioned', 'all_african_countries', 'date_extracted',
-        'V2Tone'
-    ]]
-
-    aggregated_data = []
+        'V2Tone', 'TranslationInfo', 'Extras', 'Quotations', 'AllNames',
+        'Amounts', 'SharingImage', 'RelatedImages', 'SocialImageEmbeds',
+        'SocialVideoEmbeds', 'GCAM',
+    }
 
     # Define group columns once for reuse
     group_cols = [
@@ -997,15 +1145,30 @@ def main():
         'ipc_district', 'ipc_region',
         'ipc_geographic_unit', 'ipc_geographic_unit_full',
         'ipc_fewsnet_region', 'ipc_geographic_group',
-        'year_month', 'match_level'
+        'year_month'
     ]
 
-    for chunk_num, articles_chunk in enumerate(pd.read_csv(ARTICLES_FILE, chunksize=CHUNK_SIZE)):
-        print(f"   Articles chunk {chunk_num + 1}: {len(articles_chunk):,} articles...", flush=True)
+    # Load partial aggregation from checkpoint if resuming
+    if resuming and CHECKPOINT_PARQUET.exists():
+        print(f"   [RESUME] Loading partial aggregation from {CHECKPOINT_PARQUET}", flush=True)
+        aggregated_data = [pd.read_parquet(CHECKPOINT_PARQUET)]
+        print(f"   [RESUME] Loaded {len(aggregated_data[0]):,} rows from checkpoint", flush=True)
+    else:
+        aggregated_data = []
 
-        article_ids = list(articles_chunk['GKGRECORDID'].unique())
+    def _process_one_file(df, file_label):
+        """Process one chunk/file of articles and append to aggregated_data."""
+        nonlocal aggregated_data
+        if 'GKGRECORDID' not in df.columns or len(df) == 0:
+            return
 
-        # Query SQLite for matching GKGRECORDIDs in BATCHES to avoid too many placeholders
+        # Drop match_level from raw file if present — SQLite lookup provides the authoritative one
+        if 'match_level' in df.columns:
+            df = df.drop(columns=['match_level'])
+
+        # Keep V2Themes/Themes on df so they survive into merged for theme parsing
+        article_ids = list(df['GKGRECORDID'].unique())
+
         gkg_chunks = []
         for i in range(0, len(article_ids), SQL_QUERY_BATCH_SIZE):
             batch_ids = article_ids[i:i + SQL_QUERY_BATCH_SIZE]
@@ -1016,53 +1179,107 @@ def main():
                 gkg_chunks.append(gkg_chunk)
 
         if not gkg_chunks:
-            del articles_chunk, article_ids
-            continue
+            return
 
-        gkg_lookup_chunk = pd.concat(gkg_chunks, ignore_index=True)
+        gkg_lookup = pd.concat(gkg_chunks, ignore_index=True)
         del gkg_chunks
 
-        merged = articles_chunk.merge(gkg_lookup_chunk, on='GKGRECORDID', how='inner')
-        print(f"      Matched: {len(merged):,} article-month pairs")
-
-        del articles_chunk, gkg_lookup_chunk, article_ids
+        merged = df.merge(gkg_lookup, on='GKGRECORDID', how='inner')
+        print(f"      {file_label}: {len(merged):,} article-month pairs matched", flush=True)
+        del gkg_lookup
 
         if len(merged) == 0:
-            continue
+            return
 
-        # Aggregate
-        agg_dict = {col: 'sum' for col in numeric_cols if col in merged.columns}
+        # Apply theme categorization on the small matched set only (fast)
+        merged = _add_theme_categories(merged)
+
+        # Build agg dict: exclude group_cols, match_level, and non-numeric cols
+        exclude = set(NON_NUMERIC_COLS) | set(group_cols) | {'match_level', 'GKGRECORDID', 'SourceCommonName'}
+        numeric_cols = [c for c in merged.columns if c not in exclude]
+        agg_dict = {col: 'sum' for col in numeric_cols}
+        # Ensure theme category cols are summed
+        for cat_col in THEME_CATEGORY_COLS:
+            if cat_col in merged.columns:
+                agg_dict[cat_col] = 'sum'
         agg_dict['GKGRECORDID'] = 'count'
         if 'SourceCommonName' in merged.columns:
             agg_dict['SourceCommonName'] = 'nunique'
+        if 'match_level' in merged.columns:
+            agg_dict['match_level'] = 'first'
 
         agg_result = merged.groupby(group_cols).agg(agg_dict).reset_index()
         agg_result = agg_result.rename(columns={
             'GKGRECORDID': 'article_count',
             'SourceCommonName': 'unique_sources'
         })
-
+        del merged
         aggregated_data.append(agg_result)
-
-        del merged, agg_result
         gc.collect()
 
-        # PERIODIC CONSOLIDATION: Prevent memory accumulation (memory-safe for 8GB)
+        # Periodic consolidation to cap memory
         if len(aggregated_data) >= CONSOLIDATE_EVERY:
             print(f"      Consolidating {len(aggregated_data)} partial aggregations...", flush=True)
             combined = pd.concat(aggregated_data, ignore_index=True)
-
-            # Re-aggregate to reduce memory footprint
-            numeric_to_sum = [c for c in combined.columns if c not in group_cols]
-            agg_dict_consol = {col: 'sum' for col in numeric_to_sum if col in combined.columns}
-            if 'match_level' in combined.columns and 'match_level' not in group_cols:
+            exclude_consol = set(group_cols) | {'match_level', 'GKGRECORDID', 'SourceCommonName'}
+            numeric_to_sum = [c for c in combined.columns if c not in exclude_consol]
+            agg_dict_consol = {col: 'sum' for col in numeric_to_sum}
+            if 'match_level' in combined.columns:
                 agg_dict_consol['match_level'] = 'first'
-
             consolidated = combined.groupby(group_cols).agg(agg_dict_consol).reset_index()
             aggregated_data = [consolidated]
             del combined, consolidated
             gc.collect()
             print(f"      Consolidated to {len(aggregated_data[0]):,} aggregated rows", flush=True)
+
+    def _save_progress_checkpoint(file_name):
+        """Persist processed-file list + partial aggregation so we can resume."""
+        checkpoint_data = {
+            'sqlite_file': str(sqlite_file),
+            'dedup_done': True,
+            'processed_files': list(processed_files),
+        }
+        CHECKPOINT_FILE.write_text(json.dumps(checkpoint_data))
+        if aggregated_data:
+            combined = pd.concat(aggregated_data, ignore_index=True)
+            combined.to_parquet(CHECKPOINT_PARQUET, index=False)
+            del combined
+
+    use_daily_parquets = not ARTICLES_FILE.exists() and GDELT_DAILY_DIR.exists()
+
+    if use_daily_parquets:
+        daily_files = sorted(GDELT_DAILY_DIR.glob('gkg_*.parquet'))
+        total_files = len(daily_files)
+        skipped = sum(1 for f in daily_files if f.name in processed_files)
+        print(f"   CSV not found — using {total_files} daily GKG parquets from OneDrive", flush=True)
+        if skipped:
+            print(f"   [RESUME] Skipping {skipped} already-processed files", flush=True)
+
+        for i, f in enumerate(daily_files, 1):
+            if f.name in processed_files:
+                continue
+            try:
+                df = pd.read_parquet(f)
+                print(f"   [{i}/{total_files}] {f.name} ({len(df):,} rows)", flush=True)
+                _process_one_file(df, f.name)
+                del df
+                processed_files.add(f.name)
+                # Save checkpoint every 100 files
+                if i % 100 == 0:
+                    _save_progress_checkpoint(f.name)
+            except Exception as e:
+                print(f"   WARNING: Could not read {f.name}: {e}", flush=True)
+    else:
+        for chunk_num, articles_chunk in enumerate(pd.read_csv(ARTICLES_FILE, chunksize=CHUNK_SIZE)):
+            label = f"chunk {chunk_num + 1}"
+            if label in processed_files:
+                continue
+            print(f"   Articles {label}: {len(articles_chunk):,} articles...", flush=True)
+            _process_one_file(articles_chunk, label)
+            del articles_chunk
+            processed_files.add(label)
+            if chunk_num % 50 == 0:
+                _save_progress_checkpoint(label)
 
     # Combine and final aggregation
     print("\n6. Combining and final aggregation...")
@@ -1111,24 +1328,28 @@ def main():
     print("District Alignment Check")
     print("=" * 80)
 
-    stage1_articles = pd.read_parquet(DISTRICT_DATA_DIR / 'articles_aggregated.parquet')
-    stage1_districts = set(stage1_articles['ipc_geographic_unit_full'].unique())
-    stage2_districts = set(final_agg['ipc_geographic_unit_full'].unique())
+    stage1_art_path = Path('C:/GDELT_Africa_Extract/data/district_level/stage1/articles_aggregated.parquet')
+    if not stage1_art_path.exists():
+        print("  Skipping alignment check: Stage 1 articles_aggregated.parquet not found")
+    else:
+        stage1_articles = pd.read_parquet(stage1_art_path)
+        stage1_districts = set(stage1_articles['ipc_geographic_unit_full'].unique())
+        stage2_districts = set(final_agg['ipc_geographic_unit_full'].unique())
 
-    overlap = stage1_districts & stage2_districts
-    only_stage1 = stage1_districts - stage2_districts
-    only_stage2 = stage2_districts - stage1_districts
+        overlap = stage1_districts & stage2_districts
+        only_stage1 = stage1_districts - stage2_districts
+        only_stage2 = stage2_districts - stage1_districts
 
-    print(f"\nStage 1 districts: {len(stage1_districts):,}")
-    print(f"Stage 2 districts: {len(stage2_districts):,}")
-    print(f"Overlap: {len(overlap):,} ({100*len(overlap)/len(stage1_districts):.1f}% of Stage 1)")
-    print(f"Only in Stage 1: {len(only_stage1):,}")
-    print(f"Only in Stage 2: {len(only_stage2):,}")
+        print(f"\nStage 1 districts: {len(stage1_districts):,}")
+        print(f"Stage 2 districts: {len(stage2_districts):,}")
+        print(f"Overlap: {len(overlap):,} ({100*len(overlap)/len(stage1_districts):.1f}% of Stage 1)")
+        print(f"Only in Stage 1: {len(only_stage1):,}")
+        print(f"Only in Stage 2: {len(only_stage2):,}")
 
-    if len(only_stage1) > 0:
-        print(f"\nSample districts only in Stage 1:")
-        for d in list(only_stage1)[:5]:
-            print(f"   {d}")
+        if len(only_stage1) > 0:
+            print(f"\nSample districts only in Stage 1:")
+            for d in list(only_stage1)[:5]:
+                print(f"   {d}")
 
     # Save
     print(f"\n7. Saving to {OUTPUT_PARQUET}...")
@@ -1139,12 +1360,16 @@ def main():
     final_agg.to_csv(OUTPUT_CSV, index=False)
     print("   [OK] CSV saved")
 
-    # Cleanup SQLite database
+    # Cleanup SQLite database and checkpoint files on success
     print("\n   Cleaning up temporary SQLite database...")
     conn.close()
     if sqlite_file.exists():
         sqlite_file.unlink()
         print("   Cleaned up SQLite database")
+    for f in [CHECKPOINT_FILE, CHECKPOINT_PARQUET]:
+        if f.exists():
+            f.unlink()
+    print("   Cleaned up checkpoint files")
 
     print("\n" + "=" * 80)
     print("Stage 2 Monthly Aggregation Complete")
@@ -1160,8 +1385,8 @@ if __name__ == "__main__":
     except Exception as e:
         print(f"\n\nERROR: {e}")
         print("Attempting to clean up temporary SQLite database...")
-        # Try to clean up SQLite file
-        sqlite_file = STAGE2_DATA_DIR / 'temp_gkg_district_lookup.db'
+        # Try to clean up SQLite file (stored on C:\GDELT_temp)
+        sqlite_file = Path(r'C:\GDELT_temp') / 'temp_gkg_district_lookup.db'
         if sqlite_file.exists():
             try:
                 sqlite_file.unlink()

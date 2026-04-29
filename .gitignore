@@ -23,8 +23,9 @@ DATA/raw/ipcFic_fews_2020_2024.csv
 DATA/raw/spatial_weights.parquet
 DATA/raw/african_gkg_locations_2021_2024.parquet
 
-# GADM shapefile (64 MB — copy from C:\GDELT_Africa_Extract\data\gadm\)
+# GADM shapefiles (large — copy from FINAL_PIPELINE/DATA/shapefiles/gadm/)
 DATA/gadm/
+DATA/shapefiles/
 
 # Raw GDELT daily GKG parquets (~40GB — download via data_preparation/download_gdelt_gkg_2020.py)
 DATA/gdelt_2020/
