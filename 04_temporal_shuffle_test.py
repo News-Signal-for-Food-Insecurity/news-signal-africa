@@ -90,7 +90,7 @@ class ShuffleTestConfig:
     # Rolling CV parameters (identical to 01_train_models.py)
     TRAIN_WINDOW_MONTHS  = 24
     IPC_PERIOD_MONTHS    = 4
-    MONTHLY_DATA_START   = pd.Timestamp("2021-01-01")
+    MONTHLY_DATA_START   = pd.Timestamp("2020-02-01")
 
     # Features (identical to 01_train_models.py)
     AR_FEATURES = ["ipc_lag_1", "ipc_persistence_2yr", "spatial_lag", "ipc_period"]

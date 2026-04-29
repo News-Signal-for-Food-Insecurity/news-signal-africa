@@ -58,7 +58,7 @@ class DeltaTestConfig:
     N_PERMUTATIONS      = 100
     TRAIN_WINDOW_MONTHS = 20
     IPC_PERIOD_MONTHS   = 4
-    MONTHLY_DATA_START  = pd.Timestamp("2021-01-01")
+    MONTHLY_DATA_START  = pd.Timestamp("2020-02-01")
     VALIDATION_FRACTION = 0.20
 
     AR_FEATURES = ["ipc_lag_1", "ipc_persistence_2yr", "spatial_lag", "ipc_period"]

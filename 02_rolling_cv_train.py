@@ -50,7 +50,7 @@ class Config3Yr:
 
     TRAIN_WINDOW_MONTHS  = 28   # longer window for sensitivity check
     IPC_PERIOD_MONTHS    = 4
-    MONTHLY_DATA_START   = pd.Timestamp("2021-01-01")
+    MONTHLY_DATA_START   = pd.Timestamp("2020-02-01")
 
     STRICT_DISTRICTS_PATH = DATA_DIR / "filtering" / "strict_filtered_districts.csv"
 

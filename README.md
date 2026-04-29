@@ -90,7 +90,7 @@ Nine thematic categories (conflict, displacement, economic, food\_security, gove
 - `{theme}_relative_coverage` — theme share of monthly news (controls for media volume bias)
 - `{theme}_zscore` — fold-aware z-score: recomputed within each CV fold using training-window baseline only (prevents data leakage)
 
-**Coverage threshold:** Districts with ≥ 100 mean articles/month included (319 districts). See `DATA/filtering/coverage_threshold_sensitivity.csv` for sensitivity at 50–200 thresholds.
+**Coverage threshold:** Districts with ≥ 75 mean articles/month included (387 qualifying; 353 in final dataset after IPC merge). See `DATA/filtering/coverage_threshold_sensitivity.csv` for sensitivity at 10–200 thresholds.
 
 **Africa regions (used in figures):**
 | Region | Countries |
@@ -164,15 +164,17 @@ Raw GDELT articles (47 GB) are not included. Pre-processed district-level aggreg
 
 ---
 
-## Current Results (2021–2024, ≥100 articles/month threshold)
+## Current Results (2021–2024, ≥75 articles/month threshold, 7-fold rolling CV)
 
 | Model | Mean PR-AUC | Mean ROC-AUC | Mean F1 |
 |-------|-------------|--------------|---------|
-| AR-only | 0.704 ± 0.066 | — | — |
-| Combined | 0.731 ± 0.093 | — | — |
-| Delta | +0.027 | — | — |
+| AR-only | 0.799 ± 0.085 | — | — |
+| Combined | 0.803 ± 0.075 | — | — |
+| Delta | +0.003 | — | — |
 
-Dataset: 2,771 district-period observations, 287 districts, 18 countries, 2021–2024.
+**Window sensitivity (28-month window, 5 folds):** AR 0.759 ± 0.077, Combined 0.796 ± 0.062, Delta +0.037
+
+Dataset: 3,245 district-period observations, 353 districts, 18 countries, 2021–2024.
 
 ---
 

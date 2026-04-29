@@ -49,7 +49,7 @@ BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "DATA"
 RAW_DIR  = DATA_DIR / "raw"
 
-STRICT_THRESHOLD   = 100   # mean articles/month (computed over non-zero months)
+STRICT_THRESHOLD   = 75    # mean articles/month (computed over non-zero months)
 THEMES = [
     "conflict", "displacement", "economic", "food_security",
     "governance", "health", "humanitarian", "weather", "other",
