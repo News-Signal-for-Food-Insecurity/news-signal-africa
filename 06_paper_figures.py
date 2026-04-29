@@ -55,7 +55,8 @@ RESULTS_DIR = BASE_DIR / "results" / "window_2yr"    # primary (2-year) model on
 FIGURES_DIR = BASE_DIR / "figures"
 FIGURES_DIR.mkdir(exist_ok=True)
 
-SHAPEFILE   = DATA_DIR / "shapefiles" / "gadm" / "africa_adm2_combined.gpkg"
+SHAPEFILE    = DATA_DIR / "shapefiles" / "gadm" / "africa_adm2_combined.gpkg"
+AFRICA_ADM0  = DATA_DIR / "shapefiles" / "gadm" / "africa_adm0_basemap.gpkg"
 MONTHLY_PATH = DATA_DIR / "modelling" / "monthly_gdelt_features.parquet"
 
 # ---------------------------------------------------------------------------
@@ -232,6 +233,14 @@ def figure_1() -> None:
     import warnings
     gdf = gpd.read_file(SHAPEFILE)
 
+    # Full Africa ADM0 basemap (all 54 countries) — backdrop for the map
+    if AFRICA_ADM0.exists():
+        africa_base = gpd.read_file(AFRICA_ADM0)
+    else:
+        # Fallback: dissolve the ADM2 shapefile to country level (only 23 countries)
+        africa_base = gdf.dissolve(by="country_name").reset_index()
+    print(f"  Africa basemap: {len(africa_base)} countries")
+
     ds = pd.read_parquet(DATA_DIR / "dataset.parquet")
     ds["ipc_period_start"] = pd.to_datetime(ds["ipc_period_start"])
     s1 = pd.read_parquet(DATA_DIR / "raw" / "stage1_features.parquet")
@@ -304,8 +313,9 @@ def figure_1() -> None:
     print(f"  IPC: {gdf_ipc_plot['crisis_prev_pct'].notna().sum()} / {len(study_shp)} ADM2 polygons filled")
     print(f"  News: {gdf_art_plot['total_articles'].notna().sum()} / {len(study_shp)} ADM2 polygons filled")
 
-    # ── Dissolve ADM2 to country boundaries for basemap ──────────────────
-    countries_gdf = gdf.dissolve(by="country_name").reset_index()
+    # ── Country boundaries for borders + labels ──────────────────────────
+    # Use the full Africa ADM0 basemap (already loaded above)
+    countries_gdf = africa_base.copy()
 
     # Manual label nudges for overlapping/small countries (lon_offset, lat_offset)
     LABEL_NUDGE = {
@@ -324,46 +334,51 @@ def figure_1() -> None:
         "Central African Republic":         "C.A.R.",
     }
 
+    # ADM0 name column is "COUNTRY" in the basemap file
+    _name_col = "COUNTRY" if "COUNTRY" in countries_gdf.columns else "country_name"
+
     def _add_country_labels(ax):
         """Draw country name labels at centroid positions."""
+        import warnings
         for _, row in countries_gdf.iterrows():
-            name = row["country_name"]
-            centroid = row.geometry.centroid
-            cx, cy   = centroid.x, centroid.y
-            dx, dy   = LABEL_NUDGE.get(name, (0.0, 0.0))
-            label    = LABEL_SHORT.get(name, name)
+            name = row[_name_col]
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore")
+                centroid = row.geometry.centroid
+            cx, cy = centroid.x, centroid.y
+            dx, dy = LABEL_NUDGE.get(name, (0.0, 0.0))
+            label  = LABEL_SHORT.get(name, name)
             ax.text(cx + dx, cy + dy, label,
-                    fontsize=5.5, ha="center", va="center",
-                    color="#333333", fontweight="normal",
+                    fontsize=5.2, ha="center", va="center",
+                    color="#222222", fontweight="normal",
                     fontstyle="italic",
-                    bbox=dict(boxstyle="round,pad=0.15", facecolor="white",
-                              alpha=0.55, edgecolor="none"),
-                    zorder=6, clip_on=True)
+                    bbox=dict(boxstyle="round,pad=0.12", facecolor="white",
+                              alpha=0.60, edgecolor="none"),
+                    zorder=7, clip_on=True)
 
     # ── Cartographic helper ──────────────────────────────────────────────
     def _draw_map(ax, gdf_all, gdf_data, col, cmap_listed, norm,
                   legend_patches, panel_label):
         """Plot one choropleth panel on ax.
 
-        gdf_all  — full ADM2 shapefile (continent backdrop)
-        gdf_data — study-country ADM2 polygons with col values (all filled
-                   via nearest-neighbour; NaNs shown as no-data grey)
+        gdf_all  — full ADM2 shapefile (used for study-region context only)
+        gdf_data — study-country ADM2 polygons, all filled via nearest-neighbour
+        africa_base — full 54-country Africa ADM0 for continent backdrop
         """
-        # Layer 1 — full continent backdrop (non-study countries, very light)
-        out_of_study = gdf_all[~gdf_all["GID_2"].isin(gdf_data["GID_2"])]
-        out_of_study.plot(ax=ax, color="#F0F0F0", linewidth=0.0,
-                          edgecolor="none", zorder=1)
-        # Layer 2 — study-country ADM2 with choropleth colour
+        # Layer 1 — full Africa ADM0 backdrop (all 54 countries, pale grey)
+        africa_base.plot(ax=ax, color="#E8E8E8", linewidth=0.3,
+                         edgecolor="#AAAAAA", zorder=1)
+        # Layer 2 — study ADM2 polygons with choropleth fill
         gdf_has = gdf_data[gdf_data[col].notna()].copy()
         gdf_nos = gdf_data[gdf_data[col].isna()].copy()
         if len(gdf_nos):
-            gdf_nos.plot(ax=ax, color="#D8D8D8", linewidth=0.15,
-                         edgecolor="#CCCCCC", zorder=2)
+            gdf_nos.plot(ax=ax, color="#CCCCCC", linewidth=0.1,
+                         edgecolor="#BBBBBB", zorder=2)
         gdf_has.plot(ax=ax, column=col, cmap=cmap_listed, norm=norm,
-                     linewidth=0.15, edgecolor="white", zorder=3)
-        # Layer 3 — country borders on top
-        countries_gdf.plot(ax=ax, color="none", linewidth=0.9,
-                           edgecolor="#333333", zorder=4)
+                     linewidth=0.1, edgecolor="white", zorder=3)
+        # Layer 3 — country borders (full Africa, drawn over choropleth)
+        africa_base.plot(ax=ax, color="none", linewidth=0.7,
+                         edgecolor="#555555", zorder=4)
 
         ax.set_axis_off()
         ax.set_xlim(-20, 52)
