@@ -918,6 +918,209 @@ def figure_7() -> None:
 
 
 # ---------------------------------------------------------------------------
+# FIGURE 6c — All-country prevalence + PR-AUC companion
+# ---------------------------------------------------------------------------
+
+def figure_6c() -> None:
+    """Two-panel figure showing all 18 countries.
+
+    Left panel  — horizontal stacked bar: crisis vs. non-crisis observations
+                  (test set) for every country, ordered by region then crisis rate.
+                  Countries where PR-AUC cannot be computed (all-crisis or
+                  all-non-crisis) are shaded grey and annotated.
+
+    Right panel — PR-AUC dot+arrow (AR-Only → AR+News) for countries that
+                  have at least 2 positive AND 2 negative observations.
+                  Countries excluded from the right panel are labelled
+                  "insufficient class mix" in a footnote.
+    """
+    print("\n[Fig 6c] All-country prevalence + PR-AUC companion...")
+    from sklearn.metrics import average_precision_score
+
+    preds = pd.read_csv(RESULTS_DIR / "fold_predictions.csv")
+    preds["ipc_country"] = preds["district_id"].apply(_country_from_district_id)
+
+    # Build per-country stats (all 18)
+    all_rows = []
+    for country, grp in preds.groupby("ipc_country"):
+        y      = grp["target_crisis_binary"].values.astype(int)
+        n_pos  = int(y.sum())
+        n_neg  = int((1 - y).sum())
+        n_tot  = len(grp)
+        prev   = n_pos / n_tot if n_tot > 0 else 0.0
+        region = COUNTRY_REGION.get(country, "Other")
+
+        can_score = (n_pos >= 2 and n_neg >= 2)
+        pr_ar     = np.nan
+        pr_full   = np.nan
+        if can_score:
+            try:
+                pr_ar   = average_precision_score(y, grp["prob_ar"].values)
+                pr_full = average_precision_score(y, grp["prob_combined"].values)
+            except Exception:
+                can_score = False
+
+        all_rows.append({
+            "country":    country,
+            "region":     region,
+            "n_pos":      n_pos,
+            "n_neg":      n_neg,
+            "n_tot":      n_tot,
+            "prevalence": prev,
+            "can_score":  can_score,
+            "prauc_ar":   pr_ar,
+            "prauc_full": pr_full,
+        })
+
+    adf = pd.DataFrame(all_rows)
+
+    # Sort: region order, then descending crisis prevalence within region
+    region_rank = {r: i for i, r in enumerate(REGION_ORDER)}
+    adf["region_rank"] = adf["region"].map(region_rank).fillna(99)
+    adf = adf.sort_values(
+        ["region_rank", "prevalence"], ascending=[True, False]
+    ).reset_index(drop=True)
+    n_all = len(adf)
+
+    # Shorten DRC name for display
+    adf["country_label"] = adf["country"].str.replace(
+        "The Democratic Republic of the", "DR Congo", regex=False
+    )
+
+    # ── Layout: two panels side-by-side ──────────────────────────────────
+    fig, (ax_prev, ax_prauc) = plt.subplots(
+        1, 2, figsize=(13, max(7, n_all * 0.42)),
+        gridspec_kw={"width_ratios": [1, 1.2]}
+    )
+
+    CRISIS_COL    = "#C0392B"
+    NONCRISIS_COL = "#2980B9"
+    NODATA_COL    = "#CCCCCC"
+
+    # ── Left panel: stacked prevalence bars ──────────────────────────────
+    ax_prev.grid(True, axis="x", alpha=0.18, linestyle="--", linewidth=0.5)
+    for i, row in enumerate(adf.itertuples()):
+        total = row.n_tot
+        if total == 0:
+            ax_prev.barh(i, 1.0, color=NODATA_COL, height=0.65)
+            continue
+        frac_pos = row.n_pos / total
+        frac_neg = row.n_neg / total
+        ax_prev.barh(i, frac_pos, color=CRISIS_COL,    height=0.65, zorder=3)
+        ax_prev.barh(i, frac_neg, left=frac_pos,
+                     color=NONCRISIS_COL, height=0.65, zorder=3)
+        # prevalence % label inside or beside the crisis bar
+        pct_str = f"{frac_pos*100:.0f}%"
+        if frac_pos >= 0.12:
+            ax_prev.text(frac_pos / 2, i, pct_str,
+                         ha="center", va="center", fontsize=7,
+                         color="white", fontweight="bold")
+        else:
+            ax_prev.text(frac_pos + 0.02, i, pct_str,
+                         ha="left", va="center", fontsize=7,
+                         color=CRISIS_COL, fontweight="bold")
+        # n_tot on right margin
+        ax_prev.text(1.02, i, f"n={total}",
+                     transform=ax_prev.get_yaxis_transform(),
+                     va="center", ha="left", fontsize=7, color="#555555")
+
+    ax_prev.set_yticks(range(n_all))
+    ax_prev.set_yticklabels(adf["country_label"].tolist(), fontsize=9)
+    ax_prev.set_xlim(0, 1)
+    ax_prev.set_xlabel("Fraction of test-set observations", labelpad=6)
+    ax_prev.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
+
+    # Region separator lines on left panel
+    prev_region = None
+    for i, row in enumerate(adf.itertuples()):
+        if row.region != prev_region and i > 0:
+            ax_prev.axhline(i - 0.5, color="#555555", lw=0.7, ls="--", alpha=0.45)
+        prev_region = row.region
+
+    prev_legend = [
+        mpatches.Patch(color=CRISIS_COL,    label="Crisis (IPC ≥ 3)"),
+        mpatches.Patch(color=NONCRISIS_COL, label="Non-crisis"),
+    ]
+    ax_prev.legend(handles=prev_legend, fontsize=8, loc="lower right",
+                   framealpha=0.95, edgecolor="#CCCCCC")
+    _despine(ax_prev)
+
+    # ── Right panel: PR-AUC dot+arrow ────────────────────────────────────
+    ax_prauc.grid(True, axis="x", alpha=0.18, linestyle="--", linewidth=0.5)
+    ax_prauc.set_yticks(range(n_all))
+    ax_prauc.set_yticklabels([""] * n_all)  # labels on left panel only
+
+    excluded = []
+    for i, row in enumerate(adf.itertuples()):
+        if not row.can_score:
+            reason = ("all crisis" if row.n_neg < 2
+                      else "no crisis" if row.n_pos < 2
+                      else "too few obs")
+            excluded.append(row.country_label)
+            ax_prauc.text(0.5, i, f"—  {reason}",
+                          ha="center", va="center", fontsize=8,
+                          color="#999999", style="italic")
+            continue
+
+        col = REGION_COLOURS.get(row.region, "#888888")
+        # Arrow AR-Only → AR+News
+        ax_prauc.annotate("",
+                          xy    =(row.prauc_full, i),
+                          xytext=(row.prauc_ar,   i),
+                          arrowprops=dict(arrowstyle="-|>", color=col,
+                                          lw=1.8, mutation_scale=10))
+        ax_prauc.plot(row.prauc_ar,   i, "o",
+                      color=MODEL_COLOURS["AR-Only"], ms=8, zorder=5,
+                      markeredgewidth=0.5, markeredgecolor="white")
+        ax_prauc.plot(row.prauc_full, i, "s",
+                      color=MODEL_COLOURS["AR+News"], ms=8, zorder=5,
+                      markeredgewidth=0.5, markeredgecolor="white")
+        delta = row.prauc_full - row.prauc_ar
+        sign  = "+" if delta >= 0 else ""
+        ax_prauc.text(1.02, i, f"{sign}{delta:.2f}",
+                      transform=ax_prauc.get_yaxis_transform(),
+                      va="center", ha="left", fontsize=7.5,
+                      color=("#27AE60" if delta >= 0 else "#E74C3C"))
+
+    # Region separator lines on right panel
+    prev_region = None
+    for i, row in enumerate(adf.itertuples()):
+        if row.region != prev_region and i > 0:
+            ax_prauc.axhline(i - 0.5, color="#555555", lw=0.7, ls="--", alpha=0.45)
+        prev_region = row.region
+
+    ax_prauc.set_xlim(0, 1)
+    ax_prauc.set_xlabel("PR-AUC", labelpad=6)
+    ax_prauc.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
+
+    # Region colour legend + model legend
+    legend_elems = [
+        Line2D([0],[0], marker="o", color="w",
+               markerfacecolor=MODEL_COLOURS["AR-Only"], ms=8, label="AR-Only"),
+        Line2D([0],[0], marker="s", color="w",
+               markerfacecolor=MODEL_COLOURS["AR+News"], ms=8, label="AR+News"),
+    ]
+    for r in REGION_ORDER:
+        if r in adf["region"].values:
+            legend_elems.append(
+                mpatches.Patch(color=REGION_COLOURS[r], label=r, alpha=0.85))
+    ax_prauc.legend(handles=legend_elems, fontsize=8, loc="lower right",
+                    title="Model / Region", title_fontsize=8,
+                    framealpha=0.95, edgecolor="#CCCCCC")
+
+    # Right-margin header for delta column
+    ax_prauc.text(1.02, n_all - 0.2, "ΔPR-AUC",
+                  transform=ax_prauc.get_yaxis_transform(),
+                  va="bottom", ha="left", fontsize=7.5,
+                  color="#333333", fontweight="bold")
+
+    _despine(ax_prauc)
+
+    fig.tight_layout(pad=0.5, w_pad=0.8)
+    save_pdf(fig, "fig6c_all_countries_prevalence_prauc")
+
+
+# ---------------------------------------------------------------------------
 # MAIN
 # ---------------------------------------------------------------------------
 
@@ -932,6 +1135,7 @@ def main() -> None:
     figure_4()   # regime analysis
     figure_5()   # temporal line plots
     figure_6()   # country / region performance
+    figure_6c()  # all-country prevalence + PR-AUC companion
     figure_7()   # district-level correlates
 
     print(f"\nAll figures saved to: {FIGURES_DIR}")
