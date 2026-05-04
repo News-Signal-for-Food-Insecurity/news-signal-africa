@@ -621,93 +621,121 @@ def figure_2() -> None:
 # FIGURE 3 — Null distribution histograms
 # ---------------------------------------------------------------------------
 
+def _draw_null_panel(ax, null_values, real_ar, real_full, axis_name):
+    """
+    Sample-style null distribution panel:
+      - Light grey background panel framing the histogram
+      - Light green histogram bars
+      - Dark green KDE curve overlay
+      - Three vertical dashed lines: Median NULL, AR only, AR + News
+      - 'Δ = ...' horizontal annotation between AR-only and AR+News
+      - Italic 'frequency' y-axis label, axis_name (e.g. PR-AUC) on the right
+    """
+    median_null = float(np.median(null_values))
+    delta_val   = real_full - real_ar
+
+    # X-axis range: tight around all three markers + null spread
+    x_lo = min(null_values.min(), real_ar, real_full) - 0.005
+    x_hi = max(null_values.max(), real_ar, real_full) + 0.005
+
+    # Histogram — light green bars
+    n_bins = _sturges_bins(len(null_values))
+    bins   = np.linspace(x_lo, x_hi, n_bins + 1)
+    ax.hist(null_values, bins=bins, density=True,
+            color="#B7DDB1", edgecolor="white", lw=0.6, zorder=2)
+
+    # KDE curve overlay — dark green
+    try:
+        from scipy.stats import gaussian_kde
+        kde = gaussian_kde(null_values)
+        xs = np.linspace(x_lo, x_hi, 400)
+        ax.plot(xs, kde(xs), color="#3D8B3D", lw=2.0, zorder=3)
+    except Exception:
+        pass  # if scipy not available, histogram alone is enough
+
+    # Light grey background panel framing the distribution region
+    y_top = ax.get_ylim()[1]
+    ax.add_patch(plt.Rectangle(
+        (x_lo, 0), x_hi - x_lo, y_top,
+        facecolor="#EDEDED", edgecolor="none", alpha=0.45, zorder=1,
+    ))
+
+    # Three dashed verticals
+    for x in (median_null, real_ar, real_full):
+        ax.axvline(x, color="#444444", lw=0.9, ls=(0, (3, 3)), zorder=4)
+
+    # Δ annotation between AR-only and AR+News (horizontal arrow with label above)
+    delta_y = y_top * 0.12
+    ax.annotate(
+        "", xy=(real_full, delta_y), xytext=(real_ar, delta_y),
+        arrowprops=dict(arrowstyle="<->", color="#444444", lw=0.9), zorder=5,
+    )
+    ax.text((real_ar + real_full) / 2, delta_y + y_top * 0.02,
+            f"Δ = {delta_val:.3f}", ha="center", va="bottom",
+            fontsize=9, color="#222222", zorder=6)
+
+    # Spines: keep left + bottom only, light
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    ax.spines["left"].set_color("#888888")
+    ax.spines["bottom"].set_color("#888888")
+    ax.tick_params(axis="x", which="both", length=0, labelbottom=False)
+    ax.tick_params(axis="y", which="both", length=0, labelleft=False)
+
+    # Three labels under the x-axis at each dashed line
+    label_y = -y_top * 0.04
+    ax.text(median_null, label_y, "Median\nNULL", ha="center", va="top",
+            fontsize=8.5, color="#222222")
+    ax.text(real_ar, label_y, "AR only", ha="center", va="top",
+            fontsize=8.5, color="#222222")
+    ax.text(real_full, label_y, "AR + News", ha="center", va="top",
+            fontsize=8.5, color="#222222")
+
+    # Axis name on the far right
+    ax.text(1.02, -0.04, axis_name, ha="left", va="top",
+            transform=ax.transAxes, fontsize=10, color="#222222")
+
+    # Italic 'frequency' label at top-left
+    ax.text(-0.02, 1.05, "frequency", ha="left", va="bottom",
+            transform=ax.transAxes, fontsize=10, style="italic", color="#222222")
+
+    ax.set_xlim(x_lo, x_hi)
+    ax.set_ylim(0, y_top)
+
+
 def figure_3() -> None:
     print("\n[Fig 3] Null distribution histograms...")
     null_path = BASE_DIR / "results" / "shuffle_test" / "null_distribution.csv"
-    cfg_path  = BASE_DIR / "results" / "shuffle_test" / "config.json"
     if not null_path.exists():
         print("  shuffle_test/null_distribution.csv not found — skipping Fig 3.")
         return
 
     null_df      = pd.read_csv(null_path)
     fold_results = pd.read_csv(RESULTS_DIR / "fold_results.csv")
-    n_perms      = len(null_df)
-
-    # Observed means from the primary (7-fold) model
-    real_ar   = fold_results["ar_pr_auc"].mean()
-    real_full = fold_results["full_pr_auc"].mean()
-
-    # Null distribution: mean PR-AUC of combined model with shuffled news
-    # Column renamed from mean_pr_auc to mean_full_pr_auc in the updated shuffle test
-    pr_col  = "mean_full_pr_auc" if "mean_full_pr_auc" in null_df.columns else "mean_pr_auc"
-    null_pr = null_df[pr_col].values
-    null_mean = null_pr.mean()
-    null_std  = null_pr.std()
-
-    # Effect size (z-score)
-    z_ar   = (real_ar   - null_mean) / null_std if null_std > 0 else np.nan
-    z_full = (real_full - null_mean) / null_std if null_std > 0 else np.nan
-
-    p_ar   = float((null_pr >= real_ar).mean())
-    p_full = float((null_pr >= real_full).mean())
-    p_str_full = "p < 0.01" if p_full < 0.01 else f"p = {p_full:.3f}"
-    p_str_ar   = "p < 0.01" if p_ar   < 0.01 else f"p = {p_ar:.3f}"
-
-    n_bins = _sturges_bins(n_perms)
-    x_lo = min(null_pr.min(), real_ar, real_full) - 0.02
-    x_hi = max(null_pr.max(), real_ar, real_full) + 0.02
-    bins  = np.linspace(x_lo, x_hi, n_bins + 1)
 
     # ── Fig 3a — PR-AUC ───────────────────────────────────────────────────
+    pr_col  = "mean_full_pr_auc" if "mean_full_pr_auc" in null_df.columns else "mean_pr_auc"
+    null_pr = null_df[pr_col].values
+    real_ar_pr   = fold_results["ar_pr_auc"].mean()
+    real_full_pr = fold_results["full_pr_auc"].mean()
+
     fig, ax = plt.subplots(figsize=(7, 4.5))
-    ax.hist(null_pr, bins=bins, density=True, alpha=0.60,
-            color="#AAAACC", edgecolor="white", lw=0.5)
-    ax.axvline(real_ar,   color=MODEL_COLOURS["AR-Only"], lw=2.2, ls="--")
-    ax.axvline(real_full, color=MODEL_COLOURS["AR+News"],  lw=2.2, ls="-")
-
-    # Null mean ± 1 SD band
-    ax.axvspan(null_mean - null_std, null_mean + null_std,
-               alpha=0.12, color="#666688")
-    ax.axvline(null_mean, color="#666688", lw=1.0, ls=":")
-
-    # Effect size annotation
-    eff_txt = (f"z(AR-Only) = {z_ar:.1f}\n"
-               f"z(AR+News) = {z_full:.1f}\n"
-               f"Null: {null_mean:.3f} ± {null_std:.3f}")
-    _annotation_box(ax, eff_txt, x=0.02, y=0.97, ha="left", va="top", fs=8)
-
-    ax.set_xlabel("Mean PR-AUC (across folds)", labelpad=6)
-    ax.set_ylabel("Density", labelpad=6)
-    _despine(ax)
-    fig.tight_layout(pad=0.5)
+    _draw_null_panel(ax, null_pr, real_ar_pr, real_full_pr, axis_name="PR-AUC")
+    fig.tight_layout(pad=0.8)
     save_pdf(fig, "fig3a_null_prauc")
 
-    # ── Fig 3b — ROC-AUC (only if real null data exists) ─────────────────
-    roc_cols = [c for c in null_df.columns if "roc" in c.lower()]
-    if not roc_cols:
+    # ── Fig 3b — ROC-AUC (only if logged) ────────────────────────────────
+    if "mean_full_roc_auc" not in null_df.columns:
         print("  No ROC-AUC null distribution available — omitting fig3b.")
         return
 
-    null_roc = null_df[roc_cols[0]].values
+    null_roc      = null_df["mean_full_roc_auc"].values
     real_ar_roc   = fold_results["ar_roc_auc"].mean()
     real_full_roc = fold_results["full_roc_auc"].mean()
-    p_roc = float((null_roc >= real_full_roc).mean())
-    p_roc_str = "p < 0.01" if p_roc < 0.01 else f"p = {p_roc:.3f}"
 
-    bins_r = np.linspace(
-        min(null_roc.min(), real_ar_roc, real_full_roc) - 0.01,
-        max(null_roc.max(), real_ar_roc, real_full_roc) + 0.01,
-        _sturges_bins(n_perms) + 1
-    )
     fig, ax = plt.subplots(figsize=(7, 4.5))
-    ax.hist(null_roc, bins=bins_r, density=True, alpha=0.60,
-            color="#AAAACC", edgecolor="white", lw=0.5)
-    ax.axvline(real_ar_roc,   color=MODEL_COLOURS["AR-Only"], lw=2.2, ls="--")
-    ax.axvline(real_full_roc, color=MODEL_COLOURS["AR+News"],  lw=2.2, ls="-")
-    ax.set_xlabel("Mean ROC-AUC (across folds)", labelpad=6)
-    ax.set_ylabel("Density", labelpad=6)
-    _despine(ax)
-    fig.tight_layout(pad=0.5)
+    _draw_null_panel(ax, null_roc, real_ar_roc, real_full_roc, axis_name="ROC-AUC")
+    fig.tight_layout(pad=0.8)
     save_pdf(fig, "fig3b_null_rocauc")
 
 

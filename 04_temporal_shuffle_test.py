@@ -72,7 +72,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from catboost import CatBoostClassifier
-from sklearn.metrics import average_precision_score
+from sklearn.metrics import average_precision_score, roc_auc_score
 
 warnings.filterwarnings("ignore")
 
@@ -309,10 +309,10 @@ def run_fold_shuffled(
          (AR features are NOT shuffled, but trained under identical protocol
          to the real AR model — gives a same-protocol AR null reference)
       5. Train Combined with CATBOOST_PARAMS_FULL + early stopping + use_best_model
-      6. Return (ar_pr_auc, full_pr_auc)
+      6. Return (ar_pr_auc, full_pr_auc, ar_roc_auc, full_roc_auc)
 
     Both models train under IDENTICAL protocol to 01_train_models.py.
-    The null PR-AUC is therefore directly comparable to the real PR-AUC.
+    The null PR-AUC and ROC-AUC are therefore directly comparable to the real values.
     """
     df_train = df.loc[fold_info["train_idx"]].copy()
     df_test  = df.loc[fold_info["test_idx"]].copy()
@@ -321,11 +321,11 @@ def run_fold_shuffled(
     df_test  = df_test[df_test["district_id"].isin(strict_districts)].copy()
 
     if len(df_train) == 0 or len(df_test) == 0:
-        return np.nan, np.nan
+        return np.nan, np.nan, np.nan, np.nan
 
     y_test = df_test[cfg.TARGET].values
     if len(np.unique(y_test)) < 2:
-        return np.nan, np.nan
+        return np.nan, np.nan, np.nan, np.nan
 
     # 1. Fold-aware z-score recomputation (identical to real model)
     df_train, df_test = compute_fold_news_features(
@@ -373,8 +373,9 @@ def run_fold_shuffled(
         eval_set=(prep_X(df_val, cfg.AR_FEATURES), y_val),
         use_best_model=True,
     )
-    prob_ar  = model_ar.predict_proba(prep_X(df_test, cfg.AR_FEATURES))[:, 1]
-    prauc_ar = float(average_precision_score(y_test, prob_ar))
+    prob_ar    = model_ar.predict_proba(prep_X(df_test, cfg.AR_FEATURES))[:, 1]
+    prauc_ar   = float(average_precision_score(y_test, prob_ar))
+    rocauc_ar  = float(roc_auc_score(y_test, prob_ar))
 
     # 5. Combined model — identical protocol to real model, on AR + shuffled news
     cat_idx_full = [cfg.COMBINED_FEATURES.index("ipc_period"),
@@ -385,10 +386,11 @@ def run_fold_shuffled(
         eval_set=(prep_X(df_val, cfg.COMBINED_FEATURES), y_val),
         use_best_model=True,
     )
-    prob_full  = model_full.predict_proba(prep_X(df_test, cfg.COMBINED_FEATURES))[:, 1]
-    prauc_full = float(average_precision_score(y_test, prob_full))
+    prob_full   = model_full.predict_proba(prep_X(df_test, cfg.COMBINED_FEATURES))[:, 1]
+    prauc_full  = float(average_precision_score(y_test, prob_full))
+    rocauc_full = float(roc_auc_score(y_test, prob_full))
 
-    return prauc_ar, prauc_full
+    return prauc_ar, prauc_full, rocauc_ar, rocauc_full
 
 
 # ============================================================================
@@ -416,18 +418,24 @@ def main():
     df = df[df["district_id"].isin(strict_districts)].copy()
     print(f"  Dataset: {len(df):,} rows, {df['district_id'].nunique()} districts")
 
-    # Real model reference (both AR and Combined to compute observed delta)
-    real_mean_pr_auc = None
-    real_mean_ar_auc = None
-    real_mean_delta  = None
+    # Real model reference (both AR and Combined, PR-AUC and ROC-AUC)
+    real_mean_pr_auc      = None
+    real_mean_ar_auc      = None
+    real_mean_delta       = None
+    real_mean_roc_full    = None
+    real_mean_roc_ar      = None
+    real_mean_roc_delta   = None
     if cfg.REAL_RESULTS_FILE.exists():
         real_df = pd.read_csv(cfg.REAL_RESULTS_FILE)
-        real_mean_pr_auc = real_df["full_pr_auc"].mean()
-        real_mean_ar_auc = real_df["ar_pr_auc"].mean()
-        real_mean_delta  = real_mean_pr_auc - real_mean_ar_auc
-        print(f"  Real AR-only mean PR-AUC      : {real_mean_ar_auc:.4f}")
-        print(f"  Real combined model mean PR-AUC: {real_mean_pr_auc:.4f}")
-        print(f"  Real observed delta            : {real_mean_delta:+.4f}")
+        real_mean_pr_auc    = real_df["full_pr_auc"].mean()
+        real_mean_ar_auc    = real_df["ar_pr_auc"].mean()
+        real_mean_delta     = real_mean_pr_auc - real_mean_ar_auc
+        real_mean_roc_full  = real_df["full_roc_auc"].mean()
+        real_mean_roc_ar    = real_df["ar_roc_auc"].mean()
+        real_mean_roc_delta = real_mean_roc_full - real_mean_roc_ar
+        print(f"  Real AR-only  mean PR-AUC : {real_mean_ar_auc:.4f}  ROC-AUC: {real_mean_roc_ar:.4f}")
+        print(f"  Real combined mean PR-AUC : {real_mean_pr_auc:.4f}  ROC-AUC: {real_mean_roc_full:.4f}")
+        print(f"  Real observed delta PR-AUC: {real_mean_delta:+.4f}  delta ROC-AUC: {real_mean_roc_delta:+.4f}")
 
     # Generate folds
     folds = generate_rolling_folds(df, cfg)
@@ -447,6 +455,8 @@ def main():
         "catboost_params_full": cfg.CATBOOST_PARAMS_FULL,
         "real_mean_ar_pr_auc": real_mean_ar_auc,
         "real_mean_pr_auc": real_mean_pr_auc,
+        "real_mean_ar_roc_auc": real_mean_roc_ar,
+        "real_mean_full_roc_auc": real_mean_roc_full,
     }
     with open(cfg.RESULTS_DIR / "config.json", "w") as f:
         json.dump(run_config, f, indent=2)
@@ -462,8 +472,10 @@ def main():
         all_rows = existing.to_dict("records")
         print(f"  Resuming: {len(completed_perms)} permutations already done.")
 
-    fold_ar_col_names   = [f"fold_{i+1}_ar_pr_auc"   for i in range(n_folds)]
-    fold_full_col_names = [f"fold_{i+1}_full_pr_auc" for i in range(n_folds)]
+    fold_ar_col_names       = [f"fold_{i+1}_ar_pr_auc"    for i in range(n_folds)]
+    fold_full_col_names     = [f"fold_{i+1}_full_pr_auc"  for i in range(n_folds)]
+    fold_ar_roc_col_names   = [f"fold_{i+1}_ar_roc_auc"   for i in range(n_folds)]
+    fold_full_roc_col_names = [f"fold_{i+1}_full_roc_auc" for i in range(n_folds)]
 
     print(f"\nRunning {cfg.N_PERMUTATIONS} permutations...\n")
 
@@ -473,77 +485,118 @@ def main():
 
         rng = np.random.default_rng(seed=perm_id)
 
-        fold_ar_aucs   = []
-        fold_full_aucs = []
+        fold_ar_aucs       = []
+        fold_full_aucs     = []
+        fold_ar_roc_aucs   = []
+        fold_full_roc_aucs = []
         for fold_info in folds:
-            prauc_ar, prauc_full = run_fold_shuffled(
+            prauc_ar, prauc_full, rocauc_ar, rocauc_full = run_fold_shuffled(
                 fold_info, df, monthly_gdelt, strict_districts, rng, cfg
             )
             fold_ar_aucs.append(prauc_ar)
             fold_full_aucs.append(prauc_full)
+            fold_ar_roc_aucs.append(rocauc_ar)
+            fold_full_roc_aucs.append(rocauc_full)
 
-        mean_ar   = float(np.nanmean(fold_ar_aucs))
-        mean_full = float(np.nanmean(fold_full_aucs))
-        mean_delta = mean_full - mean_ar
+        mean_ar       = float(np.nanmean(fold_ar_aucs))
+        mean_full     = float(np.nanmean(fold_full_aucs))
+        mean_delta    = mean_full - mean_ar
+        mean_ar_roc   = float(np.nanmean(fold_ar_roc_aucs))
+        mean_full_roc = float(np.nanmean(fold_full_roc_aucs))
+        mean_roc_delta = mean_full_roc - mean_ar_roc
 
-        row = {"permutation_id": perm_id, "mean_ar_pr_auc": mean_ar,
-               "mean_full_pr_auc": mean_full, "mean_delta": mean_delta}
+        row = {"permutation_id": perm_id,
+               "mean_ar_pr_auc": mean_ar,    "mean_full_pr_auc": mean_full,    "mean_delta": mean_delta,
+               "mean_ar_roc_auc": mean_ar_roc, "mean_full_roc_auc": mean_full_roc, "mean_roc_delta": mean_roc_delta}
         for j, val in enumerate(fold_ar_aucs):
             row[fold_ar_col_names[j]] = val
         for j, val in enumerate(fold_full_aucs):
             row[fold_full_col_names[j]] = val
+        for j, val in enumerate(fold_ar_roc_aucs):
+            row[fold_ar_roc_col_names[j]] = val
+        for j, val in enumerate(fold_full_roc_aucs):
+            row[fold_full_roc_col_names[j]] = val
         all_rows.append(row)
 
         pd.DataFrame(all_rows).to_csv(results_path, index=False)
 
         null_deltas = np.array([r["mean_delta"] for r in all_rows], dtype=float)
         print(f"  Perm {perm_id:3d}/{cfg.N_PERMUTATIONS-1} | "
-              f"AR={mean_ar:.4f} full={mean_full:.4f} delta={mean_delta:+.4f} | "
-              f"null delta={np.nanmean(null_deltas):+.4f} +/- {np.nanstd(null_deltas):.4f} "
+              f"AR={mean_ar:.4f} full={mean_full:.4f} dPR={mean_delta:+.4f} | "
+              f"AR_roc={mean_ar_roc:.4f} full_roc={mean_full_roc:.4f} dROC={mean_roc_delta:+.4f} | "
+              f"null dPR={np.nanmean(null_deltas):+.4f} +/- {np.nanstd(null_deltas):.4f} "
               f"(n={len(all_rows)})")
 
-    # Final summary — test null delta against real observed delta
-    results_df  = pd.DataFrame(all_rows)
-    null_deltas = results_df["mean_delta"].dropna()
-    null_ar     = results_df["mean_ar_pr_auc"].dropna()
-    null_full   = results_df["mean_full_pr_auc"].dropna()
+    # Final summary — test null distributions against real observed values
+    results_df    = pd.DataFrame(all_rows)
+    null_deltas   = results_df["mean_delta"].dropna()
+    null_ar       = results_df["mean_ar_pr_auc"].dropna()
+    null_full     = results_df["mean_full_pr_auc"].dropna()
+    null_ar_roc   = results_df["mean_ar_roc_auc"].dropna()   if "mean_ar_roc_auc"   in results_df.columns else pd.Series(dtype=float)
+    null_full_roc = results_df["mean_full_roc_auc"].dropna() if "mean_full_roc_auc" in results_df.columns else pd.Series(dtype=float)
+    null_roc_deltas = results_df["mean_roc_delta"].dropna()  if "mean_roc_delta"    in results_df.columns else pd.Series(dtype=float)
 
     print(f"\n{'='*70}")
     print("FINAL RESULTS")
-    print(f"  Null AR PR-AUC   : {null_ar.mean():.4f} +/- {null_ar.std():.4f}")
+    print(f"  Null AR  PR-AUC  : {null_ar.mean():.4f} +/- {null_ar.std():.4f}")
     print(f"  Null full PR-AUC : {null_full.mean():.4f} +/- {null_full.std():.4f}")
-    print(f"  Null delta       : {null_deltas.mean():+.4f} +/- {null_deltas.std():.4f}")
-    print(f"  Null delta range : [{null_deltas.min():+.4f}, {null_deltas.max():+.4f}]")
+    print(f"  Null delta PR    : {null_deltas.mean():+.4f} +/- {null_deltas.std():.4f}")
+    if len(null_full_roc) > 0:
+        print(f"  Null AR  ROC-AUC : {null_ar_roc.mean():.4f} +/- {null_ar_roc.std():.4f}")
+        print(f"  Null full ROC-AUC: {null_full_roc.mean():.4f} +/- {null_full_roc.std():.4f}")
+        print(f"  Null delta ROC   : {null_roc_deltas.mean():+.4f} +/- {null_roc_deltas.std():.4f}")
 
-    p_value_delta  = None
-    p_value_prauc  = None
+    p_value_delta     = None
+    p_value_prauc     = None
+    p_value_rocauc    = None
+    p_value_roc_delta = None
     if real_mean_delta is not None:
-        # Primary test: does the real combined PR-AUC exceed the null distribution
-        # of combined PR-AUCs (same protocol, only difference is news shuffled)?
+        # PR-AUC tests
         p_value_prauc = float((null_full >= real_mean_pr_auc).mean())
-        # Secondary test: does the real lift (combined - AR) exceed the null lift?
         p_value_delta = float((null_deltas >= real_mean_delta).mean())
 
         print(f"  Real full PR-AUC : {real_mean_pr_auc:.4f}")
-        print(f"  p-value (PR-AUC) : {p_value_prauc:.4f}  "
-              f"(H0: null full PR-AUC >= real full PR-AUC)")
-        print(f"  Real delta       : {real_mean_delta:+.4f}")
-        print(f"  p-value (delta)  : {p_value_delta:.4f}  "
-              f"(H0: null delta >= real delta)")
-        interp = "NOT significant (p > 0.05)" if p_value_prauc > 0.05 else "SIGNIFICANT (p <= 0.05)"
-        print(f"  News temporal signal: {interp}")
+        print(f"  p-value (PR-AUC) : {p_value_prauc:.4f}")
+        print(f"  Real delta PR    : {real_mean_delta:+.4f}")
+        print(f"  p-value (dPR)    : {p_value_delta:.4f}")
 
-        run_config["real_mean_ar_pr_auc"]   = real_mean_ar_auc
-        run_config["real_mean_pr_auc"]      = real_mean_pr_auc
-        run_config["real_mean_delta"]       = real_mean_delta
-        run_config["null_mean_ar_pr_auc"]   = float(null_ar.mean())
-        run_config["null_std_ar_pr_auc"]    = float(null_ar.std())
-        run_config["null_mean_full_pr_auc"] = float(null_full.mean())
-        run_config["null_std_full_pr_auc"]  = float(null_full.std())
-        run_config["null_mean_delta"]       = float(null_deltas.mean())
-        run_config["null_std_delta"]        = float(null_deltas.std())
-        run_config["p_value_prauc"]         = p_value_prauc
-        run_config["p_value_delta"]         = p_value_delta
+        # ROC-AUC tests (if available)
+        if len(null_full_roc) > 0 and real_mean_roc_full is not None:
+            p_value_rocauc    = float((null_full_roc >= real_mean_roc_full).mean())
+            p_value_roc_delta = float((null_roc_deltas >= real_mean_roc_delta).mean())
+            print(f"  Real full ROC-AUC: {real_mean_roc_full:.4f}")
+            print(f"  p-value (ROC-AUC): {p_value_rocauc:.4f}")
+            print(f"  Real delta ROC   : {real_mean_roc_delta:+.4f}")
+            print(f"  p-value (dROC)   : {p_value_roc_delta:.4f}")
+
+        interp = "NOT significant (p > 0.05)" if p_value_prauc > 0.05 else "SIGNIFICANT (p <= 0.05)"
+        print(f"  News temporal signal (PR-AUC): {interp}")
+
+        run_config["real_mean_ar_pr_auc"]    = real_mean_ar_auc
+        run_config["real_mean_pr_auc"]       = real_mean_pr_auc
+        run_config["real_mean_delta"]        = real_mean_delta
+        run_config["null_mean_ar_pr_auc"]    = float(null_ar.mean())
+        run_config["null_std_ar_pr_auc"]     = float(null_ar.std())
+        run_config["null_mean_full_pr_auc"]  = float(null_full.mean())
+        run_config["null_std_full_pr_auc"]   = float(null_full.std())
+        run_config["null_mean_delta"]        = float(null_deltas.mean())
+        run_config["null_std_delta"]         = float(null_deltas.std())
+        run_config["p_value_prauc"]          = p_value_prauc
+        run_config["p_value_delta"]          = p_value_delta
+
+        if len(null_full_roc) > 0:
+            run_config["real_mean_ar_roc_auc"]    = real_mean_roc_ar
+            run_config["real_mean_full_roc_auc"]  = real_mean_roc_full
+            run_config["real_mean_roc_delta"]     = real_mean_roc_delta
+            run_config["null_mean_ar_roc_auc"]    = float(null_ar_roc.mean())
+            run_config["null_std_ar_roc_auc"]     = float(null_ar_roc.std())
+            run_config["null_mean_full_roc_auc"]  = float(null_full_roc.mean())
+            run_config["null_std_full_roc_auc"]   = float(null_full_roc.std())
+            run_config["null_mean_roc_delta"]     = float(null_roc_deltas.mean())
+            run_config["null_std_roc_delta"]      = float(null_roc_deltas.std())
+            run_config["p_value_rocauc"]          = p_value_rocauc
+            run_config["p_value_roc_delta"]       = p_value_roc_delta
+
         with open(cfg.RESULTS_DIR / "config.json", "w") as f:
             json.dump(run_config, f, indent=2)
 
