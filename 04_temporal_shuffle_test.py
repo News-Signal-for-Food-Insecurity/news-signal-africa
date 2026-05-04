@@ -92,8 +92,8 @@ class ShuffleTestConfig:
     # Reference results for p-value computation
     REAL_RESULTS_FILE = BASE_DIR / "results" / "window_2yr" / "fold_results.csv"
 
-    # Number of permutations: 20 for feasibility check, 100 for paper
-    N_PERMUTATIONS = 100
+    # Number of permutations: 20 feasibility, 100 quick, 500 paper-grade
+    N_PERMUTATIONS = 500
 
     # Rolling CV parameters (identical to 01_train_models.py)
     TRAIN_WINDOW_MONTHS  = 20
