@@ -6,55 +6,63 @@ Constructs a null distribution for the combined model's PR-AUC by breaking
 the temporal alignment between news features and food insecurity outcomes.
 
 METHODOLOGY:
-  For each of N permutations:
-    1. For each fold, recompute fold-aware z-scores (same as 01_train_models.py)
-       using only the training window baseline -- no leakage.
-    2. For each district independently, randomly permute the time ordering of
-       all 18 news feature columns (9 relative_coverage + 9 fold-aware zscore).
-       AR features and the target are NOT shuffled.
-       This preserves each district's news distribution and volume, but destroys
-       temporal alignment between news signals and IPC outcomes.
-    3. Train the combined model (AR + shuffled news) with fixed CatBoost params.
-    4. Record PR-AUC on the test set.
-    5. Mean PR-AUC across 6 folds = one null draw.
+  Null = real model with EXACTLY ONE intervention: news features shuffled.
+  Everything else (CatBoost params, early stopping, validation split,
+  fold-aware z-score recomputation, categorical encoding, use_best_model)
+  is identical to 01_train_models.py.
 
-  The real combined model's mean PR-AUC (~0.8181) is then compared to this
-  null distribution. If the real model performs only marginally better than the
-  shuffled null, this provides strong evidence that news features do not carry
-  meaningful temporal signal -- their apparent contribution comes from structural
-  patterns (persistence, location effects) rather than timely crisis information.
+  For each of N permutations:
+    1. For each fold, recompute fold-aware z-scores (identical logic to
+       01_train_models.py — full training window baseline, log-scale article
+       count, district-level mean/std, no leakage).
+    2. Apply a double shuffle to all 19 news feature columns:
+         a) Row shuffle (temporal): for each district, permute values across
+            time. Each district's marginal totals are preserved.
+         b) Column shuffle (spatial): for each time period, permute values
+            across districts. Each period's marginal totals are preserved.
+       Net effect: global quantity of each news feature is preserved exactly,
+       but values are scattered across BOTH time and space — no district-
+       level or period-level structure remains aligned with outcomes.
+       AR features and the target are NOT shuffled.
+    3. Train BOTH AR-only and Combined (AR + shuffled news) models using the
+       SAME CatBoost params, same early-stopping config, same validation split,
+       and same use_best_model=True logic as 01_train_models.py.
+    4. Record PR-AUC on the test set for both models.
+    5. Mean PR-AUC across folds = one null draw.
+
+  The real Combined model's mean PR-AUC is then compared directly to the null
+  Combined distribution. Because protocol is identical, any gap is attributable
+  to the shuffle alone — i.e., to the temporal signal in news features.
 
 KEY DESIGN DECISIONS:
-  - Fold-aware z-scores are recomputed per fold from raw monthly GDELT data
-    (same compute_fold_news_features logic as 01_train_models.py).
-    This ensures the null test and the real model use z-scores on the same basis --
-    both free from future-period leakage. Shuffling globally-precomputed z-scores
-    (dataset.parquet) would mix two different normalization standards and make
-    the comparison invalid.
-  - Shuffle is applied AFTER fold-aware recomputation, WITHIN each fold's
-    combined train+test rows, within each district. This preserves the marginal
-    distribution of clean z-scores while destroying their temporal ordering.
-  - Fixed hyperparameters (no early stopping) to reduce runtime. Note: the real
-    combined model uses early stopping + a 20% validation split, so null models
-    are slightly under-optimised. This biases the null distribution downward,
-    making the p-value conservative (if anything, harder to reject H0).
+  - Protocol parity: identical CATBOOST_PARAMS_AR / CATBOOST_PARAMS_FULL,
+    identical VALIDATION_FRACTION, identical eval_set + use_best_model=True
+    as 01_train_models.py. This is the ONLY way the comparison is valid —
+    differing protocol confounds the test.
+  - Fold-aware z-scores recomputed from raw monthly GDELT (same baseline
+    logic as 01_train_models.py). Shuffling globally-precomputed z-scores
+    would mix normalization standards.
+  - Double shuffle (row then column). Preserves the global quantity of each
+    news feature in the dataset exactly, while scattering values across both
+    time and space. This tests whether news features carry ANY signal aligned
+    with outcomes — temporal, spatial, or district-baseline — beyond AR.
   - random_state = permutation index for full reproducibility.
 
 RUNTIME:
-  ~100 permutations x 6 folds x ~60-90s/fold ~ 10-15 hours. Use N_PERMUTATIONS=20
-  first to verify runtime. Set N_PERMUTATIONS=100 for final paper results.
+  Approximately the same as the real run (01_train_models.py) per permutation,
+  multiplied by N_PERMUTATIONS. With early stopping enabled, expect ~10-20h
+  for 100 permutations on 6 folds.
 
 OUTPUTS:
-  results_rolling_cv/shuffle_test/
-    null_distribution.csv    -- N rows: permutation_id, mean_pr_auc, fold_1..6_pr_auc
-    config.json              -- run configuration + final p-value
+  results/shuffle_test/
+    null_distribution.csv    -- N rows: permutation_id, mean_ar_pr_auc,
+                                mean_full_pr_auc, mean_delta, fold-level cols
+    config.json              -- run configuration + final p-values
 
 REFERENCE:
-  Real combined model: results_rolling_cv/window_2yr/fold_results.csv
-  mean full_pr_auc = 0.8181 (6 folds, 2-year window, fold-aware z-scores)
-
-  p-value = proportion of null mean_pr_auc >= real mean_pr_auc
-  If p > 0.05: news temporal signal not statistically significant.
+  Real combined model: results/window_2yr/fold_results.csv
+  p-value (PR-AUC) = proportion of null mean_full_pr_auc >= real mean_full_pr_auc
+  p-value (delta)  = proportion of null mean_delta       >= real mean_delta
 """
 
 import json
@@ -63,7 +71,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from catboost import CatBoostClassifier, Pool
+from catboost import CatBoostClassifier
 from sklearn.metrics import average_precision_score
 
 warnings.filterwarnings("ignore")
@@ -88,12 +96,12 @@ class ShuffleTestConfig:
     N_PERMUTATIONS = 100
 
     # Rolling CV parameters (identical to 01_train_models.py)
-    TRAIN_WINDOW_MONTHS  = 24
+    TRAIN_WINDOW_MONTHS  = 20
     IPC_PERIOD_MONTHS    = 4
     MONTHLY_DATA_START   = pd.Timestamp("2020-02-01")
 
     # Features (identical to 01_train_models.py)
-    AR_FEATURES = ["ipc_lag_1", "ipc_persistence_2yr", "spatial_lag", "ipc_period"]
+    AR_FEATURES = ["ipc_lag_1", "ipc_persistence_2yr", "spatial_lag", "ipc_period", "ipc_country"]
 
     NEWS_THEMES = [
         "conflict", "displacement", "economic", "food_security",
@@ -101,23 +109,39 @@ class ShuffleTestConfig:
     ]
     RELATIVE_COVERAGE_FEATURES = [f"{t}_relative_coverage" for t in NEWS_THEMES]
     ZSCORE_FEATURES            = [f"{t}_zscore" for t in NEWS_THEMES]
-    NEWS_FEATURES              = RELATIVE_COVERAGE_FEATURES + ZSCORE_FEATURES  # 18
-    COMBINED_FEATURES          = AR_FEATURES + NEWS_FEATURES                   # 22
+    NEWS_FEATURES              = RELATIVE_COVERAGE_FEATURES + ZSCORE_FEATURES + ["article_count_zscore"]  # 19
+    COMBINED_FEATURES          = AR_FEATURES + NEWS_FEATURES                   # 24
 
     TARGET = "target_crisis_binary"
 
     EPSILON = 1e-10
 
-    # CatBoost -- fixed params, NO early stopping (speed)
-    CATBOOST_PARAMS_SHUFFLE = dict(
+    # CatBoost params -- IDENTICAL to 01_train_models.py.
+    # Protocol parity is mandatory: any difference confounds the null test.
+    CATBOOST_PARAMS_AR = dict(
         iterations=300,
-        depth=7,
-        learning_rate=0.03,
+        depth=6,
+        learning_rate=0.05,
+        loss_function="Logloss",
+        eval_metric="AUC",
         random_seed=42,
-        verbose=False,
+        verbose=0,
+        early_stopping_rounds=30,
+    )
+    CATBOOST_PARAMS_FULL = dict(
+        iterations=500,
+        depth=6,
+        learning_rate=0.03,
         loss_function="Logloss",
         eval_metric="PRAUC",
+        auto_class_weights="Balanced",
+        random_seed=42,
+        verbose=0,
+        early_stopping_rounds=50,
     )
+    # Identical to 01_train_models.py
+    VALIDATION_FRACTION = 0.40
+    THRESHOLD = 0.5
 
 
 # ============================================================================
@@ -174,33 +198,37 @@ def compute_fold_news_features(
     cfg: ShuffleTestConfig,
 ) -> tuple:
     """
-    Fold-aware z-score recomputation using 12-month rolling baseline from
-    training months only. Test rows receive frozen (train-end) statistics.
-    Identical logic to 01_train_models.py.
+    Fold-aware z-score recomputation using full training window as baseline.
+    Identical logic to 01_train_models.py — full window, log-scale article count.
     """
-    baseline_start = train_end - pd.DateOffset(months=12)
-    baseline_gdelt = monthly_gdelt[
-        (monthly_gdelt["month"] >= baseline_start)
-        & (monthly_gdelt["month"] <= train_end)
-    ].copy()
+    baseline_gdelt = monthly_gdelt[monthly_gdelt["month"] <= train_end].copy()
+    baseline_gdelt["log_article_count"] = np.log1p(baseline_gdelt["article_count"].clip(lower=0))
 
     cov_cols = [f"{t}_relative_coverage" for t in cfg.NEWS_THEMES]
+    all_stat_cols = cov_cols + ["log_article_count"]
     district_stats = (
-        baseline_gdelt.groupby("district_id")[cov_cols]
+        baseline_gdelt.groupby("district_id")[all_stat_cols]
         .agg(["mean", "std"])
     )
     district_stats.columns = [f"{c[0]}__{c[1]}" for c in district_stats.columns]
 
     def apply_zscore(df_split: pd.DataFrame) -> pd.DataFrame:
         df_out = df_split.copy()
+        stats = district_stats.reindex(df_out["district_id"].values)
         for theme in cfg.NEWS_THEMES:
             cov_col    = f"{theme}_relative_coverage"
             zscore_col = f"{theme}_zscore"
-            stats = district_stats.reindex(df_out["district_id"])
             means = stats[f"{cov_col}__mean"].values
             stds  = stats[f"{cov_col}__std"].values
-            stds  = np.where(stds < cfg.EPSILON, 1.0, stds)
-            df_out[zscore_col] = (df_out[cov_col].values - means) / stds
+            valid = np.isfinite(means) & np.isfinite(stds) & (stds > cfg.EPSILON)
+            raw   = df_out[cov_col].values.astype(float)
+            df_out[zscore_col] = np.where(valid, (raw - means) / stds, 0.0)
+        # article_count_zscore: log-scale z-score (numerator and denominator both log1p)
+        log_count    = np.log1p(df_out["article_count"].values.astype(float)) if "article_count" in df_out.columns else np.zeros(len(df_out))
+        ac_log_means = stats["log_article_count__mean"].values
+        ac_log_stds  = stats["log_article_count__std"].values
+        valid_ac = np.isfinite(ac_log_means) & np.isfinite(ac_log_stds) & (ac_log_stds > cfg.EPSILON)
+        df_out["article_count_zscore"] = np.where(valid_ac, (log_count - ac_log_means) / ac_log_stds, 0.0)
         return df_out
 
     return apply_zscore(df_train), apply_zscore(df_test)
@@ -210,18 +238,44 @@ def compute_fold_news_features(
 # TEMPORAL SHUFFLE
 # ============================================================================
 
-def shuffle_news_within_districts(df: pd.DataFrame, news_features: list, rng) -> pd.DataFrame:
+def shuffle_news_rows_and_columns(df: pd.DataFrame, news_features: list, rng) -> pd.DataFrame:
     """
-    For each district independently, randomly permute the time ordering of
-    all news feature columns. AR features and target are unchanged.
+    Double shuffle: scatters news feature values across BOTH time and space
+    while preserving the global quantity of each news feature in the dataset.
 
-    Shuffle is applied within each district's rows only, preserving the
-    marginal distribution while destroying temporal alignment.
+    Step 1 — Row shuffle (temporal): for each district independently, permute
+      the time ordering of all news feature columns. After this step, each
+      district's marginal totals are preserved exactly; temporal alignment
+      with outcomes within districts is destroyed.
+
+    Step 2 — Column shuffle (spatial): for each time period independently,
+      permute the (already time-shuffled) values across districts. After this
+      step, each period's marginal totals are preserved exactly; spatial
+      alignment with outcomes is destroyed.
+
+    Net effect: the global quantity of each news feature (sum across the full
+    dataset) is preserved exactly, and row/column totals are approximately
+    preserved — but the values are scattered across both time and space, so
+    no district-level or period-level structure remains aligned with outcomes.
+
+    AR features and the target are unchanged.
     """
     df_shuffled = df.copy().reset_index(drop=True)
 
+    # Step 1: row shuffle within each district (temporal)
     for district_id, group_idx in df_shuffled.groupby("district_id").groups.items():
         row_positions = list(group_idx)
+        if len(row_positions) < 2:
+            continue
+        perm = rng.permutation(len(row_positions))
+        original_values = df_shuffled.loc[row_positions, news_features].values
+        df_shuffled.loc[row_positions, news_features] = original_values[perm]
+
+    # Step 2: column shuffle within each time period (spatial)
+    for period, period_idx in df_shuffled.groupby("ipc_period_start").groups.items():
+        row_positions = list(period_idx)
+        if len(row_positions) < 2:
+            continue
         perm = rng.permutation(len(row_positions))
         original_values = df_shuffled.loc[row_positions, news_features].values
         df_shuffled.loc[row_positions, news_features] = original_values[perm]
@@ -240,56 +294,101 @@ def run_fold_shuffled(
     strict_districts: set,
     rng,
     cfg: ShuffleTestConfig,
-) -> float:
+) -> tuple:
     """
-    1. Split fold
-    2. Recompute fold-aware z-scores (leakage-free)
-    3. Concatenate train+test, shuffle news within districts, re-split
-    4. Train combined model (fixed iterations, no early stopping)
-    5. Return PR-AUC on test set
+    Mirrors run_single_fold() in 01_train_models.py EXACTLY.
+    Only difference: news features are double-shuffled (row-then-column,
+    preserving global quantity while scattering across time and space)
+    on the combined train+test rows BEFORE the validation split.
+
+    Steps:
+      1. Restrict to strict districts, recompute fold-aware z-scores
+      2. Apply row+column double shuffle to news features
+      3. Last 40% of training periods = validation set (same as real model)
+      4. Train AR-only with CATBOOST_PARAMS_AR + early stopping + use_best_model
+         (AR features are NOT shuffled, but trained under identical protocol
+         to the real AR model — gives a same-protocol AR null reference)
+      5. Train Combined with CATBOOST_PARAMS_FULL + early stopping + use_best_model
+      6. Return (ar_pr_auc, full_pr_auc)
+
+    Both models train under IDENTICAL protocol to 01_train_models.py.
+    The null PR-AUC is therefore directly comparable to the real PR-AUC.
     """
     df_train = df.loc[fold_info["train_idx"]].copy()
     df_test  = df.loc[fold_info["test_idx"]].copy()
 
-    # Filter to strict districts
     df_train = df_train[df_train["district_id"].isin(strict_districts)].copy()
     df_test  = df_test[df_test["district_id"].isin(strict_districts)].copy()
 
     if len(df_train) == 0 or len(df_test) == 0:
-        return np.nan
+        return np.nan, np.nan
 
     y_test = df_test[cfg.TARGET].values
     if len(np.unique(y_test)) < 2:
-        return np.nan
+        return np.nan, np.nan
 
-    # Fold-aware z-score recomputation
+    # 1. Fold-aware z-score recomputation (identical to real model)
     df_train, df_test = compute_fold_news_features(
         df_train, df_test, monthly_gdelt, fold_info["train_end"], cfg
     )
 
-    # Concatenate, shuffle news, re-split
+    # 2. Apply within-district temporal shuffle to news features.
+    #    Shuffle on combined train+test rows so a district's full timeline is
+    #    permuted as one unit, then split back into train/test on period boundary.
+    train_periods = set(df_train["ipc_period_start"].unique())
     combined = pd.concat([df_train, df_test], ignore_index=True)
-    combined = shuffle_news_within_districts(combined, cfg.NEWS_FEATURES, rng)
+    combined = shuffle_news_rows_and_columns(combined, cfg.NEWS_FEATURES, rng)
+    df_train = combined[combined["ipc_period_start"].isin(train_periods)].copy()
+    df_test  = combined[~combined["ipc_period_start"].isin(train_periods)].copy()
 
-    train_periods = df_train["ipc_period_start"].unique()
-    df_train_s = combined[combined["ipc_period_start"].isin(train_periods)].copy()
-    df_test_s  = combined[~combined["ipc_period_start"].isin(train_periods)].copy()
+    y_test = df_test[cfg.TARGET].values
 
-    # Encode ipc_period
-    for d in [df_train_s, df_test_s]:
-        d["ipc_period"] = d["ipc_period"].astype(str)
+    # 3. Validation split: last VALIDATION_FRACTION of training periods
+    #    (identical to 01_train_models.py)
+    train_period_list = sorted(df_train["ipc_period_start"].unique())
+    n_val     = max(1, int(len(train_period_list) * cfg.VALIDATION_FRACTION))
+    val_perds = set(train_period_list[-n_val:])
+    val_mask  = df_train["ipc_period_start"].isin(val_perds)
 
-    cat_idx = [cfg.COMBINED_FEATURES.index("ipc_period")]
+    df_fit = df_train[~val_mask]
+    df_val = df_train[val_mask]
 
-    X_train = df_train_s[cfg.COMBINED_FEATURES]
-    y_train = df_train_s[cfg.TARGET].values
-    X_test  = df_test_s[cfg.COMBINED_FEATURES]
+    y_fit = df_fit[cfg.TARGET].values
+    y_val = df_val[cfg.TARGET].values
 
-    model = CatBoostClassifier(**cfg.CATBOOST_PARAMS_SHUFFLE, cat_features=cat_idx)
-    model.fit(Pool(X_train, y_train, cat_features=cat_idx))
+    # Identical prep_X to 01_train_models.py
+    def prep_X(df_subset, features):
+        X = df_subset[features].copy()
+        X["ipc_period"] = X["ipc_period"].astype(str)
+        if "ipc_country" in X.columns:
+            X["ipc_country"] = X["ipc_country"].astype(str)
+        return X
 
-    y_proba = model.predict_proba(X_test)[:, 1]
-    return float(average_precision_score(y_test, y_proba))
+    # 4. AR-only model — identical protocol to real model
+    cat_idx_ar = [cfg.AR_FEATURES.index("ipc_period"),
+                  cfg.AR_FEATURES.index("ipc_country")]
+    model_ar = CatBoostClassifier(**cfg.CATBOOST_PARAMS_AR, cat_features=cat_idx_ar)
+    model_ar.fit(
+        prep_X(df_fit, cfg.AR_FEATURES), y_fit,
+        eval_set=(prep_X(df_val, cfg.AR_FEATURES), y_val),
+        use_best_model=True,
+    )
+    prob_ar  = model_ar.predict_proba(prep_X(df_test, cfg.AR_FEATURES))[:, 1]
+    prauc_ar = float(average_precision_score(y_test, prob_ar))
+
+    # 5. Combined model — identical protocol to real model, on AR + shuffled news
+    cat_idx_full = [cfg.COMBINED_FEATURES.index("ipc_period"),
+                    cfg.COMBINED_FEATURES.index("ipc_country")]
+    model_full = CatBoostClassifier(**cfg.CATBOOST_PARAMS_FULL, cat_features=cat_idx_full)
+    model_full.fit(
+        prep_X(df_fit, cfg.COMBINED_FEATURES), y_fit,
+        eval_set=(prep_X(df_val, cfg.COMBINED_FEATURES), y_val),
+        use_best_model=True,
+    )
+    prob_full  = model_full.predict_proba(prep_X(df_test, cfg.COMBINED_FEATURES))[:, 1]
+    prauc_full = float(average_precision_score(y_test, prob_full))
+
+    return prauc_ar, prauc_full
 
 
 # ============================================================================
@@ -303,7 +402,7 @@ def main():
     print("TEMPORAL SHUFFLE NULL TEST")
     print("=" * 70)
     print(f"N_PERMUTATIONS : {cfg.N_PERMUTATIONS}")
-    print(f"News features  : {len(cfg.NEWS_FEATURES)} columns shuffled within each district")
+    print(f"News features  : {len(cfg.NEWS_FEATURES)} columns shuffled (19 = 9 rel_cov + 9 zscore + article_count_zscore)")
 
     # Load data
     print("\nLoading data...")
@@ -317,12 +416,18 @@ def main():
     df = df[df["district_id"].isin(strict_districts)].copy()
     print(f"  Dataset: {len(df):,} rows, {df['district_id'].nunique()} districts")
 
-    # Real model reference
+    # Real model reference (both AR and Combined to compute observed delta)
     real_mean_pr_auc = None
+    real_mean_ar_auc = None
+    real_mean_delta  = None
     if cfg.REAL_RESULTS_FILE.exists():
         real_df = pd.read_csv(cfg.REAL_RESULTS_FILE)
         real_mean_pr_auc = real_df["full_pr_auc"].mean()
+        real_mean_ar_auc = real_df["ar_pr_auc"].mean()
+        real_mean_delta  = real_mean_pr_auc - real_mean_ar_auc
+        print(f"  Real AR-only mean PR-AUC      : {real_mean_ar_auc:.4f}")
         print(f"  Real combined model mean PR-AUC: {real_mean_pr_auc:.4f}")
+        print(f"  Real observed delta            : {real_mean_delta:+.4f}")
 
     # Generate folds
     folds = generate_rolling_folds(df, cfg)
@@ -336,7 +441,11 @@ def main():
         "n_permutations": cfg.N_PERMUTATIONS,
         "n_folds": n_folds,
         "news_features_shuffled": cfg.NEWS_FEATURES,
-        "catboost_params": cfg.CATBOOST_PARAMS_SHUFFLE,
+        "shuffle_strategy": "row_then_column_double_shuffle",
+        "validation_fraction": cfg.VALIDATION_FRACTION,
+        "catboost_params_ar": cfg.CATBOOST_PARAMS_AR,
+        "catboost_params_full": cfg.CATBOOST_PARAMS_FULL,
+        "real_mean_ar_pr_auc": real_mean_ar_auc,
         "real_mean_pr_auc": real_mean_pr_auc,
     }
     with open(cfg.RESULTS_DIR / "config.json", "w") as f:
@@ -353,7 +462,8 @@ def main():
         all_rows = existing.to_dict("records")
         print(f"  Resuming: {len(completed_perms)} permutations already done.")
 
-    fold_col_names = [f"fold_{i+1}_pr_auc" for i in range(n_folds)]
+    fold_ar_col_names   = [f"fold_{i+1}_ar_pr_auc"   for i in range(n_folds)]
+    fold_full_col_names = [f"fold_{i+1}_full_pr_auc" for i in range(n_folds)]
 
     print(f"\nRunning {cfg.N_PERMUTATIONS} permutations...\n")
 
@@ -363,48 +473,77 @@ def main():
 
         rng = np.random.default_rng(seed=perm_id)
 
-        fold_pr_aucs = []
+        fold_ar_aucs   = []
+        fold_full_aucs = []
         for fold_info in folds:
-            pr_auc = run_fold_shuffled(
+            prauc_ar, prauc_full = run_fold_shuffled(
                 fold_info, df, monthly_gdelt, strict_districts, rng, cfg
             )
-            fold_pr_aucs.append(pr_auc)
+            fold_ar_aucs.append(prauc_ar)
+            fold_full_aucs.append(prauc_full)
 
-        mean_pr_auc = float(np.nanmean(fold_pr_aucs))
+        mean_ar   = float(np.nanmean(fold_ar_aucs))
+        mean_full = float(np.nanmean(fold_full_aucs))
+        mean_delta = mean_full - mean_ar
 
-        row = {"permutation_id": perm_id, "mean_pr_auc": mean_pr_auc}
-        for j, val in enumerate(fold_pr_aucs):
-            row[fold_col_names[j]] = val
+        row = {"permutation_id": perm_id, "mean_ar_pr_auc": mean_ar,
+               "mean_full_pr_auc": mean_full, "mean_delta": mean_delta}
+        for j, val in enumerate(fold_ar_aucs):
+            row[fold_ar_col_names[j]] = val
+        for j, val in enumerate(fold_full_aucs):
+            row[fold_full_col_names[j]] = val
         all_rows.append(row)
 
         pd.DataFrame(all_rows).to_csv(results_path, index=False)
 
-        completed_vals = np.array([r["mean_pr_auc"] for r in all_rows], dtype=float)
+        null_deltas = np.array([r["mean_delta"] for r in all_rows], dtype=float)
         print(f"  Perm {perm_id:3d}/{cfg.N_PERMUTATIONS-1} | "
-              f"PR-AUC={mean_pr_auc:.4f} | "
-              f"Running null={np.nanmean(completed_vals):.4f} +/- {np.nanstd(completed_vals):.4f} "
+              f"AR={mean_ar:.4f} full={mean_full:.4f} delta={mean_delta:+.4f} | "
+              f"null delta={np.nanmean(null_deltas):+.4f} +/- {np.nanstd(null_deltas):.4f} "
               f"(n={len(all_rows)})")
 
-    # Final summary
-    results_df = pd.DataFrame(all_rows)
-    null_pr_aucs = results_df["mean_pr_auc"].dropna()
+    # Final summary — test null delta against real observed delta
+    results_df  = pd.DataFrame(all_rows)
+    null_deltas = results_df["mean_delta"].dropna()
+    null_ar     = results_df["mean_ar_pr_auc"].dropna()
+    null_full   = results_df["mean_full_pr_auc"].dropna()
 
     print(f"\n{'='*70}")
     print("FINAL RESULTS")
-    print(f"  Null mean   : {null_pr_aucs.mean():.4f}")
-    print(f"  Null std    : {null_pr_aucs.std():.4f}")
-    print(f"  Null [min, max]: [{null_pr_aucs.min():.4f}, {null_pr_aucs.max():.4f}]")
+    print(f"  Null AR PR-AUC   : {null_ar.mean():.4f} +/- {null_ar.std():.4f}")
+    print(f"  Null full PR-AUC : {null_full.mean():.4f} +/- {null_full.std():.4f}")
+    print(f"  Null delta       : {null_deltas.mean():+.4f} +/- {null_deltas.std():.4f}")
+    print(f"  Null delta range : [{null_deltas.min():+.4f}, {null_deltas.max():+.4f}]")
 
-    if real_mean_pr_auc is not None:
-        p_value = float((null_pr_aucs >= real_mean_pr_auc).mean())
-        print(f"  Real PR-AUC : {real_mean_pr_auc:.4f}")
-        print(f"  p-value     : {p_value:.4f}")
-        interp = "NOT significant (p > 0.05)" if p_value > 0.05 else "SIGNIFICANT (p <= 0.05)"
+    p_value_delta  = None
+    p_value_prauc  = None
+    if real_mean_delta is not None:
+        # Primary test: does the real combined PR-AUC exceed the null distribution
+        # of combined PR-AUCs (same protocol, only difference is news shuffled)?
+        p_value_prauc = float((null_full >= real_mean_pr_auc).mean())
+        # Secondary test: does the real lift (combined - AR) exceed the null lift?
+        p_value_delta = float((null_deltas >= real_mean_delta).mean())
+
+        print(f"  Real full PR-AUC : {real_mean_pr_auc:.4f}")
+        print(f"  p-value (PR-AUC) : {p_value_prauc:.4f}  "
+              f"(H0: null full PR-AUC >= real full PR-AUC)")
+        print(f"  Real delta       : {real_mean_delta:+.4f}")
+        print(f"  p-value (delta)  : {p_value_delta:.4f}  "
+              f"(H0: null delta >= real delta)")
+        interp = "NOT significant (p > 0.05)" if p_value_prauc > 0.05 else "SIGNIFICANT (p <= 0.05)"
         print(f"  News temporal signal: {interp}")
 
-        run_config["null_mean_pr_auc"] = float(null_pr_aucs.mean())
-        run_config["null_std_pr_auc"]  = float(null_pr_aucs.std())
-        run_config["p_value"]          = p_value
+        run_config["real_mean_ar_pr_auc"]   = real_mean_ar_auc
+        run_config["real_mean_pr_auc"]      = real_mean_pr_auc
+        run_config["real_mean_delta"]       = real_mean_delta
+        run_config["null_mean_ar_pr_auc"]   = float(null_ar.mean())
+        run_config["null_std_ar_pr_auc"]    = float(null_ar.std())
+        run_config["null_mean_full_pr_auc"] = float(null_full.mean())
+        run_config["null_std_full_pr_auc"]  = float(null_full.std())
+        run_config["null_mean_delta"]       = float(null_deltas.mean())
+        run_config["null_std_delta"]        = float(null_deltas.std())
+        run_config["p_value_prauc"]         = p_value_prauc
+        run_config["p_value_delta"]         = p_value_delta
         with open(cfg.RESULTS_DIR / "config.json", "w") as f:
             json.dump(run_config, f, indent=2)
 

@@ -59,6 +59,7 @@ class Config3Yr:
         "ipc_persistence_2yr",
         "spatial_lag",
         "ipc_period",
+        "ipc_country",
     ]
     NEWS_THEMES = [
         "conflict", "displacement", "economic", "food_security",
@@ -69,7 +70,8 @@ class Config3Yr:
         + [f"{t}_zscore" for t in NEWS_THEMES]
         + ["article_count_zscore"]
     )
-    COMBINED_FEATURES = AR_FEATURES + ["ipc_country"] + NEWS_FEATURES
+    # ipc_country included in both AR and Combined so models differ only in news features.
+    COMBINED_FEATURES = AR_FEATURES + NEWS_FEATURES
     TARGET = "target_crisis_binary"
 
     CATBOOST_PARAMS_AR = dict(
@@ -142,7 +144,9 @@ def generate_rolling_folds(df: pd.DataFrame, cfg):
 def compute_fold_news_features(df_train, df_test, monthly_gdelt, train_end, cfg):
     baseline_gdelt = monthly_gdelt[monthly_gdelt["month"] <= train_end].copy()
     cov_cols = [f"{t}_relative_coverage" for t in cfg.NEWS_THEMES]
-    all_stat_cols = cov_cols + ["article_count"]
+    baseline_gdelt = baseline_gdelt.copy()
+    baseline_gdelt["log_article_count"] = np.log1p(baseline_gdelt["article_count"].clip(lower=0))
+    all_stat_cols = cov_cols + ["log_article_count"]
     district_stats = (
         baseline_gdelt.groupby("district_id")[all_stat_cols]
         .agg(["mean", "std"])
@@ -160,12 +164,12 @@ def compute_fold_news_features(df_train, df_test, monthly_gdelt, train_end, cfg)
             valid = np.isfinite(means) & np.isfinite(stds) & (stds > 1e-6)
             raw   = df_out[cov_col].values.astype(float)
             df_out[zscore_col] = np.where(valid, (raw - means) / stds, 0.0)
-        log_count = np.log1p(df_out["article_count"].values.astype(float)) if "article_count" in df_out.columns else np.zeros(len(df_out))
-        ac_means = stats["article_count__mean"].values
-        ac_stds  = stats["article_count__std"].values
-        log_ac_means = np.log1p(np.where(np.isfinite(ac_means) & (ac_means >= 0), ac_means, 0.0))
-        valid_ac = np.isfinite(ac_means) & np.isfinite(ac_stds) & (ac_stds > 1e-6)
-        df_out["article_count_zscore"] = np.where(valid_ac, (log_count - log_ac_means) / ac_stds, 0.0)
+        # log-scale z-score: both numerator and denominator on log1p scale
+        log_count    = np.log1p(df_out["article_count"].values.astype(float)) if "article_count" in df_out.columns else np.zeros(len(df_out))
+        ac_log_means = stats["log_article_count__mean"].values
+        ac_log_stds  = stats["log_article_count__std"].values
+        valid_ac = np.isfinite(ac_log_means) & np.isfinite(ac_log_stds) & (ac_log_stds > 1e-6)
+        df_out["article_count_zscore"] = np.where(valid_ac, (log_count - ac_log_means) / ac_log_stds, 0.0)
         return df_out
 
     return apply_zscore(df_train), apply_zscore(df_test)
@@ -213,7 +217,8 @@ def run_single_fold(fold_info, df, monthly_gdelt, cfg):
             X["ipc_country"] = X["ipc_country"].astype(str)
         return X
 
-    cat_idx_ar = [cfg.AR_FEATURES.index("ipc_period")]
+    cat_idx_ar = [cfg.AR_FEATURES.index("ipc_period"),
+                  cfg.AR_FEATURES.index("ipc_country")]
     model_ar = CatBoostClassifier(**cfg.CATBOOST_PARAMS_AR, cat_features=cat_idx_ar)
     model_ar.fit(
         prep_X(df_fit, cfg.AR_FEATURES), y_fit,

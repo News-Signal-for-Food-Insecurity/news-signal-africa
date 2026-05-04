@@ -69,8 +69,8 @@ REGIME_COLOURS = {
     "stable":   "#1F77B4",   # blue
 }
 MODEL_COLOURS = {
-    "AR-Only": "#1B4F72",    # dark navy
-    "AR+News": "#C0392B",    # deep red
+    "AR-Only": "#1f77b4",    # seaborn blue
+    "AR+News": "#9467bd",    # seaborn purple
 }
 REGION_COLOURS = {
     "East Africa":     "#8E44AD",
@@ -114,6 +114,9 @@ _THEMES_FALLBACK = [
 # ---------------------------------------------------------------------------
 # Global plot style
 # ---------------------------------------------------------------------------
+import seaborn as sns
+sns.set_style("whitegrid")
+
 plt.rcParams.update({
     "font.family":          "serif",
     "font.serif":           ["Times New Roman", "Liberation Serif", "DejaVu Serif"],
@@ -126,16 +129,10 @@ plt.rcParams.update({
     "legend.framealpha":    0.9,
     "legend.edgecolor":     "#CCCCCC",
     "axes.linewidth":       0.8,
-    "axes.spines.top":      False,
-    "axes.spines.right":    False,
-    "axes.grid":            True,
-    "grid.alpha":           0.25,
-    "grid.linestyle":       "--",
-    "grid.linewidth":       0.5,
     "lines.linewidth":      1.8,
     "figure.dpi":           300,
     "savefig.dpi":          300,
-    "pdf.fonttype":         42,   # embeds fonts as Type-42 (TrueType) in PDF
+    "pdf.fonttype":         42,
     "ps.fonttype":          42,
 })
 
@@ -152,8 +149,7 @@ def save_pdf(fig: plt.Figure, name: str) -> None:
 
 
 def _despine(ax: plt.Axes) -> None:
-    ax.spines["top"].set_visible(False)
-    ax.spines["right"].set_visible(False)
+    sns.despine(ax=ax)
 
 
 def _load_themes(ds: pd.DataFrame) -> list[str]:
@@ -358,7 +354,7 @@ def figure_1() -> None:
 
     # ── Cartographic helper ──────────────────────────────────────────────
     def _draw_map(ax, gdf_all, gdf_data, col, cmap_listed, norm,
-                  legend_patches, panel_label):
+                  legend_patches):
         """Plot one choropleth panel on ax.
 
         gdf_all  — full ADM2 shapefile (used for study-region context only)
@@ -387,10 +383,6 @@ def figure_1() -> None:
         # Country name labels
         _add_country_labels(ax)
 
-        # Panel label (a) / (b)
-        ax.text(0.02, 0.98, panel_label, transform=ax.transAxes,
-                fontsize=13, fontweight="bold", va="top", ha="left",
-                color="#222222")
 
         # North arrow
         ax.annotate("", xy=(0.08, 0.19), xytext=(0.08, 0.12),
@@ -424,7 +416,7 @@ def figure_1() -> None:
 
     fig1a, ax1a = plt.subplots(figsize=(7.5, 9))
     _draw_map(ax1a, gdf, gdf_ipc_plot, "crisis_prev_pct",
-              ipc_cmap, ipc_norm, ipc_patches, "(a)")
+              ipc_cmap, ipc_norm, ipc_patches)
     fig1a.tight_layout(pad=0.2)
     save_pdf(fig1a, "fig1a_ipc_choropleth")
 
@@ -456,7 +448,7 @@ def figure_1() -> None:
 
         fig1b, ax1b = plt.subplots(figsize=(7.5, 9))
         _draw_map(ax1b, gdf, gdf_art_plot, "total_articles_plot",
-                  news_cmap, news_norm, news_patches, "(b)")
+                  news_cmap, news_norm, news_patches)
         fig1b.tight_layout(pad=0.2)
         save_pdf(fig1b, "fig1b_news_choropleth")
     else:
@@ -474,8 +466,8 @@ def figure_2() -> None:
     ds["period_label"] = ds["ipc_period_start"].dt.strftime("%Y-%m")
     ds["region"]       = ds["ipc_country"].map(COUNTRY_REGION).fillna("Other")
 
-    themes      = _load_themes(ds)
-    rel_cols    = [f"{t}_relative_coverage" for t in themes]
+    themes       = _load_themes(ds)
+    rel_cols     = [f"{t}_relative_coverage" for t in themes]
     theme_labels = [t.replace("_", " ").title() for t in themes]
 
     cmap5 = ListedColormap(["#EFF3FF", "#BDD7E7", "#6BAED6", "#2171B5", "#08306B"])
@@ -486,19 +478,45 @@ def figure_2() -> None:
         qs   = np.nanpercentile(vals, [20, 40, 60, 80])
         return np.digitize(arr2d, qs, right=True)  # 0..4
 
-    # ── Fig 2a — topic × time ─────────────────────────────────────────────
-    pivot_a = (ds.groupby("period_label")[rel_cols].mean()
-                 .sort_index())
-    pivot_a.columns = theme_labels
-    binned_a = _quintile_bin(pivot_a.values)
+    def _quintile_boundaries(arr2d):
+        """Return the 4 boundary values used for labelling the colorbar."""
+        vals = arr2d[np.isfinite(arr2d) & (arr2d > 0)]
+        return np.nanpercentile(vals, [20, 40, 60, 80])
 
-    # Use quarterly x-tick labels to avoid label collisions
+    def _fmt_val(v):
+        """Format a coverage value for colorbar tick labels."""
+        if v >= 0.01:
+            return f"{v:.2f}"
+        return f"{v:.4f}"
+
+    def _colorbar_with_values(fig, im, ax, arr2d, shrink=0.85, pad=0.015):
+        """Add a colorbar showing actual quintile boundary values."""
+        boundaries = _quintile_boundaries(arr2d)
+        cb = fig.colorbar(im, ax=ax, ticks=[0, 1, 2, 3, 4],
+                          pad=pad, shrink=shrink)
+        tick_labels = [
+            f"Q1\n(<{_fmt_val(boundaries[0])})",
+            f"Q2\n(<{_fmt_val(boundaries[1])})",
+            f"Q3\n(<{_fmt_val(boundaries[2])})",
+            f"Q4\n(<{_fmt_val(boundaries[3])})",
+            f"Q5\n(≥{_fmt_val(boundaries[3])})",
+        ]
+        cb.ax.set_yticklabels(tick_labels, fontsize=7.5)
+        cb.set_label("Relative coverage (quintile)", fontsize=9)
+        return cb
+
+    # Shared tick positions for both heatmaps
+    pivot_a = (ds.groupby("period_label")[rel_cols].mean().sort_index())
+    pivot_a.columns = theme_labels
     periods   = list(pivot_a.index)
     n_periods = len(periods)
-    # Show every 3rd label (quarterly cadence for 4-month periods)
     tick_step = 3
     tick_pos  = list(range(0, n_periods, tick_step))
     tick_lbl  = [periods[i] for i in tick_pos]
+
+    # ── Fig 2a — theme × time-period ─────────────────────────────────────
+    # Rows = themes, Columns = time periods  (themes on y, time on x)
+    binned_a = _quintile_bin(pivot_a.values)
 
     fig, ax = plt.subplots(figsize=(11, 4.5))
     ax.grid(False)
@@ -511,14 +529,13 @@ def figure_2() -> None:
     ax.set_xlabel("Assessment period", labelpad=6)
     ax.set_ylabel("News theme", labelpad=6)
     ax.spines[:].set_visible(False)
-    cb = fig.colorbar(im, ax=ax, ticks=[0, 1, 2, 3, 4], pad=0.015, shrink=0.85)
-    cb.ax.set_yticklabels(["Q1\n(lowest)", "Q2", "Q3", "Q4", "Q5\n(highest)"],
-                           fontsize=8)
-    cb.set_label("Relative coverage\n(global quintile)", fontsize=9)
+    _colorbar_with_values(fig, im, ax, pivot_a.values, shrink=0.85, pad=0.015)
     fig.tight_layout(pad=0.5)
     save_pdf(fig, "fig2a_topic_heatmap")
 
-    # ── Fig 2b — country × time (grouped by region) ───────────────────────
+    # ── Fig 2b — geography (x-axis) × theme (y-axis), grouped by region ──
+    # Each cell = mean relative coverage for that country averaged across all themes
+    # Axes: x = countries (grouped by region), y = themes
     ds2 = ds.copy()
     country_order = []
     for r in REGION_ORDER:
@@ -528,13 +545,12 @@ def figure_2() -> None:
     other = [c for c in ds2["ipc_country"].unique() if c not in country_order]
     country_order.extend(sorted(other))
 
-    pivot_b = (ds2.groupby(["ipc_country", "period_label"])[rel_cols]
-                  .mean().mean(axis=1)
-                  .unstack("period_label")
-                  .sort_index(axis=1))
+    # pivot_b: index=country, columns=theme, values=mean relative coverage
+    pivot_b = (ds2.groupby("ipc_country")[rel_cols].mean())
+    pivot_b.columns = theme_labels
     pivot_b = pivot_b.reindex([c for c in country_order if c in pivot_b.index])
 
-    raw_b = pivot_b.values.astype(float)
+    raw_b    = pivot_b.values.astype(float)   # shape: (n_countries, n_themes)
     binned_b = np.where(np.isfinite(raw_b), _quintile_bin(raw_b), np.nan)
     masked_b = np.ma.masked_invalid(binned_b)
 
@@ -545,40 +561,59 @@ def figure_2() -> None:
         if n:
             region_sizes.append((r, n))
 
-    fig, ax = plt.subplots(figsize=(13, max(6, n_countries * 0.4)))
+    # imshow: rows=countries, cols=themes → imshow(masked_b) has shape (n_countries, n_themes)
+    # We want x=geography (countries), y=themes → transpose so rows=themes, cols=countries
+    fig, ax = plt.subplots(figsize=(max(10, n_countries * 0.55), 5.5))
     ax.grid(False)
-    im = ax.imshow(masked_b, aspect="auto", cmap=cmap5, vmin=0, vmax=4,
+    im = ax.imshow(masked_b.T, aspect="auto", cmap=cmap5, vmin=0, vmax=4,
                    interpolation="nearest")
-    ax.set_xticks(tick_pos)
-    ax.set_xticklabels(tick_lbl, rotation=45, ha="right", fontsize=8)
-    ax.set_yticks(range(n_countries))
-    ax.set_yticklabels(pivot_b.index.tolist(), fontsize=8)
-    ax.set_xlabel("Assessment period", labelpad=6)
-    ax.set_ylabel("Country", labelpad=6)
+
+    # x-axis: countries
+    ax.set_xticks(range(n_countries))
+    ax.set_xticklabels(pivot_b.index.tolist(), rotation=45, ha="right", fontsize=8)
+    ax.set_xlabel("Country (grouped by region)", labelpad=6)
+
+    # y-axis: themes
+    ax.set_yticks(range(len(theme_labels)))
+    ax.set_yticklabels(theme_labels, fontsize=9)
+    ax.set_ylabel("News theme", labelpad=6)
     ax.spines[:].set_visible(False)
 
-    # Region separator lines and right-side labels
+    # Region separator lines on x-axis (vertical)
     cumulative = 0
-    ax2 = ax.twinx()
-    midpoints, rlabels = [], []
-    for (rname, rsize) in region_sizes:
+    region_mid_x = []
+    region_names = []
+    for rname, rsize in region_sizes:
         boundary = cumulative + rsize
         if boundary < n_countries:
-            ax.axhline(boundary - 0.5, color="black", lw=1.2, ls="-")
-        midpoints.append(cumulative + rsize / 2 - 0.5)
-        rlabels.append(rname)
+            ax.axvline(boundary - 0.5, color="black", lw=1.2, ls="-")
+        region_mid_x.append(cumulative + rsize / 2 - 0.5)
+        region_names.append(rname)
         cumulative = boundary
 
-    ax2.set_ylim(ax.get_ylim())
-    ax2.set_yticks(midpoints)
-    ax2.set_yticklabels(rlabels, fontsize=8.5, color="#333333", fontweight="bold")
-    ax2.tick_params(right=False, labelright=True)
+    # Region labels above the x-axis
+    ax2 = ax.twiny()
+    ax2.set_xlim(ax.get_xlim())
+    ax2.set_xticks(region_mid_x)
+    ax2.set_xticklabels(region_names, fontsize=8.5, color="#333333",
+                        fontweight="bold", rotation=0)
+    ax2.tick_params(top=False, labeltop=True)
     ax2.spines[:].set_visible(False)
 
-    cb = fig.colorbar(im, ax=ax, ticks=[0, 1, 2, 3, 4], pad=0.08, shrink=0.6)
-    cb.ax.set_yticklabels(["Q1", "Q2", "Q3", "Q4", "Q5"], fontsize=8)
-    cb.set_label("Coverage quintile", fontsize=9)
-    fig.tight_layout(pad=0.5)
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+    boundaries_b = _quintile_boundaries(raw_b)
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", size="1.5%", pad=0.25)
+    cb = fig.colorbar(im, cax=cax, ticks=[0, 1, 2, 3, 4])
+    cb.ax.set_yticklabels([
+        f"Q1\n(<{_fmt_val(boundaries_b[0])})",
+        f"Q2\n(<{_fmt_val(boundaries_b[1])})",
+        f"Q3\n(<{_fmt_val(boundaries_b[2])})",
+        f"Q4\n(<{_fmt_val(boundaries_b[3])})",
+        f"Q5\n(≥{_fmt_val(boundaries_b[3])})",
+    ], fontsize=7.5)
+    cb.set_label("Relative coverage (quintile)", fontsize=9)
+    fig.subplots_adjust(left=0.08, right=0.92, top=0.92, bottom=0.22)
     save_pdf(fig, "fig2b_country_heatmap")
 
 
@@ -603,7 +638,9 @@ def figure_3() -> None:
     real_full = fold_results["full_pr_auc"].mean()
 
     # Null distribution: mean PR-AUC of combined model with shuffled news
-    null_pr = null_df["mean_pr_auc"].values
+    # Column renamed from mean_pr_auc to mean_full_pr_auc in the updated shuffle test
+    pr_col  = "mean_full_pr_auc" if "mean_full_pr_auc" in null_df.columns else "mean_pr_auc"
+    null_pr = null_df[pr_col].values
     null_mean = null_pr.mean()
     null_std  = null_pr.std()
 
@@ -624,16 +661,13 @@ def figure_3() -> None:
     # ── Fig 3a — PR-AUC ───────────────────────────────────────────────────
     fig, ax = plt.subplots(figsize=(7, 4.5))
     ax.hist(null_pr, bins=bins, density=True, alpha=0.60,
-            color="#AAAACC", edgecolor="white", lw=0.5,
-            label=f"Null (n={n_perms} permutations)")
-    ax.axvline(real_ar,   color=MODEL_COLOURS["AR-Only"], lw=2.2, ls="--",
-               label=f"AR-Only  {real_ar:.3f}  ({p_str_ar})")
-    ax.axvline(real_full, color=MODEL_COLOURS["AR+News"],  lw=2.2, ls="-",
-               label=f"AR+News  {real_full:.3f}  ({p_str_full})")
+            color="#AAAACC", edgecolor="white", lw=0.5)
+    ax.axvline(real_ar,   color=MODEL_COLOURS["AR-Only"], lw=2.2, ls="--")
+    ax.axvline(real_full, color=MODEL_COLOURS["AR+News"],  lw=2.2, ls="-")
 
     # Null mean ± 1 SD band
     ax.axvspan(null_mean - null_std, null_mean + null_std,
-               alpha=0.12, color="#666688", label="Null ±1 SD")
+               alpha=0.12, color="#666688")
     ax.axvline(null_mean, color="#666688", lw=1.0, ls=":")
 
     # Effect size annotation
@@ -644,7 +678,6 @@ def figure_3() -> None:
 
     ax.set_xlabel("Mean PR-AUC (across folds)", labelpad=6)
     ax.set_ylabel("Density", labelpad=6)
-    ax.legend(fontsize=8.5, loc="upper right")
     _despine(ax)
     fig.tight_layout(pad=0.5)
     save_pdf(fig, "fig3a_null_prauc")
@@ -668,15 +701,11 @@ def figure_3() -> None:
     )
     fig, ax = plt.subplots(figsize=(7, 4.5))
     ax.hist(null_roc, bins=bins_r, density=True, alpha=0.60,
-            color="#AAAACC", edgecolor="white", lw=0.5,
-            label=f"Null (n={n_perms} permutations)")
-    ax.axvline(real_ar_roc,   color=MODEL_COLOURS["AR-Only"], lw=2.2, ls="--",
-               label=f"AR-Only  {real_ar_roc:.3f}")
-    ax.axvline(real_full_roc, color=MODEL_COLOURS["AR+News"],  lw=2.2, ls="-",
-               label=f"AR+News  {real_full_roc:.3f}  ({p_roc_str})")
+            color="#AAAACC", edgecolor="white", lw=0.5)
+    ax.axvline(real_ar_roc,   color=MODEL_COLOURS["AR-Only"], lw=2.2, ls="--")
+    ax.axvline(real_full_roc, color=MODEL_COLOURS["AR+News"],  lw=2.2, ls="-")
     ax.set_xlabel("Mean ROC-AUC (across folds)", labelpad=6)
     ax.set_ylabel("Density", labelpad=6)
-    ax.legend(fontsize=8.5, loc="upper left")
     _despine(ax)
     fig.tight_layout(pad=0.5)
     save_pdf(fig, "fig3b_null_rocauc")
@@ -789,22 +818,21 @@ def figure_5() -> None:
         y_full = fold_df[col_full].values
 
         fig, ax = plt.subplots(figsize=(8, 4.5))
-        ax.grid(True, alpha=0.20, linestyle="--", linewidth=0.5)
 
         ax.plot(x, y_ar,   "o-", color=MODEL_COLOURS["AR-Only"],
-                label="AR-Only", lw=2.0, ms=7, zorder=4)
+                label="AR Only", lw=2.0, ms=8, zorder=4)
         ax.plot(x, y_full, "s-", color=MODEL_COLOURS["AR+News"],
-                label="AR+News",  lw=2.0, ms=7, zorder=4)
+                label="AR + News", lw=2.0, ms=8, zorder=4)
 
-        # Shaded area between models (highlight where news helps)
+        # Shaded area between models (no legend entry)
         ax.fill_between(x, y_ar, y_full,
                         where=(y_full >= y_ar),
                         alpha=0.12, color=MODEL_COLOURS["AR+News"],
-                        interpolate=True, label="Combined > AR")
+                        interpolate=True)
         ax.fill_between(x, y_ar, y_full,
                         where=(y_full < y_ar),
                         alpha=0.12, color="#888888",
-                        interpolate=True, label="AR > Combined")
+                        interpolate=True)
 
         # n_test labels above the higher of the two lines
         n_vals = fold_df["n_test"].values
@@ -816,10 +844,10 @@ def figure_5() -> None:
 
         ax.set_xlabel("Test period (start)", labelpad=6)
         ax.set_ylabel(ylabel, labelpad=6)
-        ax.set_ylim(max(0, min(y_ar.min(), y_full.min()) - 0.08), 1.0)
+        ax.set_ylim(0, 1.0)
         ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%b %Y"))
         ax.tick_params(axis="x", rotation=30)
-        ax.legend(fontsize=8.5, loc="lower left", ncol=2)
+        ax.legend(fontsize=8.5, loc="lower left")
         _despine(ax)
         fig.tight_layout(pad=0.5)
         save_pdf(fig, fname)
@@ -874,17 +902,16 @@ def figure_6() -> None:
     ax.grid(True, axis="x", alpha=0.20, linestyle="--", linewidth=0.5)
 
     for i, row in enumerate(cdf.itertuples()):
-        col = REGION_COLOURS.get(row.region, "#888888")
-        # Arrow: AR-Only → AR+News
+        arrow_col = "green" if row.prauc_full >= row.prauc_ar else "red"
         ax.annotate("",
                     xy     =(row.prauc_full, i),
                     xytext =(row.prauc_ar,   i),
-                    arrowprops=dict(arrowstyle="-|>", color=col,
-                                    lw=1.8, mutation_scale=10))
-        ax.plot(row.prauc_ar,   i, "o", color=MODEL_COLOURS["AR-Only"],
-                ms=8, zorder=5, markeredgewidth=0.5, markeredgecolor="white")
-        ax.plot(row.prauc_full, i, "s", color=MODEL_COLOURS["AR+News"],
-                ms=8, zorder=5, markeredgewidth=0.5, markeredgecolor="white")
+                    arrowprops=dict(arrowstyle="->", color=arrow_col,
+                                    lw=2, mutation_scale=15))
+        ax.scatter(row.prauc_ar,   i, color=MODEL_COLOURS["AR-Only"],
+                   s=100, zorder=5, edgecolors="white", linewidths=0.5)
+        ax.scatter(row.prauc_full, i, marker="s", color=MODEL_COLOURS["AR+News"],
+                   s=100, zorder=5, edgecolors="white", linewidths=0.5)
         # n annotation on right margin
         ax.text(1.02, i, f"n={row.n_obs}", transform=ax.get_yaxis_transform(),
                 va="center", ha="left", fontsize=7, color="#666666")
@@ -902,79 +929,19 @@ def figure_6() -> None:
             ax.axhline(i - 0.5, color="#555555", lw=0.8, ls="--", alpha=0.5)
         prev_region = row.region
 
-    # Legend: models + region colours
     legend_elems = [
         Line2D([0],[0], marker="o", color="w",
-               markerfacecolor=MODEL_COLOURS["AR-Only"], ms=8, label="AR-Only"),
+               markerfacecolor=MODEL_COLOURS["AR-Only"], ms=10, label="AR Only"),
         Line2D([0],[0], marker="s", color="w",
-               markerfacecolor=MODEL_COLOURS["AR+News"],  ms=8, label="AR+News"),
+               markerfacecolor=MODEL_COLOURS["AR+News"],  ms=10, label="AR + News"),
+        Line2D([0],[0], color="green", lw=2, label="Improvement"),
+        Line2D([0],[0], color="red",   lw=2, label="Degradation"),
     ]
-    for r in REGION_ORDER:
-        if r in cdf["region"].values:
-            legend_elems.append(
-                mpatches.Patch(color=REGION_COLOURS[r], label=r, alpha=0.85))
-    ax.legend(handles=legend_elems, fontsize=8, loc="lower right",
-              title="Model / Region", title_fontsize=8)
+    ax.legend(handles=legend_elems, fontsize=8, loc="lower right", frameon=True)
     _despine(ax)
     fig.tight_layout(pad=0.5)
     save_pdf(fig, "fig6a_country_prauc")
 
-    # ── Fig 6b — strip + box: PR-AUC by region ───────────────────────────
-    regions_present = [r for r in REGION_ORDER if r in cdf["region"].values]
-    n_reg = len(regions_present)
-
-    fig, ax = plt.subplots(figsize=(8.5, 5))
-    ax.grid(True, axis="y", alpha=0.20, linestyle="--", linewidth=0.5)
-
-    gap    = 2.2
-    bw     = 0.6
-    offset = 0.35
-
-    for ri, region in enumerate(regions_present):
-        sub = cdf[cdf["region"] == region]
-        xc  = ri * gap
-        col = REGION_COLOURS[region]
-
-        for model_key, col_name, xoff, mshape in [
-            ("AR-Only", "prauc_ar",   -offset, "o"),
-            ("AR+News",  "prauc_full", +offset, "s"),
-        ]:
-            vals = sub[col_name].values
-            xj   = xc + xoff + np.random.default_rng(42).uniform(-0.06, 0.06, len(vals))
-            mc   = MODEL_COLOURS[model_key]
-            ax.scatter(xj, vals, color=mc, alpha=0.8, s=50, zorder=4,
-                       marker=mshape, edgecolors="white", linewidths=0.5)
-            if len(vals) >= 3:
-                bp = ax.boxplot(vals, positions=[xc + xoff], widths=bw * 0.38,
-                                patch_artist=True, manage_ticks=False,
-                                medianprops=dict(color="black", lw=2.2),
-                                whiskerprops=dict(color="#333333", lw=1.0),
-                                capprops=dict(color="#333333", lw=1.0),
-                                flierprops=dict(visible=False),
-                                boxprops=dict(linewidth=0.6))
-                for patch in bp["boxes"]:
-                    patch.set_facecolor(mc); patch.set_alpha(0.40)
-            elif len(vals) > 0:
-                # Single country — just a horizontal line
-                ax.hlines(vals[0], xc + xoff - 0.15, xc + xoff + 0.15,
-                          color=mc, lw=2.0, zorder=4)
-
-    ax.set_xticks([ri * gap for ri in range(n_reg)])
-    ax.set_xticklabels(regions_present, fontsize=9)
-    ax.set_ylabel("PR-AUC", labelpad=6)
-    ax.set_ylim(0, 1.05)
-    ax.axhline(0.5, color="#AAAAAA", lw=0.8, ls=":")
-
-    legend_elems = [
-        Line2D([0],[0], marker="o", color="w",
-               markerfacecolor=MODEL_COLOURS["AR-Only"], ms=9, label="AR-Only"),
-        Line2D([0],[0], marker="s", color="w",
-               markerfacecolor=MODEL_COLOURS["AR+News"], ms=9, label="AR+News"),
-    ]
-    ax.legend(handles=legend_elems, fontsize=9)
-    _despine(ax)
-    fig.tight_layout(pad=0.5)
-    save_pdf(fig, "fig6b_region_prauc")
 
 
 # ---------------------------------------------------------------------------
@@ -990,22 +957,13 @@ def figure_7() -> None:
     n_dm = len(dm)
     print(f"  Districts with n_obs >= 5: {n_dm}")
 
-    # Add country/region for colour encoding
-    dm["country"] = dm["district_id"].apply(_country_from_district_id)
-    dm["region"]  = dm["country"].map(COUNTRY_REGION).fillna("Other")
-
-    def _scatter_panel(ax, x_arr, y_arr, region_arr, xlabel, ylabel,
-                       x_log=False, add_hline=None):
-        """Scatter coloured by region with regression overlay."""
+    def _scatter_panel(ax, x_arr, y_arr, xlabel, ylabel, add_hline=None):
+        """Scatter with single neutral colour and regression overlay."""
         ax.grid(True, alpha=0.18, linestyle="--", linewidth=0.5)
-        for region in REGION_ORDER + ["Other"]:
-            mask_r = (region_arr == region) & np.isfinite(x_arr) & np.isfinite(y_arr)
-            if mask_r.sum() == 0:
-                continue
-            col = REGION_COLOURS.get(region, "#888888")
-            ax.scatter(x_arr[mask_r], y_arr[mask_r],
-                       color=col, alpha=0.65, s=28, edgecolors="white",
-                       linewidths=0.4, label=region, zorder=3)
+        mask = np.isfinite(x_arr) & np.isfinite(y_arr)
+        ax.scatter(x_arr[mask], y_arr[mask],
+                   color="#555555", alpha=0.6, s=60, edgecolors="white",
+                   linewidths=0.5, zorder=3)
         if add_hline is not None:
             ax.axhline(add_hline, color="#888888", lw=0.9, ls=":", zorder=2)
         _regression_annotation(ax, x_arr, y_arr)
@@ -1017,16 +975,12 @@ def figure_7() -> None:
     fig, ax = plt.subplots(figsize=(6.5, 5.5))
     x7a = np.log10(dm["mean_articles_month"].clip(lower=1).values)
     y7a = dm["delta_prauc"].values
-    _scatter_panel(ax, x7a, y7a, dm["region"].values,
+    _scatter_panel(ax, x7a, y7a,
                    r"$\log_{10}$(Mean articles month$^{-1}$)",
                    r"$\Delta$PR-AUC  =  PR-AUC(AR+News) $-$ PR-AUC(AR-Only)",
                    add_hline=0.0)
     ax.set_ylim(y7a[np.isfinite(y7a)].min() - 0.05,
                 y7a[np.isfinite(y7a)].max() + 0.10)
-    handles = [mpatches.Patch(color=REGION_COLOURS.get(r,"#888888"), label=r)
-               for r in REGION_ORDER if r in dm["region"].values]
-    ax.legend(handles=handles, fontsize=7.5, title="Region",
-              title_fontsize=8, loc="upper left")
     fig.tight_layout(pad=0.5)
     save_pdf(fig, "fig7a_articles_vs_delta")
 
@@ -1034,14 +988,10 @@ def figure_7() -> None:
     fig, ax = plt.subplots(figsize=(6.5, 5.5))
     x7b = dm["volatility"].values
     y7b = dm["prauc_ar"].values
-    _scatter_panel(ax, x7b, y7b, dm["region"].values,
+    _scatter_panel(ax, x7b, y7b,
                    "Volatility  (fraction of periods with regime change)",
                    "PR-AUC — AR-Only")
     ax.set_xlim(-0.02, 1.02); ax.set_ylim(-0.02, 1.05)
-    handles = [mpatches.Patch(color=REGION_COLOURS.get(r,"#888888"), label=r)
-               for r in REGION_ORDER if r in dm["region"].values]
-    ax.legend(handles=handles, fontsize=7.5, title="Region",
-              title_fontsize=8, loc="lower left")
     fig.tight_layout(pad=0.5)
     save_pdf(fig, "fig7b_volatility_vs_prauc")
 
@@ -1049,15 +999,11 @@ def figure_7() -> None:
     fig, ax = plt.subplots(figsize=(6.5, 5.5))
     x7c = dm["onset_chronic_count"].values.astype(float)
     y7c = dm["prauc_ar"].values
-    _scatter_panel(ax, x7c, y7c, dm["region"].values,
+    _scatter_panel(ax, x7c, y7c,
                    "Onset + Chronic observations per district",
                    "PR-AUC — AR-Only")
     ax.set_xlim(-0.3, x7c[np.isfinite(x7c)].max() + 0.5)
     ax.set_ylim(-0.02, 1.05)
-    handles = [mpatches.Patch(color=REGION_COLOURS.get(r,"#888888"), label=r)
-               for r in REGION_ORDER if r in dm["region"].values]
-    ax.legend(handles=handles, fontsize=7.5, title="Region",
-              title_fontsize=8, loc="lower right")
     fig.tight_layout(pad=0.5)
     save_pdf(fig, "fig7c_onsetchronic_vs_prauc")
 
@@ -1207,19 +1153,16 @@ def figure_6c() -> None:
                           color="#999999", style="italic")
             continue
 
-        col = REGION_COLOURS.get(row.region, "#888888")
-        # Arrow AR-Only → AR+News
+        arrow_col = "green" if row.prauc_full >= row.prauc_ar else "red"
         ax_prauc.annotate("",
                           xy    =(row.prauc_full, i),
                           xytext=(row.prauc_ar,   i),
-                          arrowprops=dict(arrowstyle="-|>", color=col,
-                                          lw=1.8, mutation_scale=10))
-        ax_prauc.plot(row.prauc_ar,   i, "o",
-                      color=MODEL_COLOURS["AR-Only"], ms=8, zorder=5,
-                      markeredgewidth=0.5, markeredgecolor="white")
-        ax_prauc.plot(row.prauc_full, i, "s",
-                      color=MODEL_COLOURS["AR+News"], ms=8, zorder=5,
-                      markeredgewidth=0.5, markeredgecolor="white")
+                          arrowprops=dict(arrowstyle="->", color=arrow_col,
+                                          lw=2, mutation_scale=15))
+        ax_prauc.scatter(row.prauc_ar,   i, color=MODEL_COLOURS["AR-Only"],
+                         s=100, zorder=5, edgecolors="white", linewidths=0.5)
+        ax_prauc.scatter(row.prauc_full, i, marker="s", color=MODEL_COLOURS["AR+News"],
+                         s=100, zorder=5, edgecolors="white", linewidths=0.5)
         delta = row.prauc_full - row.prauc_ar
         sign  = "+" if delta >= 0 else ""
         ax_prauc.text(1.02, i, f"{sign}{delta:.2f}",
@@ -1238,20 +1181,15 @@ def figure_6c() -> None:
     ax_prauc.set_xlabel("PR-AUC", labelpad=6)
     ax_prauc.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
 
-    # Region colour legend + model legend
     legend_elems = [
         Line2D([0],[0], marker="o", color="w",
-               markerfacecolor=MODEL_COLOURS["AR-Only"], ms=8, label="AR-Only"),
+               markerfacecolor=MODEL_COLOURS["AR-Only"], ms=10, label="AR Only"),
         Line2D([0],[0], marker="s", color="w",
-               markerfacecolor=MODEL_COLOURS["AR+News"], ms=8, label="AR+News"),
+               markerfacecolor=MODEL_COLOURS["AR+News"], ms=10, label="AR + News"),
+        Line2D([0],[0], color="green", lw=2, label="Improvement"),
+        Line2D([0],[0], color="red",   lw=2, label="Degradation"),
     ]
-    for r in REGION_ORDER:
-        if r in adf["region"].values:
-            legend_elems.append(
-                mpatches.Patch(color=REGION_COLOURS[r], label=r, alpha=0.85))
-    ax_prauc.legend(handles=legend_elems, fontsize=8, loc="lower right",
-                    title="Model / Region", title_fontsize=8,
-                    framealpha=0.95, edgecolor="#CCCCCC")
+    ax_prauc.legend(handles=legend_elems, fontsize=8, loc="lower right", frameon=True)
 
     # Right-margin header for delta column
     ax_prauc.text(1.02, n_all - 0.2, "ΔPR-AUC",

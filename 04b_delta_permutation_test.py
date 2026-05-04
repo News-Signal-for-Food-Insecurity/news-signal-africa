@@ -61,12 +61,13 @@ class DeltaTestConfig:
     MONTHLY_DATA_START  = pd.Timestamp("2020-02-01")
     VALIDATION_FRACTION = 0.20
 
-    AR_FEATURES = ["ipc_lag_1", "ipc_persistence_2yr", "spatial_lag", "ipc_period"]
+    AR_FEATURES = ["ipc_lag_1", "ipc_persistence_2yr", "spatial_lag", "ipc_period", "ipc_country"]
     NEWS_THEMES = [
         "conflict", "displacement", "economic", "food_security",
         "governance", "health", "humanitarian", "weather", "other",
     ]
-    NEWS_FEATURES     = [f"{t}_relative_coverage" for t in NEWS_THEMES] + [f"{t}_zscore" for t in NEWS_THEMES]
+    NEWS_FEATURES     = [f"{t}_relative_coverage" for t in NEWS_THEMES] + [f"{t}_zscore" for t in NEWS_THEMES] + ["article_count_zscore"]
+    # ipc_country in both AR and Combined so delta isolates news contribution only.
     COMBINED_FEATURES = AR_FEATURES + NEWS_FEATURES
     TARGET            = "target_crisis_binary"
     EPSILON           = 1e-10
@@ -108,22 +109,28 @@ def generate_rolling_folds(df, cfg):
 
 
 def compute_fold_news_features(df_train, df_test, monthly_gdelt, train_end, cfg):
-    baseline_start = train_end - pd.DateOffset(months=12)
-    baseline = monthly_gdelt[
-        (monthly_gdelt["month"] >= baseline_start) & (monthly_gdelt["month"] <= train_end)
-    ].copy()
+    baseline = monthly_gdelt[monthly_gdelt["month"] <= train_end].copy()
+    baseline["log_article_count"] = np.log1p(baseline["article_count"].clip(lower=0))
     cov_cols = [f"{t}_relative_coverage" for t in cfg.NEWS_THEMES]
-    stats = baseline.groupby("district_id")[cov_cols].agg(["mean", "std"])
+    all_stat_cols = cov_cols + ["log_article_count"]
+    stats = baseline.groupby("district_id")[all_stat_cols].agg(["mean", "std"])
     stats.columns = [f"{c[0]}__{c[1]}" for c in stats.columns]
 
     def apply_z(df_s):
         out = df_s.copy()
+        s = stats.reindex(out["district_id"])
         for t in cfg.NEWS_THEMES:
             c = f"{t}_relative_coverage"
-            s = stats.reindex(out["district_id"])
             means = s[f"{c}__mean"].values
-            stds  = np.where(s[f"{c}__std"].values < cfg.EPSILON, 1.0, s[f"{c}__std"].values)
-            out[f"{t}_zscore"] = (out[c].values - means) / stds
+            stds  = s[f"{c}__std"].values
+            valid = np.isfinite(means) & np.isfinite(stds) & (stds > cfg.EPSILON)
+            out[f"{t}_zscore"] = np.where(valid, (out[c].values - means) / stds, 0.0)
+        # article_count_zscore: log-scale z-score
+        log_count    = np.log1p(out["article_count"].values.astype(float)) if "article_count" in out.columns else np.zeros(len(out))
+        ac_log_means = s["log_article_count__mean"].values
+        ac_log_stds  = s["log_article_count__std"].values
+        valid_ac = np.isfinite(ac_log_means) & np.isfinite(ac_log_stds) & (ac_log_stds > cfg.EPSILON)
+        out["article_count_zscore"] = np.where(valid_ac, (log_count - ac_log_means) / ac_log_stds, 0.0)
         return out
 
     return apply_z(df_train), apply_z(df_test)
@@ -141,6 +148,8 @@ def shuffle_news_within_districts(df, news_features, rng):
 def prep_X(df_subset, features):
     X = df_subset[features].copy()
     X["ipc_period"] = X["ipc_period"].astype(str)
+    if "ipc_country" in X.columns:
+        X["ipc_country"] = X["ipc_country"].astype(str)
     return X
 
 
@@ -180,8 +189,8 @@ def run_fold_delta(fold_info, df, monthly_gdelt, rng, cfg):
     y_fit = df_fit[cfg.TARGET].values
     y_val = df_val[cfg.TARGET].values
 
-    cat_ar   = [cfg.AR_FEATURES.index("ipc_period")]
-    cat_full = [cfg.COMBINED_FEATURES.index("ipc_period")]
+    cat_ar   = [cfg.AR_FEATURES.index("ipc_period"),   cfg.AR_FEATURES.index("ipc_country")]
+    cat_full = [cfg.COMBINED_FEATURES.index("ipc_period"), cfg.COMBINED_FEATURES.index("ipc_country")]
 
     # AR model (uses real AR features — not shuffled)
     model_ar = CatBoostClassifier(**cfg.CATBOOST_PARAMS_AR, cat_features=cat_ar)

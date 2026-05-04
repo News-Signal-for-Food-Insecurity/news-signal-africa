@@ -1,0 +1,8 @@
+{
+  "n_permutations": 100,
+  "n_folds": 7,
+  "observed_delta": 0.030249484841286263,
+  "null_mean_delta": -0.0008568093010125218,
+  "null_std_delta": 0.008170718426468682,
+  "p_value": 0.0
+}

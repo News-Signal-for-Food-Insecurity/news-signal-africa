@@ -4,8 +4,8 @@
 Rolling stratified spatial cross-validation for AR-only and Combined models.
 
 Two CatBoost classifiers per fold:
-  - AR model   : 4 autoregressive features only
-  - Combined   : 4 AR + 18 news features (fold-aware z-scores)
+  - AR model   : 5 autoregressive features (incl. ipc_country)
+  - Combined   : 5 AR + 19 news features (fold-aware z-scores)
 
 Fold structure:
   - Training window : 20 months
@@ -69,6 +69,7 @@ class Config:
         "ipc_persistence_2yr",
         "spatial_lag",
         "ipc_period",
+        "ipc_country",
     ]
     NEWS_THEMES = [
         "conflict", "displacement", "economic", "food_security",
@@ -79,13 +80,12 @@ class Config:
         + [f"{t}_zscore" for t in NEWS_THEMES]
         + ["article_count_zscore"]   # volume anomaly: total article spike signal
     )
-    # ipc_country as categorical: captures country-level baseline crisis rates and
-    # media-coverage characteristics that are not captured by AR or news features.
-    COMBINED_FEATURES = AR_FEATURES + ["ipc_country"] + NEWS_FEATURES
+    # ipc_country included in both AR and Combined so models differ only in news features.
+    COMBINED_FEATURES = AR_FEATURES + NEWS_FEATURES
     TARGET = "target_crisis_binary"
 
-    # CatBoost params — AR uses lower capacity (4 features) to avoid overfitting;
-    # Combined uses higher capacity (23 features) to exploit richer feature space.
+    # CatBoost params — AR uses lower capacity (5 features) to avoid overfitting;
+    # Combined uses higher capacity (24 features) to exploit richer feature space.
     # auto_class_weights="Balanced": corrects for ~28% crisis prevalence (1:2.6 imbalance).
     # eval_metric="AveragePrecision": directly targets PR-AUC (paper's primary metric) for early stopping.
     # Intentional asymmetry: matching capacity to feature count, not equalising for comparison.
@@ -183,7 +183,10 @@ def compute_fold_news_features(
     baseline_gdelt = monthly_gdelt[monthly_gdelt["month"] <= train_end].copy()
 
     cov_cols = [f"{t}_relative_coverage" for t in cfg.NEWS_THEMES]
-    all_stat_cols = cov_cols + ["article_count"]
+    # Compute log1p article count for consistent log-scale z-score
+    baseline_gdelt = baseline_gdelt.copy()
+    baseline_gdelt["log_article_count"] = np.log1p(baseline_gdelt["article_count"].clip(lower=0))
+    all_stat_cols = cov_cols + ["log_article_count"]
     district_stats = (
         baseline_gdelt.groupby("district_id")[all_stat_cols]
         .agg(["mean", "std"])
@@ -203,13 +206,12 @@ def compute_fold_news_features(
             raw   = df_out[cov_col].values.astype(float)
             z     = np.where(valid, (raw - means) / stds, 0.0)
             df_out[zscore_col] = z
-        # article_count_zscore: volume anomaly (log-scale for heavy-tailed counts)
-        log_count = np.log1p(df_out["article_count"].values.astype(float)) if "article_count" in df_out.columns else np.zeros(len(df_out))
-        ac_means = stats["article_count__mean"].values
-        ac_stds  = stats["article_count__std"].values
-        log_ac_means = np.log1p(np.where(np.isfinite(ac_means) & (ac_means >= 0), ac_means, 0.0))
-        valid_ac = np.isfinite(ac_means) & np.isfinite(ac_stds) & (ac_stds > 1e-6)
-        df_out["article_count_zscore"] = np.where(valid_ac, (log_count - log_ac_means) / ac_stds, 0.0)
+        # article_count_zscore: log-scale z-score — numerator and denominator both on log1p scale
+        log_count    = np.log1p(df_out["article_count"].values.astype(float)) if "article_count" in df_out.columns else np.zeros(len(df_out))
+        ac_log_means = stats["log_article_count__mean"].values
+        ac_log_stds  = stats["log_article_count__std"].values
+        valid_ac = np.isfinite(ac_log_means) & np.isfinite(ac_log_stds) & (ac_log_stds > 1e-6)
+        df_out["article_count_zscore"] = np.where(valid_ac, (log_count - ac_log_means) / ac_log_stds, 0.0)
         return df_out
 
     return apply_zscore(df_train), apply_zscore(df_test)
@@ -262,8 +264,9 @@ def run_single_fold(fold_info: dict, df: pd.DataFrame, monthly_gdelt: pd.DataFra
             X["ipc_country"] = X["ipc_country"].astype(str)
         return X
 
-    # AR model — ipc_period is the only categorical
-    cat_idx_ar = [cfg.AR_FEATURES.index("ipc_period")]
+    # AR model — ipc_period and ipc_country are both categorical
+    cat_idx_ar = [cfg.AR_FEATURES.index("ipc_period"),
+                  cfg.AR_FEATURES.index("ipc_country")]
     model_ar = CatBoostClassifier(**cfg.CATBOOST_PARAMS_AR, cat_features=cat_idx_ar)
     model_ar.fit(
         prep_X(df_fit, cfg.AR_FEATURES), y_fit,
