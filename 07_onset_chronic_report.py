@@ -57,7 +57,8 @@ FI_PATH      = RESULTS_DIR / "feature_importance.csv"
 SUMMARY_PATH = RESULTS_DIR / "metrics_summary.json"
 SENS_PATH    = BASE_DIR / "results" / "window_sensitivity" / "metrics_summary.json"
 SHUF_PATH    = BASE_DIR / "results" / "shuffle_test" / "config.json"
-DELTA_PATH   = BASE_DIR / "results" / "delta_permutation_test" / "config.json"
+# delta permutation test removed — main shuffle test (04_temporal_shuffle_test.py)
+# now reports p_value_delta in shuffle_test/config.json. delta_cfg is built from shuf.
 IMPACT_PATH  = BASE_DIR / "results" / "operational_impact_summary.json"
 NULL_CSV     = BASE_DIR / "results" / "shuffle_test" / "null_distribution.csv"
 
@@ -112,7 +113,16 @@ def load_data():
     with open(SUMMARY_PATH)  as f: summary   = json.load(f)
     with open(SENS_PATH)     as f: sens      = json.load(f)
     with open(SHUF_PATH)     as f: shuf      = json.load(f)
-    with open(DELTA_PATH)    as f: delta_cfg = json.load(f)
+    # Adapter: the corrected main shuffle test reports both PR-AUC and delta
+    # statistics. Map them to the keys this script previously consumed from
+    # the (now-removed) delta_permutation_test/config.json.
+    delta_cfg = {
+        "p_value":         shuf.get("p_value_delta"),
+        "null_mean_delta": shuf.get("null_mean_delta"),
+        "null_std_delta":  shuf.get("null_std_delta"),
+        "n_permutations":  shuf.get("n_permutations"),
+        "observed_delta":  shuf.get("real_mean_delta"),
+    }
     with open(IMPACT_PATH)   as f: impact    = json.load(f)
     null_df = pd.read_csv(NULL_CSV) if NULL_CSV.exists() else None
     return preds, fold_results, fi, summary, sens, shuf, delta_cfg, impact, null_df

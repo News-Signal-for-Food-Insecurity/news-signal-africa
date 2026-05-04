@@ -1,3 +1,0 @@
-model,pr_auc,roc_auc,precision,recall,f1,n_folds
-AR-only,0.8162,0.9224,0.842,0.6895,0.7557,6
-Combined,0.8354,0.9303,0.8335,0.7098,0.7619,6
