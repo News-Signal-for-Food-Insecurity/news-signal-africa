@@ -20,9 +20,7 @@ Figures produced
   fig5b  Temporal line: fold-level ROC-AUC over test dates, both models
   fig6a  Dot-arrow: country-level PR-AUC (AR-Only → AR+News), grouped by region
   fig6b  Strip + box: region-level PR-AUC distribution, both models
-  fig7a  District scatter: log₁₀(mean articles/month) vs ΔPR-AUC
-  fig7b  District scatter: volatility vs AR-Only PR-AUC
-  fig7c  District scatter: onset+chronic count vs AR-Only PR-AUC
+  fig7   → see generate_fig7_new.py (fig7_time.pdf, fig7_space.pdf)
 
 Run
 ---
@@ -518,37 +516,48 @@ def figure_2() -> None:
         cb.set_label("Relative coverage (quintile)", fontsize=9)
         return cb
 
-    # Shared tick positions for both heatmaps
+    # ── Fig 2a — theme × time-period ─────────────────────────────────────
     pivot_a = (ds.groupby("period_label")[rel_cols].mean().sort_index())
     pivot_a.columns = theme_labels
     periods   = list(pivot_a.index)
     n_periods = len(periods)
-    tick_step = 3
-    tick_pos  = list(range(0, n_periods, tick_step))
-    tick_lbl  = [periods[i] for i in tick_pos]
+    binned_a  = _quintile_bin(pivot_a.values)
 
-    # ── Fig 2a — theme × time-period ─────────────────────────────────────
-    # Rows = themes, Columns = time periods  (themes on y, time on x)
-    binned_a = _quintile_bin(pivot_a.values)
-
-    fig, ax = plt.subplots(figsize=(11, 4.5))
+    fig, ax = plt.subplots(figsize=(max(11, n_periods * 0.95), 4.5))
     ax.grid(False)
     im = ax.imshow(binned_a.T, aspect="auto", cmap=cmap5, vmin=0, vmax=4,
                    interpolation="nearest")
-    ax.set_xticks(tick_pos)
-    ax.set_xticklabels(tick_lbl, rotation=45, ha="right", fontsize=8)
+
+    # All periods on x-axis
+    ax.set_xticks(range(n_periods))
+    ax.set_xticklabels(periods, rotation=45, ha="right", fontsize=8.5)
+
+    # White separator lines between every period column
+    for col in range(n_periods - 1):
+        ax.axvline(col + 0.5, color="white", lw=1.5, zorder=3)
+
     ax.set_yticks(range(len(theme_labels)))
     ax.set_yticklabels(theme_labels, fontsize=9)
     ax.set_xlabel("Assessment period", labelpad=6)
     ax.set_ylabel("News theme", labelpad=6)
     ax.spines[:].set_visible(False)
-    _colorbar_with_values(fig, im, ax, pivot_a.values, shrink=0.85, pad=0.015)
+
+    # Organised colorbar: horizontal below the figure with clear Q labels
+    boundaries_a = _quintile_boundaries(pivot_a.values)
+    cb = fig.colorbar(im, ax=ax, orientation="horizontal", pad=0.22,
+                      shrink=0.45, aspect=25, ticks=[0, 1, 2, 3, 4])
+    cb.ax.set_xticklabels([
+        f"Q1  (<{_fmt_val(boundaries_a[0])})",
+        f"Q2  (<{_fmt_val(boundaries_a[1])})",
+        f"Q3  (<{_fmt_val(boundaries_a[2])})",
+        f"Q4  (<{_fmt_val(boundaries_a[3])})",
+        f"Q5  (≥{_fmt_val(boundaries_a[3])})",
+    ], fontsize=7.5, rotation=0)
+    cb.set_label("Relative coverage (quintile)", fontsize=9, labelpad=4)
     fig.tight_layout(pad=0.5)
     save_pdf(fig, "fig2a_topic_heatmap")
 
-    # ── Fig 2b — geography (x-axis) × theme (y-axis), grouped by region ──
-    # Each cell = mean relative coverage for that country averaged across all themes
-    # Axes: x = countries (grouped by region), y = themes
+    # ── Fig 2b — country (x) × theme (y), grouped by region ──────────────
     ds2 = ds.copy()
     country_order = []
     for r in REGION_ORDER:
@@ -558,75 +567,103 @@ def figure_2() -> None:
     other = [c for c in ds2["ipc_country"].unique() if c not in country_order]
     country_order.extend(sorted(other))
 
-    # pivot_b: index=country, columns=theme, values=mean relative coverage
     pivot_b = (ds2.groupby("ipc_country")[rel_cols].mean())
     pivot_b.columns = theme_labels
     pivot_b = pivot_b.reindex([c for c in country_order if c in pivot_b.index])
 
-    raw_b    = pivot_b.values.astype(float)   # shape: (n_countries, n_themes)
+    raw_b    = pivot_b.values.astype(float)
     binned_b = np.where(np.isfinite(raw_b), _quintile_bin(raw_b), np.nan)
     masked_b = np.ma.masked_invalid(binned_b)
 
     n_countries = len(pivot_b)
     region_sizes = []
+    cumulative = 0
     for r in REGION_ORDER:
         n = sum(1 for c in pivot_b.index if COUNTRY_REGION.get(c) == r)
         if n:
-            region_sizes.append((r, n))
+            region_sizes.append((r, n, cumulative))
+            cumulative += n
 
-    # imshow: rows=countries, cols=themes → imshow(masked_b) has shape (n_countries, n_themes)
-    # We want x=geography (countries), y=themes → transpose so rows=themes, cols=countries
-    fig, ax = plt.subplots(figsize=(max(10, n_countries * 0.55), 5.5))
+    # Build expanded image with white-gap columns between countries and
+    # thicker white gap between regions.  Each country = 1 data col + 1 white col.
+    # Region boundary = extra white col on top.
+    COUNTRY_GAP = 1   # white cols between countries
+    REGION_GAP  = 3   # white cols between regions (on top of country gap)
+    n_themes    = len(theme_labels)
+
+    # Map original country index → expanded column index
+    col_map   = []   # col_map[i] = expanded column index for country i
+    exp_cols  = 0
+    prev_region = None
+    for i, country in enumerate(pivot_b.index):
+        region = COUNTRY_REGION.get(country, "Other")
+        if prev_region is not None and region != prev_region:
+            exp_cols += REGION_GAP   # extra gap at region boundary
+        elif i > 0:
+            exp_cols += COUNTRY_GAP  # gap between countries in same region
+        col_map.append(exp_cols)
+        exp_cols += 1
+        prev_region = region
+    total_exp_cols = exp_cols
+
+    # Fill expanded matrix (NaN = white/masked)
+    expanded = np.full((n_themes, total_exp_cols), np.nan)
+    for i, exp_i in enumerate(col_map):
+        expanded[:, exp_i] = masked_b.T[:, i]
+    masked_exp = np.ma.masked_invalid(expanded)
+
+    fig, ax = plt.subplots(figsize=(max(12, n_countries * 0.7), 5.5))
     ax.grid(False)
-    im = ax.imshow(masked_b.T, aspect="auto", cmap=cmap5, vmin=0, vmax=4,
+    im = ax.imshow(masked_exp, aspect="auto", cmap=cmap5, vmin=0, vmax=4,
                    interpolation="nearest")
 
-    # x-axis: countries
-    ax.set_xticks(range(n_countries))
-    ax.set_xticklabels(pivot_b.index.tolist(), rotation=45, ha="right", fontsize=8)
+    # x-axis ticks on country centres only
+    short_names = {
+        "Democratic Republic of the Congo": "DRC",
+        "Burkina Faso": "Burkina Faso",
+    }
+    country_labels = [short_names.get(c, c) for c in pivot_b.index]
+    ax.set_xticks(col_map)
+    ax.set_xticklabels(country_labels, rotation=45, ha="right", fontsize=8)
     ax.set_xlabel("Country (grouped by region)", labelpad=6)
 
     # y-axis: themes
-    ax.set_yticks(range(len(theme_labels)))
+    ax.set_yticks(range(n_themes))
     ax.set_yticklabels(theme_labels, fontsize=9)
     ax.set_ylabel("News theme", labelpad=6)
     ax.spines[:].set_visible(False)
+    ax.set_xlim(-0.5, total_exp_cols - 0.5)
 
-    # Region separator lines on x-axis (vertical)
-    cumulative = 0
-    region_mid_x = []
-    region_names = []
-    for rname, rsize in region_sizes:
-        boundary = cumulative + rsize
-        if boundary < n_countries:
-            ax.axvline(boundary - 0.5, color="black", lw=1.2, ls="-")
-        region_mid_x.append(cumulative + rsize / 2 - 0.5)
-        region_names.append(rname)
-        cumulative = boundary
-
-    # Region labels above the x-axis
+    # Region labels above x-axis via twiny
     ax2 = ax.twiny()
     ax2.set_xlim(ax.get_xlim())
+    region_mid_x = []
+    region_label_names = []
+    for rname, rsize, rstart in region_sizes:
+        first_exp = col_map[rstart]
+        last_exp  = col_map[rstart + rsize - 1]
+        region_mid_x.append((first_exp + last_exp) / 2)
+        region_label_names.append(rname)
     ax2.set_xticks(region_mid_x)
-    ax2.set_xticklabels(region_names, fontsize=8.5, color="#333333",
+    ax2.set_xticklabels(region_label_names, fontsize=8.5, color="#333333",
                         fontweight="bold", rotation=0)
     ax2.tick_params(top=False, labeltop=True)
     ax2.spines[:].set_visible(False)
 
+    # Organised horizontal colorbar below the figure
     from mpl_toolkits.axes_grid1 import make_axes_locatable
     boundaries_b = _quintile_boundaries(raw_b)
-    divider = make_axes_locatable(ax)
-    cax = divider.append_axes("right", size="1.5%", pad=0.25)
-    cb = fig.colorbar(im, cax=cax, ticks=[0, 1, 2, 3, 4])
-    cb.ax.set_yticklabels([
-        f"Q1\n(<{_fmt_val(boundaries_b[0])})",
-        f"Q2\n(<{_fmt_val(boundaries_b[1])})",
-        f"Q3\n(<{_fmt_val(boundaries_b[2])})",
-        f"Q4\n(<{_fmt_val(boundaries_b[3])})",
-        f"Q5\n(≥{_fmt_val(boundaries_b[3])})",
+    cb = fig.colorbar(im, ax=ax, orientation="horizontal", pad=0.28,
+                      shrink=0.40, aspect=25, ticks=[0, 1, 2, 3, 4])
+    cb.ax.set_xticklabels([
+        f"Q1  (<{_fmt_val(boundaries_b[0])})",
+        f"Q2  (<{_fmt_val(boundaries_b[1])})",
+        f"Q3  (<{_fmt_val(boundaries_b[2])})",
+        f"Q4  (<{_fmt_val(boundaries_b[3])})",
+        f"Q5  (≥{_fmt_val(boundaries_b[3])})",
     ], fontsize=7.5)
-    cb.set_label("Relative coverage (quintile)", fontsize=9)
-    fig.subplots_adjust(left=0.08, right=0.92, top=0.92, bottom=0.22)
+    cb.set_label("Relative coverage (quintile)", fontsize=9, labelpad=4)
+    fig.subplots_adjust(left=0.08, right=0.97, top=0.88, bottom=0.30)
     save_pdf(fig, "fig2b_country_heatmap")
 
 
@@ -936,6 +973,8 @@ def figure_5() -> None:
         ax.set_xlabel("Test period", labelpad=6)
         ax.set_ylabel(ylabel, labelpad=6)
         ax.set_ylim(0, 1.0)
+        # Pin x-axis to exactly the 7 fold dates — no interpolated ticks
+        ax.set_xticks(x)
         ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%b %Y"))
         ax.tick_params(axis="x", rotation=30)
         ax.legend(fontsize=8.5, loc="lower left")
@@ -1037,63 +1076,8 @@ def figure_6() -> None:
 # ---------------------------------------------------------------------------
 
 def figure_7() -> None:
-    print("\n[Fig 7] District-level scatter plots...")
-    dm = pd.read_csv(RESULTS_DIR / "district_level_metrics.csv")
-
-    # Filter to districts with >= 5 observations for reliable PR-AUC
-    dm = dm[dm["n_obs"] >= 5].copy()
-    n_dm = len(dm)
-    print(f"  Districts with n_obs >= 5: {n_dm}")
-
-    def _scatter_panel(ax, x_arr, y_arr, xlabel, ylabel, add_hline=None):
-        """Scatter with single neutral colour and regression overlay."""
-        ax.grid(True, alpha=0.18, linestyle="--", linewidth=0.5)
-        mask = np.isfinite(x_arr) & np.isfinite(y_arr)
-        ax.scatter(x_arr[mask], y_arr[mask],
-                   color="#555555", alpha=0.6, s=60, edgecolors="white",
-                   linewidths=0.5, zorder=3)
-        if add_hline is not None:
-            ax.axhline(add_hline, color="#888888", lw=0.9, ls=":", zorder=2)
-        _regression_annotation(ax, x_arr, y_arr)
-        ax.set_xlabel(xlabel, labelpad=6)
-        ax.set_ylabel(ylabel, labelpad=6)
-        _despine(ax)
-
-    # ── Fig 7a — log₁₀(articles/month) vs ΔPR-AUC ───────────────────────
-    fig, ax = plt.subplots(figsize=(6.5, 5.5))
-    x7a = np.log10(dm["mean_articles_month"].clip(lower=1).values)
-    y7a = dm["delta_prauc"].values
-    _scatter_panel(ax, x7a, y7a,
-                   r"$\log_{10}$(Mean articles month$^{-1}$)",
-                   r"$\Delta$PR-AUC  =  PR-AUC(AR+News) $-$ PR-AUC(AR-Only)",
-                   add_hline=0.0)
-    ax.set_ylim(y7a[np.isfinite(y7a)].min() - 0.05,
-                y7a[np.isfinite(y7a)].max() + 0.10)
-    fig.tight_layout(pad=0.5)
-    save_pdf(fig, "fig7a_articles_vs_delta")
-
-    # ── Fig 7b — volatility vs AR-Only PR-AUC ────────────────────────────
-    fig, ax = plt.subplots(figsize=(6.5, 5.5))
-    x7b = dm["volatility"].values
-    y7b = dm["prauc_ar"].values
-    _scatter_panel(ax, x7b, y7b,
-                   "Volatility  (fraction of periods with regime change)",
-                   "PR-AUC — AR-Only")
-    ax.set_xlim(-0.02, 1.02); ax.set_ylim(-0.02, 1.05)
-    fig.tight_layout(pad=0.5)
-    save_pdf(fig, "fig7b_volatility_vs_prauc")
-
-    # ── Fig 7c — onset+chronic count vs AR-Only PR-AUC ───────────────────
-    fig, ax = plt.subplots(figsize=(6.5, 5.5))
-    x7c = dm["onset_chronic_count"].values.astype(float)
-    y7c = dm["prauc_ar"].values
-    _scatter_panel(ax, x7c, y7c,
-                   "Onset + Chronic observations per district",
-                   "PR-AUC — AR-Only")
-    ax.set_xlim(-0.3, x7c[np.isfinite(x7c)].max() + 0.5)
-    ax.set_ylim(-0.02, 1.05)
-    fig.tight_layout(pad=0.5)
-    save_pdf(fig, "fig7c_onsetchronic_vs_prauc")
+    print("\n[Fig 7] Replaced by generate_fig7_new.py (fig7_time.pdf, fig7_space.pdf).")
+    print("  Run:  python generate_fig7_new.py")
 
 
 # ---------------------------------------------------------------------------
