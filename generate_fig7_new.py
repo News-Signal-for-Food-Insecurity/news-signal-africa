@@ -5,12 +5,13 @@ Produces two figures extending fig6c to full country-level analysis.
 Both figures share the same look-and-feel: countries on y-axis, despined
 axes with x-axis grid, same font and colour conventions as fig6c / fig7_space.
 
-  fig7_time.pdf  — 3-panel TIME figure (countries x 7 folds)
+  fig7a_time.pdf  — 3-panel TIME figure (countries x 7 folds)
     Panel T1: Crisis prevalence per fold — connected dots per country
     Panel T2: AR+News PR-AUC per fold   — connected dots per country
     Panel T3: Delta PR-AUC per fold     — connected dots, coloured by sign
+    Legends placed below axes (outside chart area)
 
-  fig7_space.pdf — 4-panel SPACE figure (country-level aggregates)
+  fig7b_space.pdf — 4-panel SPACE figure (country-level aggregates)
     Panel S1: Prevalence stacked bar  (mirrors fig6c left panel)
     Panel S2: PR-AUC dot+arrow AR-Only -> AR+News  (mirrors fig6c right)
     Panel S3: Volatility horizontal bars
@@ -205,7 +206,8 @@ prev_legend = [
     mpatches.Patch(color=CRISIS_COL,    label=">=50% crisis"),
     mpatches.Patch(color=NONCRISIS_COL, label="<50% crisis"),
 ]
-ax.legend(handles=prev_legend, fontsize=7.5, loc="upper right", framealpha=0.95)
+ax.legend(handles=prev_legend, fontsize=7.5, loc="upper left",
+          bbox_to_anchor=(0, -0.13), framealpha=0.95, ncol=2)
 
 # ── T2: AR+News PR-AUC per fold — solid purple + AR-Only dashed blue ─────────
 ax = axes[1]
@@ -244,7 +246,8 @@ leg_elems = [
     Line2D([0],[0], marker="o", color="w",
            markerfacecolor=MODEL_COLOURS["AR-Only"], ms=8, label="AR-Only"),
 ]
-ax.legend(handles=leg_elems, fontsize=7.5, loc="upper right", frameon=True)
+ax.legend(handles=leg_elems, fontsize=7.5, loc="upper left",
+          bbox_to_anchor=(0, -0.13), frameon=True, ncol=2)
 
 # ── T3: Delta PR-AUC per fold — dots coloured by sign ────────────────────────
 ax = axes[2]
@@ -273,15 +276,17 @@ delta_legend = [
     mpatches.Patch(color=DELTA_POS, label="AR+News > AR-Only"),
     mpatches.Patch(color=DELTA_NEG, label="AR+News < AR-Only"),
 ]
-ax.legend(handles=delta_legend, fontsize=7.5, loc="upper right", framealpha=0.95)
+ax.legend(handles=delta_legend, fontsize=7.5, loc="upper left",
+          bbox_to_anchor=(0, -0.13), framealpha=0.95, ncol=2)
 
+fig.subplots_adjust(bottom=0.12)   # room for below-axis legends
 fig.suptitle(
-    "Figure 7 (Time) — Country-level model performance across 7 folds",
+    "Figure 7a — Country-level model performance across 7 folds (time)",
     fontsize=11, fontweight="bold", y=1.003,
 )
-fig.savefig(FIGURES_DIR / "fig7_time.pdf", format="pdf", bbox_inches="tight", dpi=300)
+fig.savefig(FIGURES_DIR / "fig7a_time.pdf", format="pdf", bbox_inches="tight", dpi=300)
 plt.close(fig)
-print("  Saved fig7_time.pdf")
+print("  Saved fig7a_time.pdf")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -396,10 +401,10 @@ _add_region_separators(ax, df)
 _despine(ax)
 
 fig.suptitle(
-    "Figure 7 (Space) — Country-level characteristics and model performance",
+    "Figure 7b — Country-level characteristics and model performance (space)",
     fontsize=11, fontweight="bold", y=1.003,
 )
-fig.savefig(FIGURES_DIR / "fig7_space.pdf", format="pdf", bbox_inches="tight", dpi=300)
+fig.savefig(FIGURES_DIR / "fig7b_space.pdf", format="pdf", bbox_inches="tight", dpi=300)
 plt.close(fig)
-print("  Saved fig7_space.pdf")
+print("  Saved fig7b_space.pdf")
 print("Done.")
