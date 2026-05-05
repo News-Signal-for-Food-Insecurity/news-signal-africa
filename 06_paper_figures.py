@@ -66,11 +66,11 @@ REGIME_COLOURS = {
     "onset":    "#D62728",   # red
     "chronic":  "#FF7F0E",   # orange
     "recovery": "#2CA02C",   # green
-    "stable":   "#1F77B4",   # blue
+    "stable":   "#7F7F7F",   # grey (distinct from AR-Only blue)
 }
 MODEL_COLOURS = {
-    "AR-Only": "#1f77b4",    # seaborn blue
-    "AR+News": "#9467bd",    # seaborn purple
+    "AR-Only": "#1f77b4",    # blue
+    "AR+News": "#9467bd",    # purple
 }
 REGION_COLOURS = {
     "East Africa":     "#8E44AD",
@@ -164,7 +164,20 @@ def _country_from_district_id(district_id: str) -> str:
     return parts[-1] if parts else "Unknown"
 
 
-def _sturges_bins(n: int) -> int:
+def _sturges_bins(n: int, data: "np.ndarray | None" = None) -> int:
+    """Freedman-Diaconis rule when data is provided; Sturges fallback otherwise.
+
+    FD is preferred for n >= 50 because it adapts to data spread and avoids
+    the over-coarsening that Sturges produces for large n (e.g. 10 bins at
+    n=500 is too few for a narrow null distribution).
+    """
+    if data is not None and len(data) >= 50:
+        iqr = np.percentile(data, 75) - np.percentile(data, 25)
+        if iqr > 0:
+            bw = 2 * iqr / (len(data) ** (1 / 3))
+            span = data.max() - data.min()
+            n_bins = int(np.ceil(span / bw)) if bw > 0 else 20
+            return max(10, min(n_bins, 40))  # clamp to [10, 40]
     return max(5, int(np.ceil(1 + np.log2(max(n, 1)))))
 
 
@@ -621,7 +634,7 @@ def figure_2() -> None:
 # FIGURE 3 — Null distribution histograms
 # ---------------------------------------------------------------------------
 
-def _draw_null_panel(ax, null_values, real_ar, real_full, axis_name):
+def _draw_null_panel(ax, null_values, real_ar, real_full, axis_name, p_value=None):
     """
     Sample-style null distribution panel:
       - Light grey background panel framing the histogram
@@ -629,18 +642,29 @@ def _draw_null_panel(ax, null_values, real_ar, real_full, axis_name):
       - Dark green KDE curve overlay
       - Three vertical dashed lines: Median NULL, AR only, AR + News
       - 'Δ = ...' horizontal annotation between AR-only and AR+News
+      - Actual metric values shown beneath each dashed-line label
+      - p-value annotated in top-right corner
       - Italic 'frequency' y-axis label, axis_name (e.g. PR-AUC) on the right
     """
     median_null = float(np.median(null_values))
     delta_val   = real_full - real_ar
 
-    # X-axis range: tight around all three markers + null spread
-    x_lo = min(null_values.min(), real_ar, real_full) - 0.005
-    x_hi = max(null_values.max(), real_ar, real_full) + 0.005
+    # X-axis range: anchor to the null distribution spread, then extend just
+    # enough to show all three markers.  This prevents a lone outlier marker
+    # (e.g. AR-Only far left of the null) from creating a vast empty gap.
+    null_lo = null_values.min()
+    null_hi = null_values.max()
+    null_span = null_hi - null_lo
+    pad = max(null_span * 0.15, 0.004)   # generous padding around null body
+    x_lo = min(null_lo - pad, real_ar   - pad)
+    x_hi = max(null_hi + pad, real_full + pad)
 
-    # Histogram — light green bars
-    n_bins = _sturges_bins(len(null_values))
-    bins   = np.linspace(x_lo, x_hi, n_bins + 1)
+    # Histogram — bins computed from the null distribution body (Freedman-Diaconis),
+    # not stretched across the full x-range which may include outlier markers.
+    iqr = float(np.percentile(null_values, 75) - np.percentile(null_values, 25))
+    bw  = 2.0 * iqr / (len(null_values) ** (1/3)) if iqr > 0 else null_span / 20
+    n_bins = max(int(np.ceil(null_span / bw)), 8)
+    bins   = np.linspace(null_lo - bw, null_hi + bw, n_bins + 2)
     ax.hist(null_values, bins=bins, density=True,
             color="#B7DDB1", edgecolor="white", lw=0.6, zorder=2)
 
@@ -660,9 +684,10 @@ def _draw_null_panel(ax, null_values, real_ar, real_full, axis_name):
         facecolor="#EDEDED", edgecolor="none", alpha=0.45, zorder=1,
     ))
 
-    # Three dashed verticals
-    for x in (median_null, real_ar, real_full):
-        ax.axvline(x, color="#444444", lw=0.9, ls=(0, (3, 3)), zorder=4)
+    # Three dashed verticals — colour-coded to match MODEL_COLOURS
+    ax.axvline(median_null, color="#444444",            lw=0.9, ls=(0, (3, 3)), zorder=4)
+    ax.axvline(real_ar,     color=MODEL_COLOURS["AR-Only"], lw=1.2, ls=(0, (3, 3)), zorder=4)
+    ax.axvline(real_full,   color=MODEL_COLOURS["AR+News"], lw=1.2, ls=(0, (3, 3)), zorder=4)
 
     # Δ annotation between AR-only and AR+News (horizontal arrow with label above)
     delta_y = y_top * 0.12
@@ -682,14 +707,39 @@ def _draw_null_panel(ax, null_values, real_ar, real_full, axis_name):
     ax.tick_params(axis="x", which="both", length=0, labelbottom=False)
     ax.tick_params(axis="y", which="both", length=0, labelleft=False)
 
-    # Three labels under the x-axis at each dashed line
-    label_y = -y_top * 0.04
-    ax.text(median_null, label_y, "Median\nNULL", ha="center", va="top",
-            fontsize=8.5, color="#222222")
-    ax.text(real_ar, label_y, "AR only", ha="center", va="top",
-            fontsize=8.5, color="#222222")
-    ax.text(real_full, label_y, "AR + News", ha="center", va="top",
-            fontsize=8.5, color="#222222")
+    # Three labels under the x-axis — stagger heights when markers are close
+    # Stagger threshold: if two markers are within 15% of the total x-span, drop
+    # the right-hand one to a lower row to prevent text collision.
+    x_span  = x_hi - x_lo
+    row0    = -y_top * 0.04   # first row (shallowest drop)
+    row1    = -y_top * 0.19   # second row
+    row2    = -y_top * 0.34   # third row
+
+    # Assign rows: sorted left-to-right, each marker gets a progressively
+    # lower row if it is within 15% of the x-span from its left neighbour.
+    markers   = sorted([(real_ar,     "AR only",     real_ar,     MODEL_COLOURS["AR-Only"]),
+                        (median_null, "Median NULL", median_null, "#444444"),
+                        (real_full,   "AR + News",   real_full,   MODEL_COLOURS["AR+News"])],
+                       key=lambda t: t[0])
+    rows      = [row0, row0, row0]
+    threshold = 0.15 * x_span
+    if markers[1][0] - markers[0][0] < threshold:
+        rows[1] = row1
+    if markers[2][0] - markers[1][0] < threshold or markers[2][0] - markers[0][0] < threshold:
+        rows[2] = row2 if rows[1] == row1 else row1
+
+    for (xpos, name, val, col), ry in zip(markers, rows):
+        ax.text(xpos, ry, f"{name}\n{val:.4f}",
+                ha="center", va="top", fontsize=8.5, color=col)
+
+    # p-value in top-right corner
+    if p_value is not None:
+        p_str = f"p = {p_value}" if p_value >= 0.01 else "p < 0.01"
+        ax.text(0.97, 0.97, p_str,
+                transform=ax.transAxes, ha="right", va="top",
+                fontsize=9, color="#222222",
+                bbox=dict(boxstyle="round,pad=0.3", fc="white",
+                          ec="#AAAAAA", alpha=0.85))
 
     # Axis name on the far right
     ax.text(1.02, -0.04, axis_name, ha="left", va="top",
@@ -706,12 +756,17 @@ def _draw_null_panel(ax, null_values, real_ar, real_full, axis_name):
 def figure_3() -> None:
     print("\n[Fig 3] Null distribution histograms...")
     null_path = BASE_DIR / "results" / "shuffle_test" / "null_distribution.csv"
+    cfg_path  = BASE_DIR / "results" / "shuffle_test" / "config.json"
     if not null_path.exists():
         print("  shuffle_test/null_distribution.csv not found — skipping Fig 3.")
         return
 
     null_df      = pd.read_csv(null_path)
     fold_results = pd.read_csv(RESULTS_DIR / "fold_results.csv")
+    cfg          = json.load(open(cfg_path)) if cfg_path.exists() else {}
+
+    p_pr  = cfg.get("p_value_prauc",  None)
+    p_roc = cfg.get("p_value_rocauc", None)
 
     # ── Fig 3a — PR-AUC ───────────────────────────────────────────────────
     pr_col  = "mean_full_pr_auc" if "mean_full_pr_auc" in null_df.columns else "mean_pr_auc"
@@ -720,7 +775,8 @@ def figure_3() -> None:
     real_full_pr = fold_results["full_pr_auc"].mean()
 
     fig, ax = plt.subplots(figsize=(7, 4.5))
-    _draw_null_panel(ax, null_pr, real_ar_pr, real_full_pr, axis_name="PR-AUC")
+    _draw_null_panel(ax, null_pr, real_ar_pr, real_full_pr,
+                     axis_name="PR-AUC", p_value=p_pr)
     fig.tight_layout(pad=0.8)
     save_pdf(fig, "fig3a_null_prauc")
 
@@ -733,9 +789,12 @@ def figure_3() -> None:
     real_ar_roc   = fold_results["ar_roc_auc"].mean()
     real_full_roc = fold_results["full_roc_auc"].mean()
 
-    fig, ax = plt.subplots(figsize=(7, 4.5))
-    _draw_null_panel(ax, null_roc, real_ar_roc, real_full_roc, axis_name="ROC-AUC")
-    fig.tight_layout(pad=0.8)
+    # Wider figure for ROC-AUC: AR-Only sits well left of the null distribution
+    # (x-span only ~0.05) so extra width gives labels room to breathe
+    fig, ax = plt.subplots(figsize=(9, 5))
+    _draw_null_panel(ax, null_roc, real_ar_roc, real_full_roc,
+                     axis_name="ROC-AUC", p_value=p_roc)
+    fig.tight_layout(pad=1.2)
     save_pdf(fig, "fig3b_null_rocauc")
 
 
@@ -766,7 +825,7 @@ def figure_4() -> None:
                    edgecolors="none",
                    label=f"{regime.capitalize()} (n={len(grp):,})")
     ax.plot([0, 1], [0, 1], color="#333333", lw=1.4, ls="--", alpha=0.6,
-            zorder=10, label="y = x")
+            zorder=10)
     ax.set_xlabel("P(crisis) — AR-Only", labelpad=6)
     ax.set_ylabel("P(crisis) — AR+News", labelpad=6)
     ax.set_xlim(0, 1); ax.set_ylim(0, 1)
@@ -813,17 +872,21 @@ def figure_4() -> None:
 
     ax.axhline(0, color="#333333", lw=1.0, ls="--", alpha=0.7)
 
-    # Sample size annotations above each violin
-    for i, (arr, r) in enumerate(zip(data_by_regime, labels_regime)):
-        ymax = np.percentile(arr, 95)
-        ax.text(i, ymax + 0.01, f"n={len(arr):,}", ha="center",
-                va="bottom", fontsize=7.5, color="#444444")
-
     ax.set_xticks(x_pos)
     ax.set_xticklabels([r.capitalize() for r in labels_regime], fontsize=10)
     ax.set_xlabel("Crisis regime", labelpad=6)
     ax.set_ylabel("ΔP(crisis)  =  P(AR+News) − P(AR-Only)", labelpad=6)
     _despine(ax)
+
+    # Sample size annotations — placed above the y-axis top so they never
+    # overlap the violin body.  Expand y-top first, then place labels just above.
+    y_lo, y_hi = ax.get_ylim()
+    ax.set_ylim(y_lo, y_hi + (y_hi - y_lo) * 0.10)
+    y_label = ax.get_ylim()[1] * 0.985
+    for i, (arr, r) in enumerate(zip(data_by_regime, labels_regime)):
+        ax.text(i, y_label, f"n={len(arr):,}", ha="center",
+                va="top", fontsize=7.5, color="#444444")
+
     fig.tight_layout(pad=0.5)
     save_pdf(fig, "fig4b_regime_violin")
 
@@ -870,7 +933,7 @@ def figure_5() -> None:
                         textcoords="offset points", xytext=(0, 7),
                         fontsize=7, ha="center", color="#555555")
 
-        ax.set_xlabel("Test period (start)", labelpad=6)
+        ax.set_xlabel("Test period", labelpad=6)
         ax.set_ylabel(ylabel, labelpad=6)
         ax.set_ylim(0, 1.0)
         ax.xaxis.set_major_formatter(matplotlib.dates.DateFormatter("%b %Y"))
@@ -930,12 +993,11 @@ def figure_6() -> None:
     ax.grid(True, axis="x", alpha=0.20, linestyle="--", linewidth=0.5)
 
     for i, row in enumerate(cdf.itertuples()):
-        arrow_col = "green" if row.prauc_full >= row.prauc_ar else "red"
         ax.annotate("",
                     xy     =(row.prauc_full, i),
                     xytext =(row.prauc_ar,   i),
-                    arrowprops=dict(arrowstyle="->", color=arrow_col,
-                                    lw=2, mutation_scale=15))
+                    arrowprops=dict(arrowstyle="->", color="#333333",
+                                    lw=1.5, mutation_scale=15))
         ax.scatter(row.prauc_ar,   i, color=MODEL_COLOURS["AR-Only"],
                    s=100, zorder=5, edgecolors="white", linewidths=0.5)
         ax.scatter(row.prauc_full, i, marker="s", color=MODEL_COLOURS["AR+News"],
@@ -962,10 +1024,8 @@ def figure_6() -> None:
                markerfacecolor=MODEL_COLOURS["AR-Only"], ms=10, label="AR Only"),
         Line2D([0],[0], marker="s", color="w",
                markerfacecolor=MODEL_COLOURS["AR+News"],  ms=10, label="AR + News"),
-        Line2D([0],[0], color="green", lw=2, label="Improvement"),
-        Line2D([0],[0], color="red",   lw=2, label="Degradation"),
     ]
-    ax.legend(handles=legend_elems, fontsize=8, loc="lower right", frameon=True)
+    ax.legend(handles=legend_elems, fontsize=8, loc="upper right", frameon=True)
     _despine(ax)
     fig.tight_layout(pad=0.5)
     save_pdf(fig, "fig6a_country_prauc")
@@ -1160,7 +1220,7 @@ def figure_6c() -> None:
         mpatches.Patch(color=CRISIS_COL,    label="Crisis (IPC ≥ 3)"),
         mpatches.Patch(color=NONCRISIS_COL, label="Non-crisis"),
     ]
-    ax_prev.legend(handles=prev_legend, fontsize=8, loc="lower right",
+    ax_prev.legend(handles=prev_legend, fontsize=8, loc="upper right",
                    framealpha=0.95, edgecolor="#CCCCCC")
     _despine(ax_prev)
 
@@ -1181,12 +1241,11 @@ def figure_6c() -> None:
                           color="#999999", style="italic")
             continue
 
-        arrow_col = "green" if row.prauc_full >= row.prauc_ar else "red"
         ax_prauc.annotate("",
                           xy    =(row.prauc_full, i),
                           xytext=(row.prauc_ar,   i),
-                          arrowprops=dict(arrowstyle="->", color=arrow_col,
-                                          lw=2, mutation_scale=15))
+                          arrowprops=dict(arrowstyle="->", color="#333333",
+                                          lw=1.5, mutation_scale=15))
         ax_prauc.scatter(row.prauc_ar,   i, color=MODEL_COLOURS["AR-Only"],
                          s=100, zorder=5, edgecolors="white", linewidths=0.5)
         ax_prauc.scatter(row.prauc_full, i, marker="s", color=MODEL_COLOURS["AR+News"],
@@ -1214,20 +1273,19 @@ def figure_6c() -> None:
                markerfacecolor=MODEL_COLOURS["AR-Only"], ms=10, label="AR Only"),
         Line2D([0],[0], marker="s", color="w",
                markerfacecolor=MODEL_COLOURS["AR+News"], ms=10, label="AR + News"),
-        Line2D([0],[0], color="green", lw=2, label="Improvement"),
-        Line2D([0],[0], color="red",   lw=2, label="Degradation"),
     ]
-    ax_prauc.legend(handles=legend_elems, fontsize=8, loc="lower right", frameon=True)
+    ax_prauc.legend(handles=legend_elems, fontsize=8, loc="upper right", frameon=True)
 
-    # Right-margin header for delta column
-    ax_prauc.text(1.02, n_all - 0.2, "ΔPR-AUC",
-                  transform=ax_prauc.get_yaxis_transform(),
+    # Right-margin header for delta column — placed above the axes in figure coords
+    ax_prauc.text(1.02, 1.01, "ΔPR-AUC",
+                  transform=ax_prauc.transAxes,
                   va="bottom", ha="left", fontsize=7.5,
                   color="#333333", fontweight="bold")
 
     _despine(ax_prauc)
 
     fig.tight_layout(pad=0.5, w_pad=0.8)
+    fig.subplots_adjust(top=0.97)   # headroom so ΔPR-AUC header clears the top row
     save_pdf(fig, "fig6c_all_countries_prevalence_prauc")
 
 

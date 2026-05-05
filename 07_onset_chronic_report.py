@@ -14,7 +14,6 @@ Figures produced
   fig8c  Fold-by-fold onset recall trajectory (both models)
   fig8d  Onset net-saves decomposition per fold (waterfall-style)
   fig8e  Chronic probability distributions (AR-Only vs Combined)
-  fig8f  Regime-stratified precision-recall curves
 
 PDF report
 ----------
@@ -424,7 +423,7 @@ def fig8e_chronic_probability(preds):
     ax.set_xlabel("Predicted probability P(crisis)")
     ax.set_ylabel("Density")
     ax.set_title("Chronic Crisis Cases: Predicted Probability Distribution\n"
-                 "(AR-Only detects all; Combined slightly diluted)", fontweight="bold")
+                 "AR-Only vs AR+News — both models, chronic positives only", fontweight="bold")
     ax.legend(frameon=False)
     ax.set_xlim(0, 1)
     _despine(ax)
@@ -446,59 +445,6 @@ def fig8e_chronic_probability(preds):
 # ===========================================================================
 # FIG 8f — Precision-recall curves stratified by regime
 # ===========================================================================
-def fig8f_regime_pr_curves(preds):
-    print("\n[Fig 8f] Regime-stratified precision-recall curves...")
-
-    regimes_to_plot = ["onset", "chronic"]
-    fig, axes = plt.subplots(1, 2, figsize=(10, 4.5))
-
-    for ax, regime in zip(axes, regimes_to_plot):
-        sub = preds[preds["regime"] == regime].copy()
-        y   = sub["target_crisis_binary"].values
-
-        if y.sum() == 0 or len(np.unique(y)) < 2:
-            ax.set_title(f"{regime.title()} — insufficient data")
-            continue
-
-        for col, label, color, ls in [
-            ("prob_ar",       "AR-Only", MODEL_COLOURS["AR-Only"], "--"),
-            ("prob_combined", "AR+News", MODEL_COLOURS["AR+News"], "-"),
-        ]:
-            prec, rec, _ = precision_recall_curve(y, sub[col].values)
-            ap = average_precision_score(y, sub[col].values)
-            ax.plot(rec, prec, color=color, lw=2.2, ls=ls,
-                    label=f"{label}  AP={ap:.3f}")
-            ax.fill_between(rec, prec, alpha=0.08, color=color)
-
-        # Iso-F1 contours
-        for f1_val in [0.3, 0.5, 0.7]:
-            r = np.linspace(0.01, 1, 200)
-            p = (f1_val * r) / (2 * r - f1_val)
-            mask = (p >= 0) & (p <= 1)
-            ax.plot(r[mask], p[mask], color="#cccccc", lw=0.8, ls=":")
-            if mask.sum() > 0:
-                mid = mask.sum() // 2
-                ax.text(r[mask][mid], p[mask][mid], f"F1={f1_val}",
-                        fontsize=6.5, color="#999999", ha="center")
-
-        # Random baseline (prevalence)
-        prev = y.mean()
-        ax.axhline(prev, color="#aaaaaa", lw=1.0, ls="--", alpha=0.6,
-                   label=f"Random  (prev={prev:.2f})")
-
-        ax.set_xlim(0, 1.02)
-        ax.set_ylim(0, 1.05)
-        ax.set_xlabel("Recall")
-        ax.set_ylabel("Precision" if regime == "onset" else "")
-        ax.set_title(f"{regime.title()} crises  (n={int(y.sum())} positives)",
-                     fontweight="bold")
-        ax.legend(frameon=False, fontsize=8.5, loc="lower left")
-        _despine(ax)
-
-    fig.suptitle("Precision-Recall Curves by Crisis Regime", fontweight="bold",
-                 fontsize=12, y=1.01)
-    fig.tight_layout(pad=1.0)
-    save_pdf(fig, "fig8f_regime_pr_curves")
 
 
 # ===========================================================================
@@ -708,8 +654,8 @@ def build_report(preds, fold_results, fi, summary, sens, shuf, delta_cfg, impact
             ("Interpretation",
              f"ipc_lag_1=1 pushes AR prob. to median {chronic_crisis['prob_ar'].median():.2f}.\n"
              f"          News adds no marginal detection value here;\n"
-             f"          Combined prob. slightly diluted "
-             f"({chronic_crisis['prob_combined'].mean() - chronic_crisis['prob_ar'].mean():.2f} mean shift)."),
+             f"          AR+News mean probability shift: "
+             f"{chronic_crisis['prob_combined'].mean() - chronic_crisis['prob_ar'].mean():.2f} relative to AR-Only."),
         ]
         for m in ch_rows:
             y = row(ax, m[0], m[1], y)
@@ -939,7 +885,6 @@ def main():
     fig8c_onset_recall_trajectory(preds)
     fig8d_net_saves_per_fold(preds)
     fig8e_chronic_probability(preds)
-    fig8f_regime_pr_curves(preds)
 
     build_report(preds, fold_results, fi, summary, sens, shuf, delta_cfg, impact, null_df)
 
