@@ -495,10 +495,8 @@ def figure_2() -> None:
         return np.nanpercentile(vals, [20, 40, 60, 80])
 
     def _fmt_val(v):
-        """Format a coverage value for colorbar tick labels."""
-        if v >= 0.01:
-            return f"{v:.2f}"
-        return f"{v:.4f}"
+        """Format a coverage value as a percentage for colorbar tick labels."""
+        return f"{v * 100:.1f}%"
 
     def _colorbar_with_values(fig, im, ax, arr2d, shrink=0.85, pad=0.015):
         """Add a colorbar showing actual quintile boundary values."""
@@ -523,50 +521,42 @@ def figure_2() -> None:
     # ── Fig 2a — theme × 7 test periods ──────────────────────────────────
     pivot_a_all = (ds.groupby("period_label")[rel_cols].mean().sort_index())
     pivot_a_all.columns = theme_labels
-    pivot_a = pivot_a_all.loc[pivot_a_all.index.isin(test_periods)]
-    periods   = list(pivot_a.index)          # exactly 7
+    pivot_a  = pivot_a_all.loc[pivot_a_all.index.isin(test_periods)]
+    periods  = list(pivot_a.index)   # exactly 7
     n_periods = len(periods)
-    binned_a  = _quintile_bin(pivot_a.values)
+    # imshow expects (rows=themes, cols=periods)
+    binned_a = _quintile_bin(pivot_a.values).T   # shape (n_themes, n_periods)
 
-    # Build expanded matrix: data col + 1 white col gap between periods
-    # Each period col = 3 display cols wide for readability; gaps = 1 col
-    COL_W = 3   # display columns per period
-    GAP   = 1   # gap columns between periods
-    n_themes_a = len(theme_labels)
-    total_a = n_periods * COL_W + (n_periods - 1) * GAP
-    exp_a   = np.full((n_themes_a, total_a), np.nan)
-    period_centers = []
-    for j in range(n_periods):
-        start = j * (COL_W + GAP)
-        exp_a[:, start:start + COL_W] = binned_a[j, :].reshape(1, n_themes_a).T
-        period_centers.append(start + COL_W // 2)
-    masked_a = np.ma.masked_invalid(exp_a)
-
-    fig, ax = plt.subplots(figsize=(n_periods * 1.5 + 2, 5))
+    fig, ax = plt.subplots(figsize=(10, 5))
     ax.grid(False)
-    cmap5_a = cmap5.copy(); cmap5_a.set_bad(color="white")
-    im = ax.imshow(masked_a, aspect="auto", cmap=cmap5_a, vmin=0, vmax=4,
-                   interpolation="nearest")
+    im = ax.imshow(binned_a, aspect="auto", cmap=cmap5, vmin=0, vmax=4,
+                   interpolation="nearest", rasterized=True)
 
-    ax.set_xticks(period_centers)
-    ax.set_xticklabels(periods, rotation=35, ha="right", fontsize=9, fontweight="bold")
-    ax.set_yticks(range(n_themes_a))
+    # Thin white separator between every period
+    for col in range(n_periods - 1):
+        ax.axvline(col + 0.5, color="white", lw=2.0, zorder=3)
+
+    ax.set_xticks(range(n_periods))
+    ax.set_xticklabels(periods, rotation=35, ha="right", fontsize=9)
+    ax.set_yticks(range(len(theme_labels)))
     ax.set_yticklabels(theme_labels, fontsize=9)
-    ax.set_xlabel("Test period", labelpad=8)
+    ax.set_xlabel("Test period", labelpad=6)
     ax.set_ylabel("News theme", labelpad=6)
     ax.spines[:].set_visible(False)
-    ax.set_xlim(-0.5, total_a - 0.5)
 
-    # Horizontal colorbar, well below, one label per quintile band
-    boundaries_a = _quintile_boundaries(pivot_a.values)
-    cb = fig.colorbar(im, ax=ax, orientation="horizontal",
-                      pad=0.18, shrink=0.55, aspect=30, ticks=[0.5, 1.5, 2.5, 3.5, 4.5])
-    cb.mappable.set_clim(-0.5, 4.5)
-    cb.ax.set_xticklabels(
-        ["Q1\nLowest", "Q2", "Q3\nMedian", "Q4", "Q5\nHighest"],
-        fontsize=8)
-    cb.set_label("Relative news coverage (quintile across test periods)", fontsize=9, labelpad=6)
-    fig.subplots_adjust(left=0.10, right=0.97, top=0.95, bottom=0.28)
+    # Vertical colorbar — labels show actual boundary values
+    cb = fig.colorbar(im, ax=ax, orientation="vertical",
+                      pad=0.02, shrink=0.90, aspect=20, ticks=[0, 1, 2, 3, 4])
+    bnd_a = _quintile_boundaries(pivot_a.values)
+    cb.ax.set_yticklabels([
+        f"Q1  (<{_fmt_val(bnd_a[0])})",
+        f"Q2  (<{_fmt_val(bnd_a[1])})",
+        f"Q3  (<{_fmt_val(bnd_a[2])})",
+        f"Q4  (<{_fmt_val(bnd_a[3])})",
+        f"Q5  (≥{_fmt_val(bnd_a[3])})",
+    ], fontsize=8)
+    cb.set_label("Relative coverage\n(quintile)", fontsize=8, labelpad=6)
+    fig.tight_layout(pad=0.8)
     save_pdf(fig, "fig2a_topic_heatmap")
 
     # ── Fig 2b — country × theme, grouped by region ───────────────────────
@@ -582,92 +572,95 @@ def figure_2() -> None:
     pivot_b.columns = theme_labels
     pivot_b = pivot_b.reindex([c for c in country_order if c in pivot_b.index])
 
-    raw_b    = pivot_b.values.astype(float)
-    binned_b = np.where(np.isfinite(raw_b), _quintile_bin(raw_b), np.nan)
+    raw_b    = pivot_b.values.astype(float)          # (n_countries, n_themes)
+    binned_b = _quintile_bin(raw_b).T                # (n_themes, n_countries)
 
     n_countries_b = len(pivot_b)
     n_themes_b    = len(theme_labels)
 
-    # Expanded matrix: each country = 1 data col; gaps between countries = 1 col;
-    # gaps between regions = 3 cols.
-    COUNTRY_GAP = 1
-    REGION_GAP  = 3
-    col_map     = []
-    exp_cols    = 0
-    prev_region = None
-    for i, country in enumerate(pivot_b.index):
-        region = COUNTRY_REGION.get(country, "Other")
-        if prev_region is not None and region != prev_region:
-            exp_cols += REGION_GAP
-        elif i > 0:
-            exp_cols += COUNTRY_GAP
-        col_map.append(exp_cols)
-        exp_cols += 1
-        prev_region = region
-    total_exp_cols = exp_cols
+    short_names = {"The Democratic Republic of the": "DRC"}
+    country_labels_b = [short_names.get(c, c) for c in pivot_b.index]
 
-    expanded_b = np.full((n_themes_b, total_exp_cols), np.nan)
-    for i, ec in enumerate(col_map):
-        expanded_b[:, ec] = binned_b[i, :]
-    masked_exp = np.ma.masked_invalid(expanded_b)
-
-    # Region bookkeeping for labels and separators
-    region_info = []   # (name, first_exp_col, last_exp_col)
-    prev_r = None; rstart_i = 0
+    # Which column indices are region boundaries (first country of a new region)
+    region_boundaries = []   # column indices where a new region starts (skip 0)
+    region_info = []         # (name, start_col, end_col) for label placement
+    prev_r = None; r_start = 0
     for i, country in enumerate(pivot_b.index):
         r = COUNTRY_REGION.get(country, "Other")
         if r != prev_r:
             if prev_r is not None:
-                region_info.append((prev_r, col_map[rstart_i], col_map[i - 1]))
-            rstart_i = i; prev_r = r
-    if prev_r is not None:
-        region_info.append((prev_r, col_map[rstart_i], col_map[len(pivot_b) - 1]))
+                region_boundaries.append(i)
+                region_info.append((prev_r, r_start, i - 1))
+            r_start = i
+            prev_r = r
+    region_info.append((prev_r, r_start, n_countries_b - 1))
 
-    short_names = {"The Democratic Republic of the": "DRC"}
-    country_labels_b = [short_names.get(c, c) for c in pivot_b.index]
-
-    fig, ax = plt.subplots(figsize=(max(14, n_countries_b * 0.85), 6))
+    fig, ax = plt.subplots(figsize=(max(16, n_countries_b * 0.80), 5.5))
     ax.grid(False)
-    cmap5_b = cmap5.copy(); cmap5_b.set_bad(color="white")
-    im = ax.imshow(masked_exp, aspect="auto", cmap=cmap5_b, vmin=0, vmax=4,
-                   interpolation="nearest")
 
-    # Country x-tick labels
-    ax.set_xticks(col_map)
+    # imshow rasterized at high DPI → pixels in PDF, no vector seam artifacts
+    im = ax.imshow(binned_b, aspect="auto", cmap=cmap5, vmin=0, vmax=4,
+                   interpolation="nearest", rasterized=True)
+
+    # Only draw dark lines at region boundaries — no white lines between countries.
+    # White lines cause antialiased pink/salmon artifacts at high-contrast cell edges.
+    # Country separation is already visible from the colour differences between cells.
+    for col in region_boundaries:
+        ax.axvline(col - 0.5, color="#222222", lw=2.5, zorder=5,
+                   solid_capstyle="butt")
+
+    ax.set_xticks(range(n_countries_b))
     ax.set_xticklabels(country_labels_b, rotation=45, ha="right", fontsize=8)
     ax.set_yticks(range(n_themes_b))
     ax.set_yticklabels(theme_labels, fontsize=9)
     ax.set_ylabel("News theme", labelpad=6)
-    ax.set_xlabel("Country (grouped by region)", labelpad=30)
+    ax.set_xlabel("Country (grouped by region)", labelpad=6)
     ax.spines[:].set_visible(False)
-    ax.set_xlim(-0.5, total_exp_cols - 0.5)
-
-    # Black region separator lines (between region blocks)
-    for rname, rfirst, rlast in region_info:
-        if rfirst > 0:
-            ax.axvline(rfirst - REGION_GAP / 2, color="#333333", lw=1.5,
-                       ls="-", zorder=4)
+    ax.tick_params(length=0)
 
     # Region labels centred above each block via twiny
     ax2 = ax.twiny()
     ax2.set_xlim(ax.get_xlim())
-    ax2.set_xticks([(rf + rl) / 2 for _, rf, rl in region_info])
+    ax2.set_xticks([(rs + re) / 2 for _, rs, re in region_info])
     ax2.set_xticklabels([rn for rn, _, _ in region_info],
-                        fontsize=9, fontweight="bold", color="#333333")
-    ax2.tick_params(top=False, labeltop=True, pad=4)
+                        fontsize=9, fontweight="bold", color="#222222")
+    ax2.tick_params(top=False, labeltop=True, pad=4, length=0)
     ax2.spines[:].set_visible(False)
 
-    # Horizontal colorbar below
-    boundaries_b = _quintile_boundaries(raw_b)
-    cb = fig.colorbar(im, ax=ax, orientation="horizontal",
-                      pad=0.22, shrink=0.45, aspect=30, ticks=[0.5, 1.5, 2.5, 3.5, 4.5])
-    cb.mappable.set_clim(-0.5, 4.5)
-    cb.ax.set_xticklabels(
-        ["Q1\nLowest", "Q2", "Q3\nMedian", "Q4", "Q5\nHighest"],
-        fontsize=8)
-    cb.set_label("Relative news coverage (quintile across countries)", fontsize=9, labelpad=6)
-    fig.subplots_adjust(left=0.08, right=0.97, top=0.88, bottom=0.32)
-    save_pdf(fig, "fig2b_country_heatmap")
+    # Vertical colorbar placed explicitly to avoid overlapping heatmap
+    fig.subplots_adjust(left=0.07, right=0.87, top=0.88, bottom=0.28)
+    cbar_ax = fig.add_axes([0.89, 0.28, 0.018, 0.60])
+    cb = fig.colorbar(im, cax=cbar_ax, orientation="vertical", ticks=[0, 1, 2, 3, 4])
+    bnd_b = _quintile_boundaries(raw_b)
+    cb.ax.set_yticklabels([
+        f"Q1  (<{_fmt_val(bnd_b[0])})",
+        f"Q2  (<{_fmt_val(bnd_b[1])})",
+        f"Q3  (<{_fmt_val(bnd_b[2])})",
+        f"Q4  (<{_fmt_val(bnd_b[3])})",
+        f"Q5  (≥{_fmt_val(bnd_b[3])})",
+    ], fontsize=8)
+    cb.set_label("Relative coverage\n(quintile)", fontsize=8, labelpad=6)
+    # Render to PNG buffer at 600 DPI (eliminates imshow vector seam artifacts),
+    # then embed that raster image inside a PDF using Pillow + PdfPages.
+    import io
+    from matplotlib.backends.backend_pdf import PdfPages
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", bbox_inches="tight", dpi=600)
+    plt.close(fig)
+    buf.seek(0)
+    from PIL import Image as _PIL_Image
+    img = _PIL_Image.open(buf)
+    w_px, h_px = img.size
+    dpi = 600
+    w_in, h_in = w_px / dpi, h_px / dpi
+    fig2, ax2 = plt.subplots(figsize=(w_in, h_in))
+    fig2.subplots_adjust(0, 0, 1, 1)
+    ax2.imshow(img)
+    ax2.axis("off")
+    path = FIGURES_DIR / "fig2b_country_heatmap.pdf"
+    fig2.savefig(path, format="pdf", bbox_inches="tight", dpi=dpi)
+    plt.close(fig2)
+    print(f"  Saved {path.name}")
 
 
 # ---------------------------------------------------------------------------
