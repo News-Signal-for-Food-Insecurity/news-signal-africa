@@ -1153,7 +1153,8 @@ def figure_6c() -> None:
     # ── Layout: two panels side-by-side ──────────────────────────────────
     fig, (ax_prev, ax_prauc) = plt.subplots(
         1, 2, figsize=(13, max(7, n_all * 0.42)),
-        gridspec_kw={"width_ratios": [1, 1.2]}
+        gridspec_kw={"width_ratios": [1, 1.2]},
+        sharey=True
     )
 
     CRISIS_COL    = "#C0392B"
