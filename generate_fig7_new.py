@@ -38,11 +38,14 @@ MODEL_COLOURS = {"AR-Only": "#1f77b4", "AR+News": "#9467bd"}
 CRISIS_COL    = "#C0392B"
 NONCRISIS_COL = "#2980B9"
 NODATA_COL    = "#CCCCCC"
+DELTA_POS     = "#27AE60"
+DELTA_NEG     = "#E74C3C"
 
+# Matches REGIME_COLOURS in 06_paper_figures.py exactly
 REGIME_COLOURS = {
-    "onset":    "#E74C3C",
-    "chronic":  "#E67E22",
-    "recovery": "#27AE60",
+    "onset":    "#D62728",
+    "chronic":  "#FF7F0E",
+    "recovery": "#2CA02C",
     "stable":   "#7F7F7F",
 }
 
@@ -229,7 +232,7 @@ for i, row in fdf.iterrows():
     delta = row["pr_full"] - row["pr_ar"]
     ax.text(1.03, i, f"{delta:+.3f}", transform=ax.get_yaxis_transform(),
             va="center", ha="left", fontsize=7.5,
-            color="#27AE60" if delta >= 0 else "#C0392B")
+            color=DELTA_POS if delta >= 0 else DELTA_NEG)
 
 ax.set_xlim(0.5, 1.0)
 ax.axvline(0.75, color="#AAAAAA", lw=0.8, ls=":")
@@ -267,7 +270,7 @@ ax = axes[3]
 max_oc = max(int((fdf["onset"] + fdf["chronic"]).max()), 1)
 for i, row in fdf.iterrows():
     oc = row["onset"] + row["chronic"]
-    ax.barh(i, oc, height=0.65, color="#E67E22", alpha=0.85, zorder=3)
+    ax.barh(i, oc, height=0.65, color=REGIME_COLOURS["chronic"], alpha=0.85, zorder=3)
     ax.text(oc + max_oc * 0.02, i, str(int(oc)),
             va="center", ha="left", fontsize=8, color="#555555")
 
@@ -353,7 +356,7 @@ for i, row in cdf.iterrows():
     delta = row["pr_full"] - row["pr_ar"]
     ax.text(1.03, i, f"{delta:+.2f}", transform=ax.get_yaxis_transform(),
             va="center", ha="left", fontsize=7,
-            color="#27AE60" if delta >= 0 else "#C0392B")
+            color=DELTA_POS if delta >= 0 else DELTA_NEG)
 
 ax.set_xlim(0, 1)
 ax.set_xlabel("PR-AUC", fontsize=8.5, labelpad=5)
@@ -376,7 +379,7 @@ for i, row in cdf.iterrows():
     if row["region"] != prev_region and i > 0:
         ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
     prev_region = row["region"]
-    ax.barh(i, row["volatility"], height=0.72, color="#8E44AD", alpha=0.78, zorder=3)
+    ax.barh(i, row["volatility"], height=0.72, color="#5B9BD5", alpha=0.85, zorder=3)
     if row["volatility"] > 0.05:
         ax.text(row["volatility"] + 0.02, i, f"{row['volatility']:.2f}",
                 va="center", ha="left", fontsize=6.5, color="#555555")
@@ -395,7 +398,7 @@ for i, row in cdf.iterrows():
     if row["region"] != prev_region and i > 0:
         ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
     prev_region = row["region"]
-    ax.barh(i, row["onset_chronic"], height=0.72, color="#E67E22", alpha=0.82, zorder=3)
+    ax.barh(i, row["onset_chronic"], height=0.72, color=REGIME_COLOURS["chronic"], alpha=0.85, zorder=3)
     if row["onset_chronic"] > 0:
         ax.text(row["onset_chronic"] + max_oc * 0.02, i, str(int(row["onset_chronic"])),
                 va="center", ha="left", fontsize=6.5, color="#555555")
