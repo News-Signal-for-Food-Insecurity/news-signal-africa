@@ -2,24 +2,22 @@
 generate_fig7_new.py
 ====================
 Two figures extending fig6c to full country-level analysis.
-Both share the same visual language as fig6c / fig7b (horizontal bars,
-despined axes, x-axis grid, countries on y-axis).
+Both share the same 4-panel visual language as fig6c / fig7b.
 
-  fig7a_time.pdf  — one row per country-fold (18 countries x 7 folds = 126 rows)
-    Same 4-panel layout as fig7b, but each row is one fold for one country.
-    Country name shown once (centred over its 7 fold rows); fold date as y-tick.
-    Panel T1: Crisis prevalence stacked bar per country-fold
-    Panel T2: AR-Only vs AR+News PR-AUC dot+arrow per country-fold
-    Panel T3: Regime change indicator per country-fold
-    Panel T4: Onset+chronic count bar per country-fold
+  fig7a_time.pdf  — 7 rows, one per test fold (aggregated across all countries)
+    Same 4-panel layout as fig7b, but the unit is the test period, not country.
+    Panel T1: Crisis prevalence stacked bar per fold
+    Panel T2: AR-Only vs AR+News PR-AUC dot+arrow per fold
+    Panel T3: Regime breakdown bar per fold (onset / chronic / recovery / stable)
+    Panel T4: Onset+chronic count bar per fold
 
-  fig7b_space.pdf — one row per country (18 rows), country-level aggregates
-    Panel S1: Prevalence stacked bar  (mirrors fig6c left)
-    Panel S2: PR-AUC dot+arrow AR-Only -> AR+News  (mirrors fig6c right)
+  fig7b_space.pdf — 18 rows, one per country (aggregated across all folds)
+    Panel S1: Prevalence stacked bar
+    Panel S2: PR-AUC dot+arrow AR-Only -> AR+News
     Panel S3: Volatility horizontal bars
     Panel S4: Onset+chronic count horizontal bars
 
-All values from fold_predictions.csv. AR+News = prob_combined.
+All values from fold_predictions.csv and fold_results.csv. AR+News = prob_combined.
 """
 
 import numpy as np
@@ -40,8 +38,13 @@ MODEL_COLOURS = {"AR-Only": "#1f77b4", "AR+News": "#9467bd"}
 CRISIS_COL    = "#C0392B"
 NONCRISIS_COL = "#2980B9"
 NODATA_COL    = "#CCCCCC"
-CHANGE_COL    = "#E67E22"
-STABLE_COL    = "#AAAAAA"
+
+REGIME_COLOURS = {
+    "onset":    "#E74C3C",
+    "chronic":  "#E67E22",
+    "recovery": "#27AE60",
+    "stable":   "#7F7F7F",
+}
 
 plt.rcParams.update({
     "font.family":  "serif",
@@ -78,7 +81,7 @@ def _despine(ax):
         ax.spines[s].set_visible(False)
 
 
-# ── Load & compute ─────────────────────────────────────────────────────────────
+# ── Load data ──────────────────────────────────────────────────────────────────
 preds   = pd.read_csv(RESULTS_DIR / "fold_predictions.csv")
 fold_df = pd.read_csv(RESULTS_DIR / "fold_results.csv")
 
@@ -90,9 +93,45 @@ fids       = sorted(preds["fold_id"].unique())
 n_folds    = len(fids)
 fold_dates = dict(zip(fold_df["fold_id"],
                       pd.to_datetime(fold_df["test_start"]).dt.strftime("%b %Y")))
-fold_lbls  = [fold_dates[f] for f in fids]
 
-# ── Build per-country summary (for fig7b) ─────────────────────────────────────
+# ── Build per-fold summary rows (for fig7a) ────────────────────────────────────
+fold_rows = []
+for fid in fids:
+    sf    = preds[preds.fold_id == fid]
+    y     = sf["target_crisis_binary"].values.astype(int)
+    n_tot = len(sf)
+    n_pos = int(y.sum())
+    n_neg = n_tot - n_pos
+    prev  = n_pos / n_tot if n_tot else 0.0
+
+    pr_ar = pr_full = float("nan")
+    if n_pos >= 2 and n_neg >= 2:
+        try:
+            pr_ar   = average_precision_score(y, sf["prob_ar"].values)
+            pr_full = average_precision_score(y, sf["prob_combined"].values)
+        except Exception:
+            pass
+
+    regime_counts = sf["regime"].value_counts().to_dict()
+
+    fold_rows.append({
+        "fold_id":   fid,
+        "fold_lbl":  fold_dates[fid],
+        "n_tot":     n_tot,
+        "n_pos":     n_pos,
+        "n_neg":     n_neg,
+        "prev":      prev,
+        "pr_ar":     pr_ar,
+        "pr_full":   pr_full,
+        "onset":     regime_counts.get("onset",    0),
+        "chronic":   regime_counts.get("chronic",  0),
+        "recovery":  regime_counts.get("recovery", 0),
+        "stable":    regime_counts.get("stable",   0),
+    })
+
+fdf = pd.DataFrame(fold_rows)   # 7 rows
+
+# ── Build per-country summary rows (for fig7b) ────────────────────────────────
 country_rows = []
 for c in sorted(preds["country"].unique()):
     sub   = preds[preds.country == c]
@@ -127,213 +166,125 @@ cdf["region_rank"] = cdf["region"].map(region_rank).fillna(99)
 cdf = cdf.sort_values(["region_rank", "prev"], ascending=[True, False]).reset_index(drop=True)
 n_countries = len(cdf)
 
-# ── Build per-country-fold rows (for fig7a) ───────────────────────────────────
-# Order: same country order as cdf, folds within each country chronologically
-time_rows = []
-for _, crow in cdf.iterrows():
-    c   = crow["country"]
-    sub = preds[preds.country == c]
-
-    prev_maj = None
-    for j, fid in enumerate(fids):
-        sf = sub[sub.fold_id == fid]
-        yf = sf["target_crisis_binary"].values.astype(int)
-        n_tot_f = len(sf)
-        prev_f  = float(yf.mean()) if n_tot_f > 0 else float("nan")
-        n_pos_f = int(yf.sum())
-        n_neg_f = int((1 - yf).sum())
-        oc_f    = int(sf[sf.regime.isin(["onset", "chronic"])].shape[0])
-
-        pr_ar_f = pr_full_f = float("nan")
-        can_f   = (n_pos_f >= 1 and n_neg_f >= 1)
-        if can_f:
-            try:
-                pr_ar_f   = average_precision_score(yf, sf["prob_ar"].values)
-                pr_full_f = average_precision_score(yf, sf["prob_combined"].values)
-            except Exception:
-                can_f = False
-
-        maj = int(prev_f >= 0.5) if np.isfinite(prev_f) else None
-        changed = (prev_maj is not None and maj is not None and maj != prev_maj)
-        prev_maj = maj if maj is not None else prev_maj
-
-        time_rows.append({
-            "country":    c,
-            "short":      crow["short"],
-            "region":     crow["region"],
-            "fold_id":    fid,
-            "fold_lbl":   fold_dates[fid],
-            "fold_idx":   j,
-            "n_tot":      n_tot_f,
-            "n_pos":      n_pos_f,
-            "n_neg":      n_neg_f,
-            "prev":       prev_f,
-            "can_score":  can_f,
-            "pr_ar":      pr_ar_f,
-            "pr_full":    pr_full_f,
-            "onset_chronic": oc_f,
-            "regime_changed": changed,
-        })
-
-tdf = pd.DataFrame(time_rows).reset_index(drop=True)
-n_rows_t = len(tdf)   # 126
-
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# FIG 7a — TIME  (126 rows: country × fold)
+# FIG 7a — TIME  (7 rows, one per test fold)
 # ═══════════════════════════════════════════════════════════════════════════════
 print("Building fig7a_time ...")
 
-ROW_H  = 0.28   # inches per row
-fig_h  = max(10, n_rows_t * ROW_H + 2.5)
-fig_w  = 22
-
 fig, axes = plt.subplots(
     1, 4,
-    figsize=(fig_w, fig_h),
-    gridspec_kw={"wspace": 0.04, "width_ratios": [1.6, 1.4, 0.7, 0.8]},
+    figsize=(20, 5),
+    gridspec_kw={"wspace": 0.06, "width_ratios": [1.4, 1.3, 1.2, 0.9]},
     sharey=True,
 )
 
-y_all = np.arange(n_rows_t)
+y_pos = np.arange(n_folds)
 
-# ── Y-axis: fold date labels; country name centred over its 7-row block ───────
-ax0 = axes[0]
-ax0.set_yticks(y_all)
-ax0.set_yticklabels(tdf["fold_lbl"].tolist(), fontsize=7)
-ax0.set_ylim(n_rows_t - 0.5, -0.5)
-
-# Country label centred over each block of 7 rows, placed to the left
-country_starts = {}
-for i, row in tdf.iterrows():
-    c = row["country"]
-    if c not in country_starts:
-        country_starts[c] = []
-    country_starts[c].append(i)
-
-for c, idxs in country_starts.items():
-    mid = (idxs[0] + idxs[-1]) / 2.0
-    ax0.text(-0.18, mid, SHORT.get(c, c),
-             transform=ax0.get_yaxis_transform(),
-             ha="right", va="center", fontsize=8, fontweight="bold", color="#222222")
-
-# Separator lines between countries
-for c, idxs in country_starts.items():
-    if idxs[0] > 0:
-        for ax in axes:
-            ax.axhline(idxs[0] - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45, zorder=4)
-
-# Alternate background shading per country block for readability
-for ci, (c, idxs) in enumerate(country_starts.items()):
-    if ci % 2 == 1:
-        for ax in axes:
-            ax.axhspan(idxs[0] - 0.5, idxs[-1] + 0.5,
-                       color="#F5F5F5", zorder=0, lw=0)
-
-
-def _fmt_axes(ax, title, xlabel):
-    ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--", zorder=1)
+def _fmt(ax, title, xlabel):
+    ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
     ax.set_title(title, fontsize=9, fontweight="bold", pad=6)
     ax.set_xlabel(xlabel, fontsize=8.5, labelpad=5)
-    for s in ("top", "right"):
-        ax.spines[s].set_visible(False)
-
+    ax.set_ylim(n_folds - 0.5, -0.5)
+    _despine(ax)
 
 # ── T1: Crisis prevalence stacked bar ────────────────────────────────────────
 ax = axes[0]
-for i, row in tdf.iterrows():
-    if not np.isfinite(row["prev"]) or row["n_tot"] == 0:
-        ax.barh(i, 1.0, height=0.72, color=NODATA_COL, zorder=2)
-        continue
+for i, row in fdf.iterrows():
     fp = row["n_pos"] / row["n_tot"]
     fn = row["n_neg"] / row["n_tot"]
-    ax.barh(i, fp, height=0.72, color=CRISIS_COL,    zorder=2)
-    ax.barh(i, fn, height=0.72, color=NONCRISIS_COL, zorder=2, left=fp)
+    ax.barh(i, fp, height=0.65, color=CRISIS_COL,    zorder=3)
+    ax.barh(i, fn, height=0.65, color=NONCRISIS_COL, zorder=3, left=fp)
+    pct = f"{fp*100:.0f}%"
     if fp >= 0.12:
-        ax.text(fp / 2, i, f"{fp*100:.0f}%", ha="center", va="center",
-                fontsize=6, color="white", fontweight="bold")
-    elif fp > 0:
-        ax.text(fp + 0.02, i, f"{fp*100:.0f}%", ha="left", va="center",
-                fontsize=6, color=CRISIS_COL)
+        ax.text(fp / 2, i, pct, ha="center", va="center",
+                fontsize=8, color="white", fontweight="bold")
+    else:
+        ax.text(fp + 0.02, i, pct, ha="left", va="center",
+                fontsize=8, color=CRISIS_COL, fontweight="bold")
+    ax.text(1.03, i, f"n={row['n_tot']}", transform=ax.get_yaxis_transform(),
+            va="center", ha="left", fontsize=7.5, color="#555555")
 
+ax.set_yticks(y_pos)
+ax.set_yticklabels(fdf["fold_lbl"].tolist(), fontsize=9)
 ax.set_xlim(0, 1)
-ax.axvline(0.5, color="#BBBBBB", lw=0.7, ls=":")
-_fmt_axes(ax, "T1 — Crisis prevalence per fold", "Fraction of observations")
+ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
+_fmt(ax, "T1 — Crisis prevalence per test period", "Fraction of observations")
 prev_legend = [mpatches.Patch(color=CRISIS_COL,    label="Crisis (IPC>=3)"),
                mpatches.Patch(color=NONCRISIS_COL, label="Non-crisis")]
-ax.legend(handles=prev_legend, fontsize=7.5, loc="upper left",
-          bbox_to_anchor=(0, -0.04), framealpha=0.95, ncol=2)
+ax.legend(handles=prev_legend, fontsize=8, loc="upper right", framealpha=0.95)
 
 # ── T2: AR-Only vs AR+News PR-AUC dot+arrow ──────────────────────────────────
 ax = axes[1]
-for i, row in tdf.iterrows():
-    if not row["can_score"] or not (np.isfinite(row["pr_ar"]) and np.isfinite(row["pr_full"])):
-        ax.text(0.5, i, "—", ha="center", va="center", fontsize=7, color="#CCCCCC")
+for i, row in fdf.iterrows():
+    if not (np.isfinite(row["pr_ar"]) and np.isfinite(row["pr_full"])):
         continue
     ax.annotate("", xy=(row["pr_full"], i), xytext=(row["pr_ar"], i),
-                arrowprops=dict(arrowstyle="->", color="#888888",
-                                lw=1.0, mutation_scale=10))
+                arrowprops=dict(arrowstyle="->", color="#333333",
+                                lw=1.5, mutation_scale=14))
     ax.scatter(row["pr_ar"],   i, color=MODEL_COLOURS["AR-Only"],
-               s=35, zorder=5, edgecolors="white", lw=0.3)
-    ax.scatter(row["pr_full"], i, color=MODEL_COLOURS["AR+News"],
-               marker="s", s=35, zorder=5, edgecolors="white", lw=0.3)
+               s=80, zorder=5, edgecolors="white", lw=0.5)
+    ax.scatter(row["pr_full"], i, marker="s", color=MODEL_COLOURS["AR+News"],
+               s=80, zorder=5, edgecolors="white", lw=0.5)
     delta = row["pr_full"] - row["pr_ar"]
-    ax.text(1.03, i, f"{delta:+.2f}", transform=ax.get_yaxis_transform(),
-            va="center", ha="left", fontsize=6,
+    ax.text(1.03, i, f"{delta:+.3f}", transform=ax.get_yaxis_transform(),
+            va="center", ha="left", fontsize=7.5,
             color="#27AE60" if delta >= 0 else "#C0392B")
 
-ax.set_xlim(0, 1)
-ax.axvline(0.5, color="#BBBBBB", lw=0.7, ls=":")
-ax.text(1.03, -1, "delta", transform=ax.get_yaxis_transform(),
-        va="center", ha="left", fontsize=7, color="#333333", fontweight="bold")
-_fmt_axes(ax, "T2 — AR-Only vs AR+News PR-AUC per fold", "PR-AUC")
+ax.set_xlim(0.5, 1.0)
+ax.axvline(0.75, color="#AAAAAA", lw=0.8, ls=":")
+ax.text(1.03, -0.7, "delta", transform=ax.get_yaxis_transform(),
+        va="top", ha="left", fontsize=7.5, color="#333333", fontweight="bold")
+_fmt(ax, "T2 — AR-Only vs AR+News PR-AUC per test period", "PR-AUC")
 leg_elems = [Line2D([0],[0], marker="o", color="w",
-                    markerfacecolor=MODEL_COLOURS["AR-Only"], ms=7, label="AR-Only"),
+                    markerfacecolor=MODEL_COLOURS["AR-Only"], ms=9, label="AR-Only"),
              Line2D([0],[0], marker="s", color="w",
-                    markerfacecolor=MODEL_COLOURS["AR+News"], ms=7, label="AR+News")]
-ax.legend(handles=leg_elems, fontsize=7.5, loc="upper left",
-          bbox_to_anchor=(0, -0.04), frameon=True, ncol=2)
+                    markerfacecolor=MODEL_COLOURS["AR+News"], ms=9, label="AR+News")]
+ax.legend(handles=leg_elems, fontsize=8, loc="upper left", frameon=True)
 
-# ── T3: Regime change indicator ───────────────────────────────────────────────
+# ── T3: Regime breakdown stacked bar ─────────────────────────────────────────
 ax = axes[2]
-for i, row in tdf.iterrows():
-    color = CHANGE_COL if row["regime_changed"] else STABLE_COL
-    ax.scatter(0.5, i, color=color, s=55, zorder=3, edgecolors="white", lw=0.3)
+for i, row in fdf.iterrows():
+    left = 0
+    for reg in ["onset", "chronic", "recovery", "stable"]:
+        val = row[reg]
+        if val > 0:
+            ax.barh(i, val, height=0.65, color=REGIME_COLOURS[reg],
+                    left=left, zorder=3)
+            if val >= 15:
+                ax.text(left + val / 2, i, str(val), ha="center", va="center",
+                        fontsize=7.5, color="white", fontweight="bold")
+            left += val
 
-ax.set_xlim(0, 1)
-ax.set_xticks([])
-_fmt_axes(ax, "T3 — Regime\nchange", "")
-chg_legend = [mpatches.Patch(color=CHANGE_COL, label="Changed"),
-              mpatches.Patch(color=STABLE_COL, label="Stable")]
-ax.legend(handles=chg_legend, fontsize=7.5, loc="upper left",
-          bbox_to_anchor=(0, -0.04), framealpha=0.95, ncol=1)
+ax.set_xlim(0, fdf[["onset","chronic","recovery","stable"]].sum(axis=1).max() * 1.05)
+_fmt(ax, "T3 — Regime breakdown per test period", "Number of observations")
+reg_legend = [mpatches.Patch(color=REGIME_COLOURS[r], label=r.capitalize())
+              for r in ["onset", "chronic", "recovery", "stable"]]
+ax.legend(handles=reg_legend, fontsize=8, loc="upper right", framealpha=0.95, ncol=2)
 
 # ── T4: Onset+chronic count bar ───────────────────────────────────────────────
 ax = axes[3]
-max_oc = max(int(tdf["onset_chronic"].max()), 1)
-for i, row in tdf.iterrows():
-    ax.barh(i, row["onset_chronic"], height=0.72,
-            color="#E67E22", alpha=0.82, zorder=2)
-    if row["onset_chronic"] > 0:
-        ax.text(row["onset_chronic"] + max_oc * 0.02, i,
-                str(int(row["onset_chronic"])),
-                va="center", ha="left", fontsize=6, color="#555555")
+max_oc = max(int((fdf["onset"] + fdf["chronic"]).max()), 1)
+for i, row in fdf.iterrows():
+    oc = row["onset"] + row["chronic"]
+    ax.barh(i, oc, height=0.65, color="#E67E22", alpha=0.85, zorder=3)
+    ax.text(oc + max_oc * 0.02, i, str(int(oc)),
+            va="center", ha="left", fontsize=8, color="#555555")
 
-ax.set_xlim(0, max_oc * 1.2)
-_fmt_axes(ax, "T4 — Onset+chronic\nper fold", "Observations")
+ax.set_xlim(0, max_oc * 1.25)
+_fmt(ax, "T4 — Onset+chronic\nper test period", "Observations")
 
 fig.suptitle(
-    "Figure 7a — Country-level model performance per fold (time)",
-    fontsize=11, fontweight="bold", y=1.003,
+    "Figure 7a — Model performance and crisis characteristics across 7 test periods",
+    fontsize=11, fontweight="bold", y=1.03,
 )
-fig.subplots_adjust(left=0.12, bottom=0.06)
 fig.savefig(FIGURES_DIR / "fig7a_time.pdf", format="pdf", bbox_inches="tight", dpi=300)
 plt.close(fig)
 print("  Saved fig7a_time.pdf")
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# FIG 7b — SPACE  (18 rows, country-level aggregates)
+# FIG 7b — SPACE  (18 rows, one per country)
 # ═══════════════════════════════════════════════════════════════════════════════
 print("Building fig7b_space ...")
 
@@ -350,13 +301,13 @@ y_pos = np.arange(n_countries)
 # ── S1: Prevalence stacked bar ────────────────────────────────────────────────
 ax = axes[0]
 ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
+prev_region = None
 for i, row in cdf.iterrows():
+    if row["region"] != prev_region and i > 0:
+        ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
+    prev_region = row["region"]
     tot = row["n_tot"]
-    if tot == 0:
-        ax.barh(i, 1.0, color=NODATA_COL, height=0.72)
-        continue
-    fp = row["n_pos"] / tot
-    fn = row["n_neg"] / tot
+    fp = row["n_pos"] / tot; fn = row["n_neg"] / tot
     ax.barh(i, fp, color=CRISIS_COL,    height=0.72, zorder=3)
     ax.barh(i, fn, left=fp, color=NONCRISIS_COL, height=0.72, zorder=3)
     pct = f"{fp*100:.0f}%"
@@ -376,13 +327,6 @@ ax.set_xlim(0, 1)
 ax.set_xlabel("Fraction of test-set observations", fontsize=8.5, labelpad=5)
 ax.set_title("S1 — Crisis Prevalence", fontsize=9, fontweight="bold", pad=6)
 ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
-
-prev_region = None
-for i, row in cdf.iterrows():
-    if row["region"] != prev_region and i > 0:
-        ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
-    prev_region = row["region"]
-
 prev_legend = [mpatches.Patch(color=CRISIS_COL,    label="Crisis (IPC>=3)"),
                mpatches.Patch(color=NONCRISIS_COL, label="Non-crisis")]
 ax.legend(handles=prev_legend, fontsize=7.5, loc="upper right", framealpha=0.95)
