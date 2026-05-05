@@ -1,12 +1,14 @@
 """
 generate_fig7_new.py
 ====================
-Produces two figures extending fig6c to full country-level analysis:
+Produces two figures extending fig6c to full country-level analysis.
+Both figures share the same look-and-feel: countries on y-axis, despined
+axes with x-axis grid, same font and colour conventions as fig6c / fig7_space.
 
-  fig7_time.pdf  — 3-panel TIME figure (country x fold heatmaps)
-    Panel T1: Crisis prevalence per country per fold
-    Panel T2: AR+News PR-AUC per country per fold
-    Panel T3: Delta PR-AUC (AR+News - AR-Only) per country per fold
+  fig7_time.pdf  — 3-panel TIME figure (countries x 7 folds)
+    Panel T1: Crisis prevalence per fold — connected dots per country
+    Panel T2: AR+News PR-AUC per fold   — connected dots per country
+    Panel T3: Delta PR-AUC per fold     — connected dots, coloured by sign
 
   fig7_space.pdf — 4-panel SPACE figure (country-level aggregates)
     Panel S1: Prevalence stacked bar  (mirrors fig6c left panel)
@@ -36,6 +38,16 @@ MODEL_COLOURS = {"AR-Only": "#1f77b4", "AR+News": "#9467bd"}
 CRISIS_COL    = "#C0392B"
 NONCRISIS_COL = "#2980B9"
 NODATA_COL    = "#CCCCCC"
+DELTA_POS     = "#27AE60"
+DELTA_NEG     = "#C0392B"
+
+plt.rcParams.update({
+    "font.family":  "serif",
+    "font.serif":   ["Times New Roman", "Liberation Serif", "DejaVu Serif"],
+    "font.size":    9,
+    "pdf.fonttype": 42,
+    "ps.fonttype":  42,
+})
 
 COUNTRY_REGION = {
     "Burkina Faso":  "West Africa", "Burundi":    "East Africa",
@@ -63,14 +75,11 @@ def _despine(ax):
         ax.spines[s].set_visible(False)
 
 
-def _add_region_separators(ax, df, orientation="h"):
+def _add_region_separators(ax, df):
     prev_region = None
     for i, row in df.iterrows():
         if row["region"] != prev_region and i > 0:
-            if orientation == "h":
-                ax.axhline(i - 0.5, color="#333333", lw=1.2, ls="--", alpha=0.55, zorder=4)
-            else:
-                ax.axvline(i - 0.5, color="#333333", lw=1.2, ls="--", alpha=0.55, zorder=4)
+            ax.axhline(i - 0.5, color="#333333", lw=1.2, ls="--", alpha=0.55, zorder=4)
         prev_region = row["region"]
 
 
@@ -81,11 +90,12 @@ fold_df = pd.read_csv(RESULTS_DIR / "fold_results.csv")
 preds["country"] = preds["district_id"].apply(
     lambda d: [p.strip() for p in str(d).split(",")][-1]
 )
-preds["delta_prob"] = preds["prob_combined"] - preds["prob_ar"]
 
 fids       = sorted(preds["fold_id"].unique())
+n_folds    = len(fids)
 fold_dates = dict(zip(fold_df["fold_id"],
                       pd.to_datetime(fold_df["test_start"]).dt.strftime("%b %Y")))
+fold_lbls  = [fold_dates[f] for f in fids]
 
 rows = []
 for c in sorted(preds["country"].unique()):
@@ -138,103 +148,136 @@ df["region_rank"] = df["region"].map(region_rank).fillna(99)
 df = df.sort_values(["region_rank", "prev"], ascending=[True, False]).reset_index(drop=True)
 n_countries    = len(df)
 country_labels = df["short"].tolist()
+y_pos          = np.arange(n_countries)
+
+# x-positions for folds: evenly spaced 0..1 within each panel
+x_fold = np.linspace(0, 1, n_folds)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# FIG 7 TIME  —  3 heatmap panels stacked vertically
+# FIG 7 TIME  —  3 panels side-by-side, same look as fig7_space
+# Countries on y-axis; x-axis = fold timeline (0..1 scaled); connected dots
 # ═══════════════════════════════════════════════════════════════════════════════
 print("Building fig7_time ...")
 
-n_folds   = len(fids)
-fold_lbls = [fold_dates[f] for f in fids]
-
-# Build matrices: rows = countries (top-to-bottom), cols = folds
-mat_prev    = np.full((n_countries, n_folds), np.nan)
-mat_pr_full = np.full((n_countries, n_folds), np.nan)
-mat_delta   = np.full((n_countries, n_folds), np.nan)
-
-for i, row in df.iterrows():
-    for j, fid in enumerate(fids):
-        mat_prev[i, j]    = row["fold_prev"].get(fid, float("nan"))
-        mat_pr_full[i, j] = row["fold_pr_full"].get(fid, float("nan"))
-        far = row["fold_pr_ar"].get(fid, float("nan"))
-        ffu = row["fold_pr_full"].get(fid, float("nan"))
-        mat_delta[i, j]   = ffu - far if (np.isfinite(far) and np.isfinite(ffu)) else float("nan")
-
-cmap_prev  = plt.cm.YlOrRd
-cmap_prauc = plt.cm.Blues
-cmap_delta = LinearSegmentedColormap.from_list(
-    "rg", ["#C0392B", "#FFFFFF", "#27AE60"], N=256)
-
-ROW_H   = 0.42          # inches per country row
-PAD_TOP = 1.6           # inches for suptitle + x-labels above top panel
-PAD_BOT = 0.5           # inches below bottom panel
-N_PANELS = 3
-PANEL_H  = n_countries * ROW_H
-CB_FRAC  = 0.03         # colorbar fraction of panel width
-CB_PAD   = 0.008
-
-fig_h = PAD_TOP + N_PANELS * PANEL_H + (N_PANELS - 1) * 0.7 + PAD_BOT
-fig_w = 11
-
+fig_h = max(7, n_countries * 0.44)
 fig, axes = plt.subplots(
-    3, 1,
-    figsize=(fig_w, fig_h),
-    gridspec_kw={"hspace": 0.65, "height_ratios": [1, 1, 1]},
+    1, 3,
+    figsize=(22, fig_h),
+    gridspec_kw={"wspace": 0.06, "width_ratios": [1, 1, 1]},
+    sharey=True,
 )
 
-plt.rcParams.update({
-    "font.family": "serif",
-    "font.size": 9,
-    "pdf.fonttype": 42,
-    "ps.fonttype": 42,
-})
+
+def _time_axis(ax, title, xlim=(0, 1)):
+    """Common formatting for a fig7_time panel."""
+    ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
+    ax.set_xticks(x_fold)
+    ax.set_xticklabels(fold_lbls, fontsize=7.5, rotation=35, ha="right")
+    ax.set_xlim(xlim[0] - 0.06, xlim[1] + 0.06)
+    ax.set_ylim(n_countries - 0.5, -0.5)
+    ax.set_title(title, fontsize=9, fontweight="bold", pad=6)
+    _add_region_separators(ax, df)
+    _despine(ax)
 
 
-def _heatmap_panel(ax, mat, cmap, vmin, vmax, title, cb_label, nodata_col="#E8E8E8"):
-    masked = np.ma.masked_invalid(mat)
-    cmap_copy = cmap
-    if hasattr(cmap, "copy"):
-        cmap_copy = cmap.copy()
-    cmap_copy.set_bad(color=nodata_col)
-    im = ax.imshow(masked, aspect="auto", cmap=cmap_copy, vmin=vmin, vmax=vmax,
-                   interpolation="nearest")
-    # x-axis: fold dates
-    ax.set_xticks(range(n_folds))
-    ax.set_xticklabels(fold_lbls, fontsize=8, rotation=35, ha="right")
-    # y-axis: country labels
-    ax.set_yticks(range(n_countries))
-    ax.set_yticklabels(country_labels, fontsize=8.5)
-    ax.set_ylim(n_countries - 0.5, -0.5)   # top-to-bottom, no drift
-    # thin white row separators
-    for i in range(n_countries - 1):
-        ax.axhline(i + 0.5, color="white", lw=0.5, alpha=0.7, zorder=3)
-    # region separators (dashed dark)
-    _add_region_separators(ax, df, "h")
-    ax.spines[:].set_visible(False)
-    ax.set_title(title, fontsize=9, fontweight="bold", pad=5)
-    cb = fig.colorbar(im, ax=ax, fraction=CB_FRAC, pad=CB_PAD, shrink=0.90)
-    cb.set_label(cb_label, fontsize=7.5)
-    cb.ax.tick_params(labelsize=7)
-    return im
+# ── T1: Crisis prevalence per fold — connected dots ──────────────────────────
+ax = axes[0]
+for i, row in df.iterrows():
+    vals = [row["fold_prev"].get(fid, float("nan")) for fid in fids]
+    xs   = [x_fold[j] for j, v in enumerate(vals) if np.isfinite(v)]
+    ys_v = [v for v in vals if np.isfinite(v)]
+    if len(xs) >= 2:
+        ax.plot(xs, [i] * len(xs), "-", color="#AAAAAA", lw=0.8, zorder=2)
+    for j, v in enumerate(vals):
+        if np.isfinite(v):
+            color = CRISIS_COL if v >= 0.5 else NONCRISIS_COL
+            ax.scatter(x_fold[j], i, color=color, s=55, zorder=5,
+                       edgecolors="white", lw=0.4)
 
+ax.set_yticks(y_pos)
+ax.set_yticklabels(country_labels, fontsize=9)
+ax.set_xlabel("Test fold", fontsize=8.5, labelpad=5)
+_time_axis(ax, "T1 — Crisis prevalence per fold")
+ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
 
-_heatmap_panel(axes[0], mat_prev, cmap_prev, 0, 1,
-               "T1 — Crisis prevalence per country per fold",
-               "Prevalence")
+prev_legend = [
+    mpatches.Patch(color=CRISIS_COL,    label=">=50% crisis"),
+    mpatches.Patch(color=NONCRISIS_COL, label="<50% crisis"),
+]
+ax.legend(handles=prev_legend, fontsize=7.5, loc="upper right", framealpha=0.95)
 
-_heatmap_panel(axes[1], mat_pr_full, cmap_prauc, 0, 1,
-               "T2 — AR+News PR-AUC per country per fold  (grey = not computable)",
-               "PR-AUC")
+# ── T2: AR+News PR-AUC per fold — solid purple + AR-Only dashed blue ─────────
+ax = axes[1]
+for i, row in df.iterrows():
+    vals_full = [row["fold_pr_full"].get(fid, float("nan")) for fid in fids]
+    vals_ar   = [row["fold_pr_ar"].get(fid, float("nan"))   for fid in fids]
 
-abs_max = float(np.nanmax(np.abs(mat_delta[np.isfinite(mat_delta)]))) if np.isfinite(mat_delta).any() else 0.3
-_heatmap_panel(axes[2], mat_delta, cmap_delta, -abs_max, abs_max,
-               "T3 — Delta PR-AUC (AR+News minus AR-Only)  (green = news helps, red = hurts)",
-               "Delta PR-AUC")
+    # AR+News line
+    xs_f = [x_fold[j] for j, v in enumerate(vals_full) if np.isfinite(v)]
+    yv_f = [v for v in vals_full if np.isfinite(v)]
+    if len(xs_f) >= 2:
+        ax.plot(xs_f, [i] * len(xs_f), "-",
+                color=MODEL_COLOURS["AR+News"], lw=1.1, alpha=0.55, zorder=2)
+    for j, v in enumerate(vals_full):
+        if np.isfinite(v):
+            ax.scatter(x_fold[j], i, color=MODEL_COLOURS["AR+News"],
+                       marker="s", s=50, zorder=5, edgecolors="white", lw=0.4)
+
+    # AR-Only line (dashed, same row)
+    xs_a = [x_fold[j] for j, v in enumerate(vals_ar) if np.isfinite(v)]
+    yv_a = [v for v in vals_ar if np.isfinite(v)]
+    if len(xs_a) >= 2:
+        ax.plot(xs_a, [i] * len(xs_a), "--",
+                color=MODEL_COLOURS["AR-Only"], lw=0.9, alpha=0.45, zorder=2)
+    for j, v in enumerate(vals_ar):
+        if np.isfinite(v):
+            ax.scatter(x_fold[j], i, color=MODEL_COLOURS["AR-Only"],
+                       marker="o", s=40, zorder=4, edgecolors="white", lw=0.4, alpha=0.75)
+
+ax.set_xlabel("Test fold", fontsize=8.5, labelpad=5)
+_time_axis(ax, "T2 — PR-AUC per fold  (square=AR+News, circle=AR-Only)")
+
+leg_elems = [
+    Line2D([0],[0], marker="s", color="w",
+           markerfacecolor=MODEL_COLOURS["AR+News"], ms=8, label="AR+News"),
+    Line2D([0],[0], marker="o", color="w",
+           markerfacecolor=MODEL_COLOURS["AR-Only"], ms=8, label="AR-Only"),
+]
+ax.legend(handles=leg_elems, fontsize=7.5, loc="upper right", frameon=True)
+
+# ── T3: Delta PR-AUC per fold — dots coloured by sign ────────────────────────
+ax = axes[2]
+for i, row in df.iterrows():
+    vals_full = [row["fold_pr_full"].get(fid, float("nan")) for fid in fids]
+    vals_ar   = [row["fold_pr_ar"].get(fid, float("nan"))   for fid in fids]
+    deltas    = [
+        ffu - far if (np.isfinite(ffu) and np.isfinite(far)) else float("nan")
+        for ffu, far in zip(vals_full, vals_ar)
+    ]
+    xs_d = [x_fold[j] for j, v in enumerate(deltas) if np.isfinite(v)]
+    if len(xs_d) >= 2:
+        ax.plot(xs_d, [i] * len(xs_d), "-", color="#CCCCCC", lw=0.8, zorder=2)
+    for j, v in enumerate(deltas):
+        if np.isfinite(v):
+            color = DELTA_POS if v >= 0 else DELTA_NEG
+            ax.scatter(x_fold[j], i, color=color, s=55, zorder=5,
+                       edgecolors="white", lw=0.4)
+
+ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
+ax.set_xlabel("Test fold", fontsize=8.5, labelpad=5)
+_time_axis(ax, "T3 — Delta PR-AUC per fold  (green=news helps, red=hurts)")
+ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
+
+delta_legend = [
+    mpatches.Patch(color=DELTA_POS, label="AR+News > AR-Only"),
+    mpatches.Patch(color=DELTA_NEG, label="AR+News < AR-Only"),
+]
+ax.legend(handles=delta_legend, fontsize=7.5, loc="upper right", framealpha=0.95)
 
 fig.suptitle(
     "Figure 7 (Time) — Country-level model performance across 7 folds",
-    fontsize=11, fontweight="bold", y=1.003
+    fontsize=11, fontweight="bold", y=1.003,
 )
 fig.savefig(FIGURES_DIR / "fig7_time.pdf", format="pdf", bbox_inches="tight", dpi=300)
 plt.close(fig)
@@ -253,8 +296,6 @@ fig, axes = plt.subplots(
     gridspec_kw={"wspace": 0.04, "width_ratios": [1.5, 1.3, 0.85, 0.85]},
     sharey=True,
 )
-
-y_pos = np.arange(n_countries)
 
 # ── S1: Prevalence stacked bar ────────────────────────────────────────────────
 ax = axes[0]
@@ -285,7 +326,7 @@ ax.set_xlim(0, 1)
 ax.set_xlabel("Fraction of test-set observations", fontsize=8.5, labelpad=5)
 ax.set_title("S1 — Crisis Prevalence", fontsize=9, fontweight="bold", pad=6)
 ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
-_add_region_separators(ax, df, "h")
+_add_region_separators(ax, df)
 prev_legend = [mpatches.Patch(color=CRISIS_COL,    label="Crisis (IPC>=3)"),
                mpatches.Patch(color=NONCRISIS_COL, label="Non-crisis")]
 ax.legend(handles=prev_legend, fontsize=7.5, loc="upper right", framealpha=0.95)
@@ -315,7 +356,7 @@ ax.set_xlim(0, 1)
 ax.set_xlabel("PR-AUC", fontsize=8.5, labelpad=5)
 ax.set_title("S2 — AR-Only vs AR+News PR-AUC", fontsize=9, fontweight="bold", pad=6)
 ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
-_add_region_separators(ax, df, "h")
+_add_region_separators(ax, df)
 leg_elems = [Line2D([0],[0], marker="o", color="w",
                     markerfacecolor=MODEL_COLOURS["AR-Only"], ms=9, label="AR-Only"),
              Line2D([0],[0], marker="s", color="w",
@@ -336,7 +377,7 @@ for i, row in df.iterrows():
 ax.set_xlim(0, 1.05)
 ax.set_xlabel("Fraction of folds\nwith regime change", fontsize=8.5, labelpad=5)
 ax.set_title("S3 — Volatility", fontsize=9, fontweight="bold", pad=6)
-_add_region_separators(ax, df, "h")
+_add_region_separators(ax, df)
 _despine(ax)
 
 # ── S4: Onset + Chronic count bar ─────────────────────────────────────────────
@@ -351,12 +392,12 @@ for i, row in df.iterrows():
 ax.set_xlim(0, max_oc * 1.18)
 ax.set_xlabel("Onset + chronic\nobservations (all folds)", fontsize=8.5, labelpad=5)
 ax.set_title("S4 — Crisis Frequency", fontsize=9, fontweight="bold", pad=6)
-_add_region_separators(ax, df, "h")
+_add_region_separators(ax, df)
 _despine(ax)
 
 fig.suptitle(
     "Figure 7 (Space) — Country-level characteristics and model performance",
-    fontsize=11, fontweight="bold", y=1.003
+    fontsize=11, fontweight="bold", y=1.003,
 )
 fig.savefig(FIGURES_DIR / "fig7_space.pdf", format="pdf", bbox_inches="tight", dpi=300)
 plt.close(fig)
