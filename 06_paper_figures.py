@@ -792,9 +792,12 @@ def _draw_null_panel(ax, null_values, real_ar, real_full, axis_name, p_value=Non
 def figure_3() -> None:
     print("\n[Fig 3] Null distribution histograms...")
 
-    # Prefer v2 results (within-column swap, 1000 models) over legacy shuffle_test
-    null_path = BASE_DIR / "results" / "shuffle_test_v2" / "null_distribution.csv"
-    cfg_path  = BASE_DIR / "results" / "shuffle_test_v2" / "config.json"
+    # Prefer v3 results (rolling CV, identical pipeline to real models)
+    null_path = BASE_DIR / "results" / "shuffle_test_v3" / "null_distribution.csv"
+    cfg_path  = BASE_DIR / "results" / "shuffle_test_v3" / "config.json"
+    if not null_path.exists():
+        null_path = BASE_DIR / "results" / "shuffle_test_v2" / "null_distribution.csv"
+        cfg_path  = BASE_DIR / "results" / "shuffle_test_v2" / "config.json"
     if not null_path.exists():
         null_path = BASE_DIR / "results" / "shuffle_test" / "null_distribution.csv"
         cfg_path  = BASE_DIR / "results" / "shuffle_test" / "config.json"

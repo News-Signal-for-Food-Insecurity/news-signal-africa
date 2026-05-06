@@ -5,7 +5,10 @@ Rolling stratified spatial cross-validation for AR-only and Combined models.
 
 Two CatBoost classifiers per fold:
   - AR model   : 5 autoregressive features (incl. ipc_country)
-  - Combined   : 5 AR + 19 news features (fold-aware z-scores)
+  - Combined   : 5 AR + 18 news features (fold-aware z-scores)
+
+All three models (AR, AR+News, null) use identical CatBoost params:
+  iterations=1000, depth=6, lr=0.03, Logloss — no tuning, no early stopping.
 
 Fold structure:
   - Training window : 20 months
@@ -78,44 +81,27 @@ class Config:
     NEWS_FEATURES = (
         [f"{t}_relative_coverage" for t in NEWS_THEMES]
         + [f"{t}_zscore" for t in NEWS_THEMES]
-        + ["article_count_zscore"]   # volume anomaly: total article spike signal
-    )
+    )                                # 18 features — identical to null model feature set
     # ipc_country included in both AR and Combined so models differ only in news features.
     COMBINED_FEATURES = AR_FEATURES + NEWS_FEATURES
     TARGET = "target_crisis_binary"
 
-    # CatBoost params — AR uses lower capacity (5 features) to avoid overfitting;
-    # Combined uses higher capacity (24 features) to exploit richer feature space.
-    # auto_class_weights="Balanced": corrects for ~28% crisis prevalence (1:2.6 imbalance).
-    # eval_metric="AveragePrecision": directly targets PR-AUC (paper's primary metric) for early stopping.
-    # Intentional asymmetry: matching capacity to feature count, not equalising for comparison.
-    CATBOOST_PARAMS_AR = dict(
-        iterations=300,
-        depth=6,
-        learning_rate=0.05,
-        loss_function="Logloss",
-        eval_metric="AUC",
-        # No class weighting for AR: ipc_lag_1 is highly predictive; balanced weights
-        # cause over-prediction of crisis and hurt precision in the PR-AUC curve.
-        # AUC eval metric used for early stopping (more stable than PRAUC on small val sets).
-        random_seed=42,
-        verbose=0,
-        early_stopping_rounds=30,
-    )
-    CATBOOST_PARAMS_FULL = dict(
-        iterations=500,
+    # Standard default CatBoost params — identical for AR, AR+News, and null model.
+    # No tuning, no early stopping, no class weights, no validation split.
+    # The only thing that differs across models is the feature set.
+    # This ensures a fair apples-to-apples comparison.
+    CATBOOST_PARAMS = dict(
+        iterations=1000,
         depth=6,
         learning_rate=0.03,
         loss_function="Logloss",
-        eval_metric="PRAUC",
-        auto_class_weights="Balanced",
+        eval_metric="AUC",
+        task_type="CPU",
         random_seed=42,
         verbose=0,
-        early_stopping_rounds=50,
     )
-    # VALIDATION_FRACTION must be >= 0.40 to guarantee 2 val periods (int(5*0.40)=2).
-    # Two periods gives ~520-700 rows for stable early stopping on AveragePrecision.
-    VALIDATION_FRACTION = 0.40
+    CATBOOST_PARAMS_AR   = CATBOOST_PARAMS   # alias — same params for both models
+    CATBOOST_PARAMS_FULL = CATBOOST_PARAMS   # alias — same params for both models
     THRESHOLD = 0.5
 
 
@@ -244,18 +230,10 @@ def run_single_fold(fold_info: dict, df: pd.DataFrame, monthly_gdelt: pd.DataFra
 
     df_train, df_test = compute_fold_news_features(df_train, df_test, monthly_gdelt, train_end, cfg)
 
-    # Validation split: last VALIDATION_FRACTION of training periods
-    train_periods = sorted(df_train["ipc_period_start"].unique())
-    n_val     = max(1, int(len(train_periods) * cfg.VALIDATION_FRACTION))
-    val_perds = set(train_periods[-n_val:])
-    val_mask  = df_train["ipc_period_start"].isin(val_perds)
-
-    df_fit = df_train[~val_mask]
-    df_val = df_train[val_mask]
-
-    y_fit  = df_fit[cfg.TARGET].values
-    y_val  = df_val[cfg.TARGET].values
-    y_test = df_test[cfg.TARGET].values
+    # Train on full training set — no validation split, no early stopping.
+    # Identical protocol to the null model for a fair comparison.
+    y_train = df_train[cfg.TARGET].values
+    y_test  = df_test[cfg.TARGET].values
 
     def prep_X(df_subset, features):
         X = df_subset[features].copy()
@@ -264,27 +242,19 @@ def run_single_fold(fold_info: dict, df: pd.DataFrame, monthly_gdelt: pd.DataFra
             X["ipc_country"] = X["ipc_country"].astype(str)
         return X
 
-    # AR model — ipc_period and ipc_country are both categorical
+    # AR model
     cat_idx_ar = [cfg.AR_FEATURES.index("ipc_period"),
                   cfg.AR_FEATURES.index("ipc_country")]
     model_ar = CatBoostClassifier(**cfg.CATBOOST_PARAMS_AR, cat_features=cat_idx_ar)
-    model_ar.fit(
-        prep_X(df_fit, cfg.AR_FEATURES), y_fit,
-        eval_set=(prep_X(df_val, cfg.AR_FEATURES), y_val),
-        use_best_model=True,
-    )
+    model_ar.fit(prep_X(df_train, cfg.AR_FEATURES), y_train)
     prob_ar = model_ar.predict_proba(prep_X(df_test, cfg.AR_FEATURES))[:, 1]
     m_ar    = compute_metrics(y_test, prob_ar, cfg.THRESHOLD)
 
-    # Combined model — ipc_period and ipc_country are both categorical
+    # AR+News model
     cat_idx_full = [cfg.COMBINED_FEATURES.index("ipc_period"),
                     cfg.COMBINED_FEATURES.index("ipc_country")]
     model_full = CatBoostClassifier(**cfg.CATBOOST_PARAMS_FULL, cat_features=cat_idx_full)
-    model_full.fit(
-        prep_X(df_fit, cfg.COMBINED_FEATURES), y_fit,
-        eval_set=(prep_X(df_val, cfg.COMBINED_FEATURES), y_val),
-        use_best_model=True,
-    )
+    model_full.fit(prep_X(df_train, cfg.COMBINED_FEATURES), y_train)
     prob_full = model_full.predict_proba(prep_X(df_test, cfg.COMBINED_FEATURES))[:, 1]
     m_full    = compute_metrics(y_test, prob_full, cfg.THRESHOLD)
 

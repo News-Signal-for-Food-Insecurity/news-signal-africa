@@ -1,51 +1,52 @@
 """
-Temporal Shuffle Null Test  (v2 — cell-swap design, parallelised)
-=================================================================
+Temporal Shuffle Null Test  (v3 — rolling CV, cell-swap, parallelised)
+=======================================================================
 
 METHODOLOGY
 -----------
 For each of N_MODELS permutations:
 
-  1. Take the ORIGINAL training feature matrix.
-  2. Apply N_SWAPS within-column cell swaps to the 18 news feature columns:
-       - Pick two random rows i, j and one random news column k.
-       - Swap matrix[i,k] ↔ matrix[j,k].
-       Column totals are preserved exactly after every swap; row totals change
-       by equal and opposite amounts (grand total always preserved). After
-       N_SWAPS = 10,000 swaps the temporal and spatial alignment of every news
-       feature with outcomes is fully destroyed while column marginals are intact.
-  3. Train a CatBoost classifier on the swapped matrix using standard default
-     parameters (iterations=1000, depth=6, lr=0.03, Logloss). No early
-     stopping, no validation set, no tuning.
-  4. Evaluate PR-AUC and ROC-AUC on the held-out test set.
-  5. One null draw recorded.
+  1. Replicate the EXACT same rolling CV folds used in 01_train_models.py
+     (same training windows, same test periods, same feature set).
+  2. For each fold, apply N_SWAPS within-column cell swaps to the 18 news
+     feature columns in that fold's training matrix:
+       - Pick two random rows i≠j and one random column k.
+       - Swap train_matrix[i,k] ↔ train_matrix[j,k].
+       Column totals preserved exactly; temporal/spatial alignment destroyed.
+  3. Train a CatBoost classifier on the swapped training data using the
+     IDENTICAL params as 01_train_models.py:
+       iterations=1000, depth=6, lr=0.03, Logloss, CPU, no early stopping.
+  4. Evaluate PR-AUC and ROC-AUC on that fold's test set.
+  5. Average PR-AUC and ROC-AUC across all folds → one null draw.
 
-After N_MODELS=1,000 draws, compare real model metrics against the null
-distribution for empirical one-sided p-values.
+This ensures the null distribution is generated under IDENTICAL conditions
+to the real models — same folds, same params, same features — with the
+only difference being that news features are randomly scrambled.
 
 EFFICIENCY
 ----------
-- joblib.Parallel(n_jobs=-1) parallelises across all CPU cores (6-8x speedup).
-- thread_count=1 inside each CatBoost fit avoids thread contention with joblib.
-- bootstrap_type='Poisson' is marginally faster than Bernoulli.
-- All 10,000 swap indices are generated in one numpy call (vectorised).
-- Estimated runtime: ~2-3h on an 8-core machine (vs ~19h sequential).
+- Each null draw = one full CV run (6 folds × 1 model fit).
+- joblib.Parallel(n_jobs=N_JOBS) runs N_JOBS draws simultaneously.
+- thread_count=1 inside CatBoost avoids thread contention with joblib.
+- All swap indices generated in one numpy call (vectorised).
+- Batches of 50 with progress saves for resume support.
 
 STATISTICAL STANDARD
 --------------------
-- 1,000 permutations: scikit-learn default; gives p-value resolution of 0.001.
-- Within-column swap: preserves column marginals exactly (continuous analogue
-  of the Curveball algorithm for binary matrices).
-- Single train/test split: valid when test set is a truly held-out time period.
+- 1,000 permutations: scikit-learn standard; p-value resolution = 0.001.
+- Within-column swap: preserves column marginals (continuous Curveball).
+- Rolling CV: same fold structure as real pipeline → fair comparison.
 
 OUTPUTS
 -------
-  results/shuffle_test_v2/
+  results/shuffle_test_v3/
     null_distribution.csv   -- N_MODELS rows: model_id, pr_auc, roc_auc
     config.json             -- run config + final p-values
 """
 
 import json
+import os
+import tempfile
 import warnings
 from pathlib import Path
 
@@ -59,7 +60,7 @@ warnings.filterwarnings("ignore")
 
 
 # ============================================================================
-# CONFIGURATION
+# CONFIGURATION  — must mirror 01_train_models.py exactly
 # ============================================================================
 
 class Config:
@@ -67,13 +68,16 @@ class Config:
     DATA_FILE    = BASE_DIR / "DATA" / "dataset.parquet"
     FILTER_FILE  = BASE_DIR / "DATA" / "filtering" / "strict_filtered_districts.csv"
     REAL_RESULTS = BASE_DIR / "results" / "window_2yr" / "fold_results.csv"
-    OUT_DIR      = BASE_DIR / "results" / "shuffle_test_v2"
+    OUT_DIR      = BASE_DIR / "results" / "shuffle_test_v3"
 
-    N_MODELS = 1_000    # null draws  (1,000 = scikit-learn standard; p-resolution 0.001)
-    N_SWAPS  = 10_000   # within-column cell swaps per model
+    N_MODELS = 1_000    # null draws  (p-value resolution: 0.001)
+    N_SWAPS  = 10_000   # within-column cell swaps per fold per model
 
-    # Use last IPC period as held-out test set (never shuffled)
-    TEST_PERIODS = 1
+    # Rolling CV params — must match 01_train_models.py
+    TRAIN_WINDOW_MONTHS  = 20
+    TEST_HORIZON_PERIODS = 2        # not used in fold gen but kept for clarity
+    IPC_PERIOD_MONTHS    = 4
+    MONTHLY_DATA_START   = pd.Timestamp("2020-02-01")
 
     AR_FEATURES = [
         "ipc_lag_1", "ipc_persistence_2yr", "spatial_lag",
@@ -86,36 +90,64 @@ class Config:
     NEWS_FEATURES = (
         [f"{t}_relative_coverage" for t in NEWS_THEMES]
         + [f"{t}_zscore"          for t in NEWS_THEMES]
-    )                              # 18 features
-    ALL_FEATURES = AR_FEATURES + NEWS_FEATURES   # 23 features
+    )                              # 18 features — identical to 01_train_models.py
+    ALL_FEATURES = AR_FEATURES + NEWS_FEATURES   # 23 total
 
     TARGET = "target_crisis_binary"
 
-    # Standard default CatBoost params — no tuning, no early stopping.
-    # thread_count=1: one thread per fit so joblib can run N_JOBS fits in
-    # parallel across all CPU cores (1 thread × 16 workers = 16 cores used).
-    # GPU is slower than CPU for this dataset size (~3k rows).
+    # Standard default CatBoost params — identical to 01_train_models.py.
+    # thread_count=1: one thread per fit; joblib owns all cores.
     CB_PARAMS = dict(
-        iterations     = 1000,
-        depth          = 6,
-        learning_rate  = 0.03,
-        loss_function  = "Logloss",
-        eval_metric    = "AUC",
-        task_type      = "CPU",
-        thread_count   = 1,    # 1 thread/fit; joblib owns all cores
-        random_seed    = 42,
-        verbose        = 0,
+        iterations    = 1000,
+        depth         = 6,
+        learning_rate = 0.03,
+        loss_function = "Logloss",
+        eval_metric   = "AUC",
+        task_type     = "CPU",
+        thread_count  = 1,
+        random_seed   = 42,
+        verbose       = 0,
     )
 
     CAT_FEATURE_INDICES = [
         ALL_FEATURES.index("ipc_period"),
         ALL_FEATURES.index("ipc_country"),
     ]
+    NEWS_COL_INDICES = [ALL_FEATURES.index(f) for f in NEWS_FEATURES]
 
-    # Parallel across all CPU cores: 1 thread/fit × N_JOBS workers.
-    # Set N_JOBS to your core count (16 here). Each batch of N_JOBS models
-    # runs simultaneously; wall time ≈ sequential_time / N_JOBS.
     N_JOBS = 16
+
+
+# ============================================================================
+# FOLD GENERATION  — mirrors generate_rolling_folds() in 01_train_models.py
+# ============================================================================
+
+def generate_rolling_folds(df: pd.DataFrame, cfg: Config) -> list:
+    all_starts = sorted(df["ipc_period_start"].unique())
+    folds = []
+    fold_id = 0
+    for test_start in all_starts:
+        test_start_ts  = pd.Timestamp(test_start)
+        train_end_ts   = test_start_ts - pd.DateOffset(months=cfg.IPC_PERIOD_MONTHS)
+        train_start_ts = train_end_ts  - pd.DateOffset(months=cfg.TRAIN_WINDOW_MONTHS)
+        if train_start_ts < cfg.MONTHLY_DATA_START:
+            continue
+        train_mask = (
+            (df["ipc_period_start"] >= train_start_ts)
+            & (df["ipc_period_start"] <= train_end_ts)
+        )
+        test_mask = df["ipc_period_start"] == test_start_ts
+        train_idx = df.index[train_mask].tolist()
+        test_idx  = df.index[test_mask].tolist()
+        if len(train_idx) < 50 or len(test_idx) < 5:
+            continue
+        fold_id += 1
+        folds.append({
+            "fold_id":   fold_id,
+            "train_idx": train_idx,
+            "test_idx":  test_idx,
+        })
+    return folds
 
 
 # ============================================================================
@@ -123,25 +155,14 @@ class Config:
 # ============================================================================
 
 def apply_column_swaps(news_matrix: np.ndarray, n_swaps: int, seed: int) -> np.ndarray:
-    """
-    Vectorised within-column swap on the news feature sub-matrix.
-
-    Each swap picks a random column k and two random rows i≠j, then
-    exchanges news_matrix[i,k] ↔ news_matrix[j,k].  Column totals are
-    preserved exactly.  All swap indices are generated in one numpy call
-    for maximum speed.
-    """
-    rng = np.random.default_rng(seed)
-    m = news_matrix.copy()
+    rng    = np.random.default_rng(seed)
+    m      = news_matrix.copy()
     n_rows, n_cols = m.shape
-
     cols   = rng.integers(0, n_cols, size=n_swaps)
     rows_i = rng.integers(0, n_rows, size=n_swaps)
     rows_j = rng.integers(0, n_rows, size=n_swaps)
-    # Resolve i==j ties by shifting j by 1
     same         = rows_i == rows_j
     rows_j[same] = (rows_j[same] + 1) % n_rows
-
     for s in range(n_swaps):
         k, i, j = cols[s], rows_i[s], rows_j[s]
         m[i, k], m[j, k] = m[j, k], m[i, k]
@@ -149,79 +170,58 @@ def apply_column_swaps(news_matrix: np.ndarray, n_swaps: int, seed: int) -> np.n
 
 
 # ============================================================================
-# SINGLE NULL MODEL  (called in parallel)
+# SINGLE NULL DRAW  — one full CV run with scrambled news (called in parallel)
 # ============================================================================
 
 def run_one_null_model(
-    model_id:      int,
-    news_train:    np.ndarray,   # float sub-matrix (n_train × n_news)
-    X_train_base:  np.ndarray,   # full object array (n_train × n_features)
-    y_train:       np.ndarray,
-    X_test_df:     pd.DataFrame,
-    y_test:        np.ndarray,
-    all_features:  list,
-    news_col_idx:  list,
-    cat_idx:       list,
-    cb_params:     dict,
-    n_swaps:       int,
+    model_id:   int,
+    fold_data:  list,    # list of (X_train_arr, y_train, X_test_df, y_test)
+    cat_idx:    list,
+    news_idx:   list,
+    all_feats:  list,
+    cb_params:  dict,
+    n_swaps:    int,
 ) -> dict:
-    """Train one CatBoost model on the column-swapped feature matrix."""
-    # 1. Swap news columns
-    news_swapped = apply_column_swaps(news_train, n_swaps, seed=model_id)
+    """
+    Run one full CV with scrambled news features.
+    Seed = model_id * 1000 + fold_id so each fold gets a different scramble
+    but results are fully reproducible.
+    """
+    pr_aucs  = []
+    roc_aucs = []
 
-    # 2. Rebuild full feature matrix with swapped news columns
-    X_swapped = X_train_base.copy()
-    for out_idx, col_idx in enumerate(news_col_idx):
-        X_swapped[:, col_idx] = news_swapped[:, out_idx]
-    X_swapped_df = pd.DataFrame(X_swapped, columns=all_features)
+    for fold_id, (X_train_arr, y_train, X_test_df, y_test) in enumerate(fold_data):
+        # Scramble news columns in this fold's training matrix
+        news_train   = X_train_arr[:, news_idx].astype(float)
+        news_swapped = apply_column_swaps(news_train, n_swaps,
+                                          seed=model_id * 1000 + fold_id)
 
-    # 3. Train — unique train_dir per model avoids file conflicts in parallel
-    import tempfile, os
-    params = dict(cb_params)
-    params["train_dir"] = os.path.join(tempfile.gettempdir(), f"cb_null_{model_id}")
-    pool_tr = Pool(X_swapped_df, y_train, cat_features=cat_idx)
-    pool_te = Pool(X_test_df,    y_test,  cat_features=cat_idx)
-    model   = CatBoostClassifier(**params)
-    model.fit(pool_tr)
+        X_swapped = X_train_arr.copy()
+        for out_pos, col_idx in enumerate(news_idx):
+            X_swapped[:, col_idx] = news_swapped[:, out_pos]
+        X_swapped_df = pd.DataFrame(X_swapped, columns=all_feats)
 
-    # 4. Evaluate
-    prob    = model.predict_proba(pool_te)[:, 1]
-    pr_auc  = float(average_precision_score(y_test, prob))
-    roc_auc = float(roc_auc_score(y_test, prob))
+        # Unique train_dir per worker avoids CatBoost file conflicts
+        params = dict(cb_params)
+        params["train_dir"] = os.path.join(
+            tempfile.gettempdir(), f"cb_null_{model_id}_f{fold_id}"
+        )
 
-    return {"model_id": model_id, "pr_auc": pr_auc, "roc_auc": roc_auc}
+        pool_tr = Pool(X_swapped_df, y_train, cat_features=cat_idx)
+        pool_te = Pool(X_test_df,    y_test,  cat_features=cat_idx)
+        model   = CatBoostClassifier(**params)
+        model.fit(pool_tr)
 
+        prob    = model.predict_proba(pool_te)[:, 1]
+        if y_test.sum() > 0:
+            pr_aucs.append(float(average_precision_score(y_test, prob)))
+            roc_aucs.append(float(roc_auc_score(y_test, prob)))
 
-# ============================================================================
-# DATA PREPARATION
-# ============================================================================
-
-def prepare_data(cfg: Config):
-    df = pd.read_parquet(cfg.DATA_FILE)
-    df["ipc_period_start"] = pd.to_datetime(df["ipc_period_start"])
-
-    strict = set(pd.read_csv(cfg.FILTER_FILE)["district"].tolist())
-    df     = df[df["district_id"].isin(strict)].copy()
-
-    periods      = sorted(df["ipc_period_start"].unique())
-    test_periods = set(periods[-cfg.TEST_PERIODS:])
-    train_periods= set(periods[:-cfg.TEST_PERIODS])
-
-    df_train = df[df["ipc_period_start"].isin(train_periods)].copy()
-    df_test  = df[df["ipc_period_start"].isin(test_periods)].copy()
-
-    for split in [df_train, df_test]:
-        split["ipc_period"]  = split["ipc_period"].astype(str)
-        split["ipc_country"] = split["ipc_country"].astype(str)
-
-    X_train_df = df_train[cfg.ALL_FEATURES].copy()
-    y_train    = df_train[cfg.TARGET].values
-    X_test_df  = df_test[cfg.ALL_FEATURES].copy()
-    y_test     = df_test[cfg.TARGET].values
-
-    news_col_idx = [cfg.ALL_FEATURES.index(f) for f in cfg.NEWS_FEATURES]
-
-    return X_train_df, y_train, X_test_df, y_test, news_col_idx, test_periods
+    return {
+        "model_id": model_id,
+        "pr_auc":   float(np.mean(pr_aucs))  if pr_aucs  else float("nan"),
+        "roc_auc":  float(np.mean(roc_aucs)) if roc_aucs else float("nan"),
+    }
 
 
 # ============================================================================
@@ -233,27 +233,43 @@ def main():
     cfg.OUT_DIR.mkdir(parents=True, exist_ok=True)
 
     print("=" * 70)
-    print("NULL SHUFFLE TEST  (within-column swap, parallelised, v2)")
+    print("NULL SHUFFLE TEST  (rolling CV, within-column swap, v3)")
     print("=" * 70)
-    print(f"  N_MODELS : {cfg.N_MODELS}  (p-value resolution: {1/cfg.N_MODELS:.3f})")
-    print(f"  N_SWAPS  : {cfg.N_SWAPS} per model")
+    print(f"  N_MODELS : {cfg.N_MODELS}  (p-resolution: {1/cfg.N_MODELS:.3f})")
+    print(f"  N_SWAPS  : {cfg.N_SWAPS} per fold per model")
     print(f"  CatBoost : iterations={cfg.CB_PARAMS['iterations']}, "
-          f"depth={cfg.CB_PARAMS['depth']}, lr={cfg.CB_PARAMS['learning_rate']}, "
-          f"thread_count={cfg.CB_PARAMS['thread_count']}")
+          f"depth={cfg.CB_PARAMS['depth']}, lr={cfg.CB_PARAMS['learning_rate']}")
     print(f"  Parallel : n_jobs={cfg.N_JOBS}")
 
     # ── Load data ──────────────────────────────────────────────────────────
     print("\nLoading data...")
-    X_train_df, y_train, X_test_df, y_test, news_col_idx, test_periods = prepare_data(cfg)
-    print(f"  Train : {len(y_train):,} rows  |  Test : {len(y_test):,} rows")
-    print(f"  Test period(s): {sorted(str(p)[:7] for p in test_periods)}")
-    print(f"  Crisis prevalence — train: {y_train.mean()*100:.1f}%  "
-          f"test: {y_test.mean()*100:.1f}%")
-    print(f"  News features shuffled: {len(cfg.NEWS_FEATURES)}")
+    df = pd.read_parquet(cfg.DATA_FILE)
+    df["ipc_period_start"] = pd.to_datetime(df["ipc_period_start"])
+    strict = set(pd.read_csv(cfg.FILTER_FILE)["district"].tolist())
+    df = df[df["district_id"].isin(strict)].copy()
+    df["ipc_period"]  = df["ipc_period"].astype(str)
+    df["ipc_country"] = df["ipc_country"].astype(str)
+    print(f"  Dataset: {len(df):,} rows, {df['district_id'].nunique()} districts")
 
-    # Pre-extract numpy arrays (passed to parallel workers — avoids re-copying df)
-    X_train_arr = X_train_df.values                              # object dtype
-    news_train  = X_train_arr[:, news_col_idx].astype(float)     # float sub-matrix
+    # ── Generate folds (identical to 01_train_models.py) ──────────────────
+    folds = generate_rolling_folds(df, cfg)
+    print(f"  Folds: {len(folds)}")
+
+    # Pre-build fold data arrays once — reused across all null models
+    fold_data = []
+    for fold in folds:
+        df_tr = df.loc[fold["train_idx"]][cfg.ALL_FEATURES + [cfg.TARGET]].copy()
+        df_te = df.loc[fold["test_idx"]][cfg.ALL_FEATURES + [cfg.TARGET]].copy()
+        X_train_arr = df_tr[cfg.ALL_FEATURES].values          # object dtype
+        y_train     = df_tr[cfg.TARGET].values
+        X_test_df   = df_te[cfg.ALL_FEATURES].copy()
+        y_test      = df_te[cfg.TARGET].values
+        fold_data.append((X_train_arr, y_train, X_test_df, y_test))
+
+    total_train = sum(len(fd[1]) for fd in fold_data)
+    total_test  = sum(len(fd[3]) for fd in fold_data)
+    print(f"  Total rows across folds — train: {total_train:,}  test: {total_test:,}")
+    print(f"  News features shuffled: {len(cfg.NEWS_FEATURES)}")
 
     # ── Real model reference ───────────────────────────────────────────────
     real_pr, real_roc = None, None
@@ -261,7 +277,7 @@ def main():
         rdf      = pd.read_csv(cfg.REAL_RESULTS)
         real_pr  = float(rdf["full_pr_auc"].mean())
         real_roc = float(rdf["full_roc_auc"].mean())
-        print(f"\n  Real model (fold-CV mean) — "
+        print(f"\n  Real AR+News (fold-CV mean) — "
               f"PR-AUC: {real_pr:.4f}  ROC-AUC: {real_roc:.4f}")
     else:
         print("\n  Real results file not found — p-values will not be computed.")
@@ -280,11 +296,9 @@ def main():
     if not pending_ids:
         print("  All models already complete.")
     else:
-        print(f"\nRunning {len(pending_ids)} null models in parallel "
-              f"(n_jobs={cfg.N_JOBS})...\n")
+        print(f"\nRunning {len(pending_ids)} null models "
+              f"({len(folds)} folds each) in parallel (n_jobs={cfg.N_JOBS})...\n")
 
-        # ── Parallel execution ─────────────────────────────────────────────
-        # Process in batches of 50 so we can save progress and print updates
         BATCH = 50
         for batch_start in range(0, len(pending_ids), BATCH):
             batch_ids = pending_ids[batch_start: batch_start + BATCH]
@@ -292,14 +306,10 @@ def main():
             batch_results = Parallel(n_jobs=cfg.N_JOBS, backend="loky")(
                 delayed(run_one_null_model)(
                     mid,
-                    news_train,
-                    X_train_arr,
-                    y_train,
-                    X_test_df,
-                    y_test,
-                    cfg.ALL_FEATURES,
-                    news_col_idx,
+                    fold_data,
                     cfg.CAT_FEATURE_INDICES,
+                    cfg.NEWS_COL_INDICES,
+                    cfg.ALL_FEATURES,
                     cfg.CB_PARAMS,
                     cfg.N_SWAPS,
                 )
@@ -335,9 +345,11 @@ def main():
           f"95% CI [{np.percentile(null_roc, 2.5):.4f}, {np.percentile(null_roc, 97.5):.4f}]")
 
     cfg_out = {
+        "version"           : "v3_rolling_cv",
         "n_models"          : cfg.N_MODELS,
         "n_swaps"           : cfg.N_SWAPS,
-        "swap_strategy"     : "within_column_cell_swap_preserves_column_marginals",
+        "n_folds"           : len(folds),
+        "swap_strategy"     : "within_column_cell_swap_per_fold",
         "n_jobs"            : cfg.N_JOBS,
         "catboost_params"   : cfg.CB_PARAMS,
         "news_features"     : cfg.NEWS_FEATURES,
@@ -361,8 +373,8 @@ def main():
             "p_value_rocauc": p_roc,
         })
         sig = lambda p: "SIGNIFICANT (p <= 0.05)" if p <= 0.05 else "not significant"
-        print(f"\n  Real PR-AUC  : {real_pr:.4f}  ->  p = {p_pr:.4f}  [{sig(p_pr)}]")
-        print(f"  Real ROC-AUC : {real_roc:.4f}  ->  p = {p_roc:.4f}  [{sig(p_roc)}]")
+        print(f"\n  Real AR+News PR-AUC  : {real_pr:.4f}  ->  p = {p_pr:.4f}  [{sig(p_pr)}]")
+        print(f"  Real AR+News ROC-AUC : {real_roc:.4f}  ->  p = {p_roc:.4f}  [{sig(p_roc)}]")
 
     with open(cfg.OUT_DIR / "config.json", "w") as f:
         json.dump(cfg_out, f, indent=2)
