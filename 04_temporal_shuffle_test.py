@@ -109,13 +109,17 @@ class Config:
         verbose       = 0,
     )
 
-    CAT_FEATURE_INDICES = [
-        ALL_FEATURES.index("ipc_period"),
-        ALL_FEATURES.index("ipc_country"),
-    ]
-    NEWS_COL_INDICES = [ALL_FEATURES.index(f) for f in NEWS_FEATURES]
+    # Indices computed after class body — see module-level lines below class
 
     N_JOBS = 16
+
+
+# Compute index lists after class definition (can't self-reference inside class body)
+Config.CAT_FEATURE_INDICES = [
+    Config.ALL_FEATURES.index("ipc_period"),
+    Config.ALL_FEATURES.index("ipc_country"),
+]
+Config.NEWS_COL_INDICES = [Config.ALL_FEATURES.index(f) for f in Config.NEWS_FEATURES]
 
 
 # ============================================================================
