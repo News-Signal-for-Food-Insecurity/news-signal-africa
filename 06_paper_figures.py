@@ -740,34 +740,38 @@ def _draw_null_panel(ax, null_values, real_ar, real_full, axis_name, p_value=Non
     ax.tick_params(axis="x", which="both", length=0, labelbottom=False)
     ax.tick_params(axis="y", which="both", length=0, labelleft=False)
 
-    # Three labels under the x-axis — stagger heights when markers are close
-    # Stagger threshold: if two markers are within 15% of the total x-span, drop
-    # the right-hand one to a lower row to prevent text collision.
-    x_span  = x_hi - x_lo
-    row0    = -y_top * 0.04   # first row (shallowest drop)
-    row1    = -y_top * 0.19   # second row
-    row2    = -y_top * 0.34   # third row
-
-    # Assign rows: sorted left-to-right, each marker gets a progressively
-    # lower row if it is within 15% of the x-span from its left neighbour.
-    markers   = sorted([(real_ar,     "AR only",     real_ar,     MODEL_COLOURS["AR-Only"]),
-                        (median_null, "Median NULL", median_null, "#444444"),
-                        (real_full,   "AR + News",   real_full,   MODEL_COLOURS["AR+News"])],
-                       key=lambda t: t[0])
-    rows      = [row0, row0, row0]
+    # Three labels placed below the x-axis.  Use ax.text with clip_on=False
+    # so they render outside the axes box into the reserved bottom margin.
+    x_span    = x_hi - x_lo
     threshold = 0.15 * x_span
-    if markers[1][0] - markers[0][0] < threshold:
-        rows[1] = row1
-    if markers[2][0] - markers[1][0] < threshold or markers[2][0] - markers[0][0] < threshold:
-        rows[2] = row2 if rows[1] == row1 else row1
 
-    for (xpos, name, val, col), ry in zip(markers, rows):
-        ax.text(xpos, ry, f"{name}\n{val:.4f}",
-                ha="center", va="top", fontsize=8.5, color=col)
+    markers = sorted([(real_ar,     "AR only",     MODEL_COLOURS["AR-Only"]),
+                      (median_null, "Median NULL", "#444444"),
+                      (real_full,   "AR + News",   MODEL_COLOURS["AR+News"])],
+                     key=lambda t: t[0])
+
+    # Stagger: markers whose labels would visually overlap drop to the next row.
+    # Overlap threshold: label text is ~8 chars wide; at 8.5pt ≈ 0.055 x-units
+    # on a typical 0.1-wide span.  Use a fixed character-width estimate instead
+    # of a fraction of x_span which varies too much between PR and ROC axes.
+    char_w = x_span * 0.09   # ~9% of span = safe non-overlap zone per label
+    row_y  = [-y_top * 0.08, -y_top * 0.26, -y_top * 0.44]
+    slots  = [0, 0, 0]
+    for i in range(1, 3):
+        if markers[i][0] - markers[i - 1][0] < char_w:
+            slots[i] = min(slots[i - 1] + 1, 2)
+
+    ax.set_ylim(0, y_top)
+    for (xpos, name, col), slot in zip(markers, slots):
+        ax.text(xpos, row_y[slot], f"{name}\n{xpos:.4f}",
+                ha="center", va="top", fontsize=8.5, color=col,
+                clip_on=False, transform=ax.transData)
 
     # p-value in top-right corner
     if p_value is not None:
-        p_str = f"p = {p_value}" if p_value >= 0.01 else "p < 0.01"
+        p_str = ("p < 0.001" if p_value < 0.001
+                 else ("p < 0.01" if p_value < 0.01
+                       else f"p = {p_value:.3f}"))
         ax.text(0.97, 0.97, p_str,
                 transform=ax.transAxes, ha="right", va="top",
                 fontsize=9, color="#222222",
@@ -783,51 +787,63 @@ def _draw_null_panel(ax, null_values, real_ar, real_full, axis_name, p_value=Non
             transform=ax.transAxes, fontsize=10, style="italic", color="#222222")
 
     ax.set_xlim(x_lo, x_hi)
-    ax.set_ylim(0, y_top)
 
 
 def figure_3() -> None:
     print("\n[Fig 3] Null distribution histograms...")
-    null_path = BASE_DIR / "results" / "shuffle_test" / "null_distribution.csv"
-    cfg_path  = BASE_DIR / "results" / "shuffle_test" / "config.json"
+
+    # Prefer v2 results (within-column swap, 1000 models) over legacy shuffle_test
+    null_path = BASE_DIR / "results" / "shuffle_test_v2" / "null_distribution.csv"
+    cfg_path  = BASE_DIR / "results" / "shuffle_test_v2" / "config.json"
     if not null_path.exists():
-        print("  shuffle_test/null_distribution.csv not found — skipping Fig 3.")
+        null_path = BASE_DIR / "results" / "shuffle_test" / "null_distribution.csv"
+        cfg_path  = BASE_DIR / "results" / "shuffle_test" / "config.json"
+    if not null_path.exists():
+        print("  No null_distribution.csv found — skipping Fig 3.")
         return
 
     null_df      = pd.read_csv(null_path)
     fold_results = pd.read_csv(RESULTS_DIR / "fold_results.csv")
-    cfg          = json.load(open(cfg_path)) if cfg_path.exists() else {}
+    cfg_data     = json.load(open(cfg_path)) if cfg_path.exists() else {}
 
-    p_pr  = cfg.get("p_value_prauc",  None)
-    p_roc = cfg.get("p_value_rocauc", None)
+    p_pr  = cfg_data.get("p_value_prauc",  None)
+    p_roc = cfg_data.get("p_value_rocauc", None)
 
-    # ── Fig 3a — PR-AUC ───────────────────────────────────────────────────
-    pr_col  = "mean_full_pr_auc" if "mean_full_pr_auc" in null_df.columns else "mean_pr_auc"
-    null_pr = null_df[pr_col].values
+    # Column name varies between v1 (mean_full_pr_auc) and v2 (pr_auc)
+    pr_col  = next(c for c in ["pr_auc", "mean_full_pr_auc", "mean_pr_auc"]
+                   if c in null_df.columns)
+    roc_col = next((c for c in ["roc_auc", "mean_full_roc_auc", "mean_roc_auc"]
+                    if c in null_df.columns), None)
+
+    null_pr      = null_df[pr_col].dropna().values
     real_ar_pr   = fold_results["ar_pr_auc"].mean()
     real_full_pr = fold_results["full_pr_auc"].mean()
+    n_models     = cfg_data.get("n_models", len(null_pr))
 
-    fig, ax = plt.subplots(figsize=(7, 4.5))
+    print(f"  Null source: {null_path.parent.name}  "
+          f"n={n_models}  PR: {null_pr.mean():.4f}±{null_pr.std():.4f}  "
+          f"p={p_pr}")
+
+    # ── Fig 3a — PR-AUC ───────────────────────────────────────────────────
+    fig, ax = plt.subplots(figsize=(7, 5.5))
     _draw_null_panel(ax, null_pr, real_ar_pr, real_full_pr,
                      axis_name="PR-AUC", p_value=p_pr)
-    fig.tight_layout(pad=0.8)
+    fig.subplots_adjust(bottom=0.35, top=0.93, left=0.04, right=0.91)
     save_pdf(fig, "fig3a_null_prauc")
 
-    # ── Fig 3b — ROC-AUC (only if logged) ────────────────────────────────
-    if "mean_full_roc_auc" not in null_df.columns:
+    # ── Fig 3b — ROC-AUC ─────────────────────────────────────────────────
+    if roc_col is None:
         print("  No ROC-AUC null distribution available — omitting fig3b.")
         return
 
-    null_roc      = null_df["mean_full_roc_auc"].values
+    null_roc      = null_df[roc_col].dropna().values
     real_ar_roc   = fold_results["ar_roc_auc"].mean()
     real_full_roc = fold_results["full_roc_auc"].mean()
 
-    # Wider figure for ROC-AUC: AR-Only sits well left of the null distribution
-    # (x-span only ~0.05) so extra width gives labels room to breathe
-    fig, ax = plt.subplots(figsize=(9, 5))
+    fig, ax = plt.subplots(figsize=(9, 6))
     _draw_null_panel(ax, null_roc, real_ar_roc, real_full_roc,
                      axis_name="ROC-AUC", p_value=p_roc)
-    fig.tight_layout(pad=1.2)
+    fig.subplots_adjust(bottom=0.35, top=0.93, left=0.04, right=0.91)
     save_pdf(fig, "fig3b_null_rocauc")
 
 
