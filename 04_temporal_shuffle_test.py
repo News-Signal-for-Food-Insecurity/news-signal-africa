@@ -111,7 +111,7 @@ class Config:
 
     # Indices computed after class body — see module-level lines below class
 
-    N_JOBS = 16
+    N_JOBS = max(1, (os.cpu_count() or 4) - 1)  # leave one core free
 
 
 # Compute index lists after class definition (can't self-reference inside class body)

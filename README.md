@@ -46,20 +46,29 @@ news-signal-africa/
 
 ---
 
-## What Is Self-Contained
+## What Is Included
 
-The following can be reproduced directly from files in this repository with no external data:
+Everything needed to reproduce all results and figures is in this repository:
 
-- **All model training and evaluation**: `01_train_models.py`, `02_rolling_cv_train.py`
-- **All statistical tests**: `04_temporal_shuffle_test.py`
-- **All paper figures**: `06_paper_figures.py`, `generate_fig7_new.py`, `08_onset_chronic_report.py`
-- **Dataset rebuilding**: `data_preparation/build_dataset.py` reads from `DATA/raw/`
+| File | Size | Purpose |
+|------|------|---------|
+| `DATA/dataset.parquet` | ~0.4 MB | Final modelling dataset — all training scripts read from here |
+| `DATA/modelling/monthly_gdelt_features.parquet` | ~1.3 MB | Monthly news counts for fold-aware z-score recomputation |
+| `DATA/filtering/strict_filtered_districts.csv` | ~0.03 MB | Districts passing the ≥75 articles/month filter |
+| `DATA/raw/stage1_features.parquet` | ~6 MB | IPC phases, spatial lag, targets (2020–2024) |
+| `DATA/raw/ml_dataset_monthly.parquet` | ~35 MB | Monthly GDELT news counts by district and theme |
+| `DATA/raw/spatial_weights.parquet` | ~11 MB | IDW spatial weight matrix |
+| `DATA/shapefiles/gadm/africa_adm2_combined.gpkg` | ~62 MB | GADM v4.1 ADM2 boundaries (Fig 1 maps; Git LFS) |
+| `DATA/shapefiles/gadm/africa_adm0_basemap.gpkg` | ~37 MB | Africa ADM0 country boundaries (Fig 1 backdrop; Git LFS) |
+| `results/window_2yr/` | — | Pre-computed primary results (fold metrics, predictions, feature importance) |
+| `results/shuffle_test_v3/` | — | Pre-computed null distribution (1,000 permutations) |
+| `figures/` | — | All paper figures as PDFs |
 
-**Not distributed** (external ingestion only):
-- Raw GDELT GKG articles (~47 GB CSV archive)
+**Not included** (raw ingestion only — not needed to reproduce results):
+- Raw GDELT GKG articles (~47 GB)
 - Raw daily GDELT parquet files
 
-These are only needed to re-run the raw ingestion scripts (`02a_*`, `03a_*`). All pre-processed data in `DATA/raw/` is included and sufficient to reproduce all results.
+These are only needed to re-run the raw ingestion scripts in `data_preparation/` (`02a_*`, `03a_*`).
 
 ---
 
@@ -149,23 +158,56 @@ News improves PR-AUC in 4 of 7 folds, with the largest gain in Fold 5 (Jun 2023)
 
 ## Quickstart
 
-### 1. Install dependencies
+### Requirements
+
+- **Python 3.9 or later** (uses built-in `list[str]` type hints)
+- **Git LFS** — large data files (`DATA/raw/ml_dataset_monthly.parquet`, `DATA/shapefiles/gadm/*.gpkg`) are stored via Git Large File Storage. Install Git LFS before cloning:
+
+```bash
+# macOS
+brew install git-lfs
+
+# Linux
+sudo apt install git-lfs   # or: sudo yum install git-lfs
+
+# Windows
+# Download from https://git-lfs.com and run the installer
+```
+
+Then enable LFS in your Git installation once:
+
+```bash
+git lfs install
+```
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/News-Signal-for-Food-Insecurity/news-signal-africa.git
+cd news-signal-africa
+```
+
+Git LFS will automatically download the large data files during clone.
+
+### 2. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-For map figures (Fig 1): `pip install geopandas`
+Geospatial packages (`geopandas`, `shapely`) are required for Fig 1 choropleth maps only. All other figures work without them.
 
-### 2. Rebuild the modelling dataset (optional — already included)
+### 3. Rebuild the modelling dataset (optional)
+
+The final modelling dataset (`DATA/dataset.parquet`) is included. If you want to rebuild it from the included raw sources:
 
 ```bash
 python data_preparation/build_dataset.py
 ```
 
-Outputs to `DATA/dataset.parquet`.
+This takes ~1 minute and regenerates `DATA/dataset.parquet`, `DATA/filtering/`, and `DATA/modelling/`.
 
-### 3. Run the full pipeline
+### 4. Run the pipeline
 
 ```bash
 # Primary results (2-year rolling window, ~5 min)
@@ -174,13 +216,11 @@ python 01_train_models.py
 # Window sensitivity check (28-month window, ~3 min)
 python 02_rolling_cv_train.py
 
-# Rolling CV null test (1,000 permutations, ~24 h on 16 cores)
+# Null shuffle test (1,000 permutations; ~24 h on 16 cores, scales with CPU count)
 python 04_temporal_shuffle_test.py
 
 # All paper figures (Fig 1–7)
 python 06_paper_figures.py
-
-# Fig 7: temporal and spatial delta panels
 python generate_fig7_new.py
 
 # Fig 8: onset vs. chronic crisis analysis
@@ -188,6 +228,8 @@ python 08_onset_chronic_report.py
 ```
 
 Results → `results/` | Figures → `figures/`
+
+Pre-computed results and all figures are included in the repository so figures can be regenerated without retraining.
 
 ---
 

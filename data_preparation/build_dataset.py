@@ -369,9 +369,8 @@ def main():
         "news_features": [f"{t}_relative_coverage" for t in THEMES] + [f"{t}_zscore" for t in THEMES],
         "target": "target_crisis_binary",
     }
-    (DATA_DIR / "dataset_summary.json").write_text(
-        __import__("json").dumps(summary, indent=2)
-    )
+    with open(DATA_DIR / "dataset_summary.json", "w") as f:
+        json.dump(summary, f, indent=2)
 
     print("\n" + "=" * 70)
     print("Dataset build complete.")

@@ -250,7 +250,11 @@ def figure_1() -> None:
 
     ds = pd.read_parquet(DATA_DIR / "dataset.parquet")
     ds["ipc_period_start"] = pd.to_datetime(ds["ipc_period_start"])
-    s1 = pd.read_parquet(DATA_DIR / "raw" / "stage1_features.parquet")
+    s1_path = DATA_DIR / "raw" / "stage1_features.parquet"
+    if not s1_path.exists():
+        print(f"  stage1_features.parquet not found — skipping Fig 1 (coord lookup unavailable).")
+        return
+    s1 = pd.read_parquet(s1_path)
     s1["district_id"] = s1["ipc_geographic_unit_full"].str.strip()
 
     # Study countries (normalise DRC name to match shapefile)

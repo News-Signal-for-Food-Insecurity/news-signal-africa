@@ -1,13 +1,14 @@
 """
 02_rolling_cv_train.py
 ======================
-Rolling stratified spatial cross-validation -- sensitivity check window.
+Window-sensitivity check for the primary rolling CV pipeline.
 
-Identical architecture to 01_train_models.py. Uses a 28-month training
-window (vs. the primary 20-month window) for window-sensitivity comparison.
+Uses a 28-month training window (vs. the primary 20-month window in
+01_train_models.py) to verify that results are not sensitive to the
+choice of training window length.
 
-Primary (01_train_models.py): TRAIN_WINDOW_MONTHS=20, 6 folds
-Sensitivity (this script):    TRAIN_WINDOW_MONTHS=28, fewer folds
+All model parameters, features, and training protocol are identical to
+01_train_models.py — only TRAIN_WINDOW_MONTHS and RESULTS_DIR differ.
 
 Outputs (results/window_sensitivity/):
   - fold_results.csv
@@ -37,16 +38,16 @@ warnings.filterwarnings("ignore")
 
 
 # ---------------------------------------------------------------------------
-# Configuration -- only TRAIN_WINDOW_MONTHS and RESULTS_DIR differ from 01_
+# Configuration — only TRAIN_WINDOW_MONTHS and RESULTS_DIR differ from 01_
 # ---------------------------------------------------------------------------
 
-class Config3Yr:
+class Config:
     BASE_DIR    = Path(__file__).parent
     DATA_DIR    = BASE_DIR / "DATA"
     RESULTS_DIR = BASE_DIR / "results" / "window_sensitivity"
 
-    DATASET_PATH        = DATA_DIR / "dataset.parquet"
-    MONTHLY_GDELT_PATH  = DATA_DIR / "modelling" / "monthly_gdelt_features.parquet"
+    DATASET_PATH         = DATA_DIR / "dataset.parquet"
+    MONTHLY_GDELT_PATH   = DATA_DIR / "modelling" / "monthly_gdelt_features.parquet"
 
     TRAIN_WINDOW_MONTHS  = 28   # longer window for sensitivity check
     IPC_PERIOD_MONTHS    = 4
@@ -68,84 +69,73 @@ class Config3Yr:
     NEWS_FEATURES = (
         [f"{t}_relative_coverage" for t in NEWS_THEMES]
         + [f"{t}_zscore" for t in NEWS_THEMES]
-        + ["article_count_zscore"]
-    )
-    # ipc_country included in both AR and Combined so models differ only in news features.
+    )                                # 18 features — identical to 01_train_models.py
     COMBINED_FEATURES = AR_FEATURES + NEWS_FEATURES
     TARGET = "target_crisis_binary"
 
-    CATBOOST_PARAMS_AR = dict(
-        iterations=300,
-        depth=6,
-        learning_rate=0.05,
-        loss_function="Logloss",
-        eval_metric="AUC",
-        random_seed=42,
-        verbose=0,
-        early_stopping_rounds=30,
-    )
-    CATBOOST_PARAMS_FULL = dict(
-        iterations=500,
+    # Identical CatBoost params as 01_train_models.py — no early stopping, no class weights.
+    CATBOOST_PARAMS = dict(
+        iterations=1000,
         depth=6,
         learning_rate=0.03,
         loss_function="Logloss",
-        eval_metric="PRAUC",
-        auto_class_weights="Balanced",
+        eval_metric="AUC",
+        task_type="CPU",
         random_seed=42,
         verbose=0,
-        early_stopping_rounds=50,
     )
-    VALIDATION_FRACTION = 0.40
+    CATBOOST_PARAMS_AR   = CATBOOST_PARAMS
+    CATBOOST_PARAMS_FULL = CATBOOST_PARAMS
     THRESHOLD = 0.5
 
 
 # ---------------------------------------------------------------------------
-# Helpers (identical to 01_train_models.py)
+# Helpers — identical to 01_train_models.py
 # ---------------------------------------------------------------------------
 
-def generate_rolling_folds(df: pd.DataFrame, cfg):
+def generate_rolling_folds(df: pd.DataFrame, cfg: Config) -> list:
     all_starts = sorted(df["ipc_period_start"].unique())
     folds = []
     fold_id = 0
-
     for test_start in all_starts:
         test_start_ts  = pd.Timestamp(test_start)
         train_end_ts   = test_start_ts - pd.DateOffset(months=cfg.IPC_PERIOD_MONTHS)
         train_start_ts = train_end_ts - pd.DateOffset(months=cfg.TRAIN_WINDOW_MONTHS)
-
         if train_start_ts < cfg.MONTHLY_DATA_START:
             continue
-
         train_mask = (
             (df["ipc_period_start"] >= train_start_ts)
             & (df["ipc_period_start"] <= train_end_ts)
         )
         test_mask = df["ipc_period_start"] == test_start_ts
-
         train_idx = df.index[train_mask].tolist()
         test_idx  = df.index[test_mask].tolist()
-
         if len(train_idx) < 50 or len(test_idx) < 5:
             continue
-
         fold_id += 1
         folds.append({
-            "fold_id":    fold_id,
+            "fold_id":     fold_id,
             "train_start": train_start_ts,
             "train_end":   train_end_ts,
             "test_start":  test_start_ts,
             "train_idx":   train_idx,
             "test_idx":    test_idx,
         })
-
     return folds
 
 
-def compute_fold_news_features(df_train, df_test, monthly_gdelt, train_end, cfg):
+def compute_fold_news_features(
+    df_train: pd.DataFrame,
+    df_test: pd.DataFrame,
+    monthly_gdelt: pd.DataFrame,
+    train_end: pd.Timestamp,
+    cfg: Config,
+) -> tuple:
     baseline_gdelt = monthly_gdelt[monthly_gdelt["month"] <= train_end].copy()
     cov_cols = [f"{t}_relative_coverage" for t in cfg.NEWS_THEMES]
-    baseline_gdelt = baseline_gdelt.copy()
-    baseline_gdelt["log_article_count"] = np.log1p(baseline_gdelt["article_count"].clip(lower=0))
+    baseline_gdelt["log_article_count"] = np.log1p(
+        baseline_gdelt["article_count"].clip(lower=0)
+    )
     all_stat_cols = cov_cols + ["log_article_count"]
     district_stats = (
         baseline_gdelt.groupby("district_id")[all_stat_cols]
@@ -153,7 +143,7 @@ def compute_fold_news_features(df_train, df_test, monthly_gdelt, train_end, cfg)
     )
     district_stats.columns = [f"{c[0]}__{c[1]}" for c in district_stats.columns]
 
-    def apply_zscore(df_split):
+    def apply_zscore(df_split: pd.DataFrame) -> pd.DataFrame:
         df_out = df_split.copy()
         stats = district_stats.reindex(df_out["district_id"].values)
         for theme in cfg.NEWS_THEMES:
@@ -164,19 +154,13 @@ def compute_fold_news_features(df_train, df_test, monthly_gdelt, train_end, cfg)
             valid = np.isfinite(means) & np.isfinite(stds) & (stds > 1e-6)
             raw   = df_out[cov_col].values.astype(float)
             df_out[zscore_col] = np.where(valid, (raw - means) / stds, 0.0)
-        # log-scale z-score: both numerator and denominator on log1p scale
-        log_count    = np.log1p(df_out["article_count"].values.astype(float)) if "article_count" in df_out.columns else np.zeros(len(df_out))
-        ac_log_means = stats["log_article_count__mean"].values
-        ac_log_stds  = stats["log_article_count__std"].values
-        valid_ac = np.isfinite(ac_log_means) & np.isfinite(ac_log_stds) & (ac_log_stds > 1e-6)
-        df_out["article_count_zscore"] = np.where(valid_ac, (log_count - ac_log_means) / ac_log_stds, 0.0)
         return df_out
 
     return apply_zscore(df_train), apply_zscore(df_test)
 
 
-def compute_metrics(y_true, y_prob, threshold=0.5):
-    y_pred = (y_prob >= threshold).astype(int)
+def compute_metrics(y_true: np.ndarray, y_prob: np.ndarray, threshold: float = 0.5) -> dict:
+    y_pred  = (y_prob >= threshold).astype(int)
     has_pos = y_true.sum() > 0
     return {
         "pr_auc":    float(average_precision_score(y_true, y_prob)) if has_pos else np.nan,
@@ -189,7 +173,7 @@ def compute_metrics(y_true, y_prob, threshold=0.5):
     }
 
 
-def run_single_fold(fold_info, df, monthly_gdelt, cfg):
+def run_single_fold(fold_info: dict, df: pd.DataFrame, monthly_gdelt: pd.DataFrame, cfg: Config):
     fold_id   = fold_info["fold_id"]
     train_end = fold_info["train_end"]
 
@@ -198,44 +182,26 @@ def run_single_fold(fold_info, df, monthly_gdelt, cfg):
 
     df_train, df_test = compute_fold_news_features(df_train, df_test, monthly_gdelt, train_end, cfg)
 
-    train_periods = sorted(df_train["ipc_period_start"].unique())
-    n_val     = max(1, int(len(train_periods) * cfg.VALIDATION_FRACTION))
-    val_perds = set(train_periods[-n_val:])
-    val_mask  = df_train["ipc_period_start"].isin(val_perds)
+    y_train = df_train[cfg.TARGET].values
+    y_test  = df_test[cfg.TARGET].values
 
-    df_fit = df_train[~val_mask]
-    df_val = df_train[val_mask]
-
-    y_fit  = df_fit[cfg.TARGET].values
-    y_val  = df_val[cfg.TARGET].values
-    y_test = df_test[cfg.TARGET].values
-
-    def prep_X(df_subset, features):
+    def prep_X(df_subset: pd.DataFrame, features: list) -> pd.DataFrame:
         X = df_subset[features].copy()
-        X["ipc_period"] = X["ipc_period"].astype(str)
-        if "ipc_country" in X.columns:
-            X["ipc_country"] = X["ipc_country"].astype(str)
+        X["ipc_period"]  = X["ipc_period"].astype(str)
+        X["ipc_country"] = X["ipc_country"].astype(str)
         return X
 
     cat_idx_ar = [cfg.AR_FEATURES.index("ipc_period"),
                   cfg.AR_FEATURES.index("ipc_country")]
     model_ar = CatBoostClassifier(**cfg.CATBOOST_PARAMS_AR, cat_features=cat_idx_ar)
-    model_ar.fit(
-        prep_X(df_fit, cfg.AR_FEATURES), y_fit,
-        eval_set=(prep_X(df_val, cfg.AR_FEATURES), y_val),
-        use_best_model=True,
-    )
+    model_ar.fit(prep_X(df_train, cfg.AR_FEATURES), y_train)
     prob_ar = model_ar.predict_proba(prep_X(df_test, cfg.AR_FEATURES))[:, 1]
     m_ar    = compute_metrics(y_test, prob_ar, cfg.THRESHOLD)
 
     cat_idx_full = [cfg.COMBINED_FEATURES.index("ipc_period"),
                     cfg.COMBINED_FEATURES.index("ipc_country")]
     model_full = CatBoostClassifier(**cfg.CATBOOST_PARAMS_FULL, cat_features=cat_idx_full)
-    model_full.fit(
-        prep_X(df_fit, cfg.COMBINED_FEATURES), y_fit,
-        eval_set=(prep_X(df_val, cfg.COMBINED_FEATURES), y_val),
-        use_best_model=True,
-    )
+    model_full.fit(prep_X(df_train, cfg.COMBINED_FEATURES), y_train)
     prob_full = model_full.predict_proba(prep_X(df_test, cfg.COMBINED_FEATURES))[:, 1]
     m_full    = compute_metrics(y_test, prob_full, cfg.THRESHOLD)
 
@@ -271,11 +237,10 @@ def run_single_fold(fold_info, df, monthly_gdelt, cfg):
         "full_n_pos":     m_full["n_pos"],
         "delta_pr_auc":   m_full["pr_auc"] - m_ar["pr_auc"],
     }
-
     return fold_result, pred_df, fi_df, model_ar, model_full
 
 
-def save_results(fold_records, all_preds, all_fi, cfg):
+def save_results(fold_records: list, all_preds: list, all_fi: list, cfg: Config):
     cfg.RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
     fold_df = pd.DataFrame(fold_records)
@@ -297,17 +262,17 @@ def save_results(fold_records, all_preds, all_fi, cfg):
 
     numeric_cols = fold_df.select_dtypes(include=[float, np.float64]).columns.tolist()
     summary = {
-        col: {"mean": float(fold_df[col].dropna().mean()), "std": float(fold_df[col].dropna().std())}
+        col: {"mean": float(fold_df[col].dropna().mean()),
+              "std":  float(fold_df[col].dropna().std())}
         for col in numeric_cols
     }
     with open(cfg.RESULTS_DIR / "metrics_summary.json", "w") as f:
         json.dump(summary, f, indent=2)
     print(f"  Saved metrics_summary.json")
-
     return fold_df, pred_df, fi_mean
 
 
-def save_models(model_pairs, models_dir):
+def save_models(model_pairs: list, models_dir: Path):
     models_dir.mkdir(exist_ok=True)
     for fold_id, model_ar, model_full in model_pairs:
         model_ar.save_model(str(models_dir / f"ar_fold_{fold_id}.cbm"))
@@ -316,9 +281,9 @@ def save_models(model_pairs, models_dir):
 
 
 def main():
-    cfg = Config3Yr()
+    cfg = Config()
     print("=" * 60)
-    print("Rolling CV: AR + Combined models  (window_sensitivity)")
+    print("Rolling CV: window sensitivity check  (28-month window)")
     print("=" * 60)
 
     print("\nLoading data...")
@@ -335,10 +300,7 @@ def main():
     folds = generate_rolling_folds(df, cfg)
     print(f"  Folds: {len(folds)}")
 
-    fold_records = []
-    all_preds    = []
-    all_fi       = []
-    model_pairs  = []
+    fold_records, all_preds, all_fi, model_pairs = [], [], [], []
 
     for fold_info in folds:
         fid = fold_info["fold_id"]
@@ -347,8 +309,9 @@ def main():
               f"test {fold_info['test_start'].date()} "
               f"({len(fold_info['train_idx'])} train, {len(fold_info['test_idx'])} test)")
 
-        result, pred_df, fi_df, m_ar, m_full = run_single_fold(fold_info, df, monthly_gdelt, cfg)
-
+        result, pred_df, fi_df, m_ar, m_full = run_single_fold(
+            fold_info, df, monthly_gdelt, cfg
+        )
         fold_records.append(result)
         all_preds.append(pred_df)
         all_fi.append(fi_df)
@@ -359,13 +322,15 @@ def main():
               f"Delta: {result['delta_pr_auc']:+.4f}")
 
     print("\nSaving results...")
-    fold_df, pred_df, fi_mean = save_results(fold_records, all_preds, all_fi, cfg)
+    fold_df, _, fi_mean = save_results(fold_records, all_preds, all_fi, cfg)
     save_models(model_pairs, cfg.RESULTS_DIR / "models")
 
     print("\n" + "=" * 60)
-    print("Summary (sensitivity window):")
-    print(f"  AR    mean PR-AUC : {fold_df['ar_pr_auc'].mean():.4f} +/- {fold_df['ar_pr_auc'].std():.4f}")
-    print(f"  Full  mean PR-AUC : {fold_df['full_pr_auc'].mean():.4f} +/- {fold_df['full_pr_auc'].std():.4f}")
+    print("Summary (28-month sensitivity window):")
+    print(f"  AR    mean PR-AUC : {fold_df['ar_pr_auc'].mean():.4f} "
+          f"+/- {fold_df['ar_pr_auc'].std():.4f}")
+    print(f"  Full  mean PR-AUC : {fold_df['full_pr_auc'].mean():.4f} "
+          f"+/- {fold_df['full_pr_auc'].std():.4f}")
     print(f"  Delta mean        : {fold_df['delta_pr_auc'].mean():+.4f}")
     print("=" * 60)
     print("Done.")
