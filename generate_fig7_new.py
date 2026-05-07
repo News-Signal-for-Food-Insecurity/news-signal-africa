@@ -98,9 +98,18 @@ fold_df = pd.read_csv(RESULTS_DIR / "fold_results.csv")
 ml      = pd.read_parquet(BASE_DIR / "DATA" / "modelling" / "monthly_gdelt_features.parquet")
 ml["month"] = pd.to_datetime(ml["month"])
 
-preds["country"] = preds["district_id"].apply(
-    lambda d: [p.strip() for p in str(d).split(",")][-1]
-)
+# Use the same country-extraction logic as fig6a (06_paper_figures.py):
+# the district_id format is "District, Country" so the last comma-token is the
+# country — except for DRC whose full name contains commas, requiring a fix.
+_DISTRICT_ID_COUNTRY_FIXES = {
+    "The Democratic Republic of the": "Democratic Republic of the Congo",
+}
+
+def _extract_country(did):
+    raw = [p.strip() for p in str(did).split(",")][-1]
+    return _DISTRICT_ID_COUNTRY_FIXES.get(raw, raw)
+
+preds["country"] = preds["district_id"].apply(_extract_country)
 
 fids       = sorted(preds["fold_id"].unique())
 n_folds    = len(fids)
@@ -203,7 +212,14 @@ for c in sorted(preds["country"].unique()):
 
 cdf = pd.DataFrame(country_rows)
 cdf["region_rank"] = cdf["region"].map(region_rank).fillna(99)
-cdf = cdf.sort_values(["region_rank", "pr_ar"], ascending=[True, False]).reset_index(drop=True)
+# Match fig6a sort: within region, scored countries ascending by pr_ar, then
+# unscored countries (nan) at the bottom of each region block.
+cdf["_scored"] = cdf["can_score"].astype(int)   # 1=scored, 0=unscored
+cdf["_pr_ar_sort"] = cdf["pr_ar"].fillna(2.0)   # nan → 2.0 so they sort last
+cdf = cdf.sort_values(
+    ["region_rank", "_scored", "_pr_ar_sort"],
+    ascending=[True, False, True],
+).drop(columns=["_scored", "_pr_ar_sort"]).reset_index(drop=True)
 n_countries = len(cdf)
 
 
