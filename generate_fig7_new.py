@@ -63,6 +63,7 @@ COUNTRY_REGION = {
     "Cameroon":                          "Central Africa",
     "Chad":                              "Central Africa",
     "Democratic Republic of the Congo":  "Central Africa",
+    "The Democratic Republic of the":    "Central Africa",
     "Ethiopia":                          "East Africa",
     "Kenya":                             "East Africa",
     "Madagascar":                        "Southern Africa",
@@ -82,6 +83,7 @@ region_rank  = {r: i for i, r in enumerate(REGION_ORDER)}
 
 SHORT = {
     "Democratic Republic of the Congo": "DRC",
+    "The Democratic Republic of the":   "DRC",
     "South Sudan":  "S. Sudan",
     "Burkina Faso": "Burkina F.",
 }
@@ -98,16 +100,10 @@ fold_df = pd.read_csv(RESULTS_DIR / "fold_results.csv")
 ml      = pd.read_parquet(BASE_DIR / "DATA" / "modelling" / "monthly_gdelt_features.parquet")
 ml["month"] = pd.to_datetime(ml["month"])
 
-# Use the same country-extraction logic as fig6a (06_paper_figures.py):
-# the district_id format is "District, Country" so the last comma-token is the
-# country — except for DRC whose full name contains commas, requiring a fix.
-_DISTRICT_ID_COUNTRY_FIXES = {
-    "The Democratic Republic of the": "Democratic Republic of the Congo",
-}
-
+# Identical extraction to fig6a (_country_from_district_id in 06_paper_figures.py)
 def _extract_country(did):
-    raw = [p.strip() for p in str(did).split(",")][-1]
-    return _DISTRICT_ID_COUNTRY_FIXES.get(raw, raw)
+    parts = [p.strip() for p in str(did).split(",")]
+    return parts[-1] if parts else "Unknown"
 
 preds["country"] = preds["district_id"].apply(_extract_country)
 
