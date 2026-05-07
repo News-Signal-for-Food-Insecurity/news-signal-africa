@@ -1,23 +1,23 @@
 """
 generate_fig7_new.py
 ====================
-Two figures extending fig6c to full country-level analysis.
-Both share the same 4-panel visual language as fig6c / fig7b.
+Two figures with identical 4-panel layout — one across time, one across space.
 
-  fig7a_time.pdf  — 7 rows, one per test fold (aggregated across all countries)
-    Same 4-panel layout as fig7b, but the unit is the test period, not country.
-    Panel T1: Crisis prevalence stacked bar per fold
-    Panel T2: AR-Only vs AR+News PR-AUC dot+arrow per fold
-    Panel T3: Regime breakdown bar per fold (onset / chronic / recovery / stable)
-    Panel T4: Onset+chronic count bar per fold
+Panel order (both figures):
+  1. Number of News         — total article count (stacked bar by regime colour)
+  2. Observations by Regime — stacked bar: onset / chronic / recovery / stable
+  3. Volatility Score       — fraction of fold-pairs where regime switches (0–1)
+  4. PR-AUC                 — AR-Only dot vs AR+News square, arrow showing direction
 
-  fig7b_space.pdf — 18 rows, one per country (aggregated across all folds)
-    Panel S1: Prevalence stacked bar
-    Panel S2: PR-AUC dot+arrow AR-Only -> AR+News
-    Panel S3: Volatility horizontal bars
-    Panel S4: Onset+chronic count horizontal bars
+Colour scheme:
+  stable   — deep green    #1A7A1A
+  recovery — light green   #6CC56C
+  chronic  — deep red      #C00000
+  onset    — light red     #E87070
 
-All values from fold_predictions.csv and fold_results.csv. AR+News = prob_combined.
+Output:
+  figures/fig7a_time.pdf  — 7 rows, one per test fold
+  figures/fig7b_space.pdf — 18 rows, one per country
 """
 
 import numpy as np
@@ -34,20 +34,19 @@ BASE_DIR    = Path(__file__).parent
 RESULTS_DIR = BASE_DIR / "results" / "window_2yr"
 FIGURES_DIR = BASE_DIR / "figures"
 
+# ── Colour config ──────────────────────────────────────────────────────────────
+REGIME_COLOURS = {
+    "stable":   "#1A7A1A",   # deep green
+    "recovery": "#6CC56C",   # light green
+    "chronic":  "#C00000",   # deep red
+    "onset":    "#E87070",   # light red
+}
+REGIME_ORDER = ["onset", "chronic", "recovery", "stable"]   # stacking order
+
 MODEL_COLOURS = {"AR-Only": "#1f77b4", "AR+News": "#9467bd"}
-CRISIS_COL    = "#C0392B"
-NONCRISIS_COL = "#2980B9"
-NODATA_COL    = "#CCCCCC"
 DELTA_POS     = "#27AE60"
 DELTA_NEG     = "#E74C3C"
-
-# Matches REGIME_COLOURS in 06_paper_figures.py exactly
-REGIME_COLOURS = {
-    "onset":    "#D62728",
-    "chronic":  "#FF7F0E",
-    "recovery": "#2CA02C",
-    "stable":   "#7F7F7F",
-}
+NEWS_COL      = "#4E79A7"    # neutral blue for article count bars
 
 plt.rcParams.update({
     "font.family":  "serif",
@@ -57,25 +56,26 @@ plt.rcParams.update({
     "ps.fonttype":  42,
 })
 
+# ── Country / region mapping ───────────────────────────────────────────────────
 COUNTRY_REGION = {
-    "Burkina Faso":                  "West Africa",
-    "Burundi":                       "East Africa",
-    "Cameroon":                      "Central Africa",
-    "Chad":                          "Central Africa",
-    "Democratic Republic of the Congo": "Central Africa",
-    "Ethiopia":                      "East Africa",
-    "Kenya":                         "East Africa",
-    "Madagascar":                    "Southern Africa",
-    "Malawi":                        "Southern Africa",
-    "Mali":                          "West Africa",
-    "Mozambique":                    "Southern Africa",
-    "Niger":                         "West Africa",
-    "Nigeria":                       "West Africa",
-    "Somalia":                       "East Africa",
-    "South Sudan":                   "East Africa",
-    "Sudan":                         "North Africa",
-    "Uganda":                        "East Africa",
-    "Zimbabwe":                      "Southern Africa",
+    "Burkina Faso":                      "West Africa",
+    "Burundi":                           "East Africa",
+    "Cameroon":                          "Central Africa",
+    "Chad":                              "Central Africa",
+    "Democratic Republic of the Congo":  "Central Africa",
+    "Ethiopia":                          "East Africa",
+    "Kenya":                             "East Africa",
+    "Madagascar":                        "Southern Africa",
+    "Malawi":                            "Southern Africa",
+    "Mali":                              "West Africa",
+    "Mozambique":                        "Southern Africa",
+    "Niger":                             "West Africa",
+    "Nigeria":                           "West Africa",
+    "Somalia":                           "East Africa",
+    "South Sudan":                       "East Africa",
+    "Sudan":                             "North Africa",
+    "Uganda":                            "East Africa",
+    "Zimbabwe":                          "Southern Africa",
 }
 REGION_ORDER = ["East Africa", "West Africa", "Central Africa", "North Africa", "Southern Africa"]
 region_rank  = {r: i for i, r in enumerate(REGION_ORDER)}
@@ -92,9 +92,11 @@ def _despine(ax):
         ax.spines[s].set_visible(False)
 
 
-# ── Load data ──────────────────────────────────────────────────────────────────
+# ── Load predictions & fold results ───────────────────────────────────────────
 preds   = pd.read_csv(RESULTS_DIR / "fold_predictions.csv")
 fold_df = pd.read_csv(RESULTS_DIR / "fold_results.csv")
+ml      = pd.read_parquet(BASE_DIR / "DATA" / "modelling" / "monthly_gdelt_features.parquet")
+ml["month"] = pd.to_datetime(ml["month"])
 
 preds["country"] = preds["district_id"].apply(
     lambda d: [p.strip() for p in str(d).split(",")][-1]
@@ -104,8 +106,29 @@ fids       = sorted(preds["fold_id"].unique())
 n_folds    = len(fids)
 fold_dates = dict(zip(fold_df["fold_id"],
                       pd.to_datetime(fold_df["test_start"]).dt.strftime("%b %Y")))
+fold_starts = dict(zip(fold_df["fold_id"],
+                       pd.to_datetime(fold_df["test_start"])))
 
-# ── Build per-fold summary rows (for fig7a) ────────────────────────────────────
+
+def _articles_for_fold(fid):
+    """Total article count for districts in this fold, across the 4-month IPC period."""
+    sf    = preds[preds.fold_id == fid]
+    start = fold_starts[fid]
+    end   = start + pd.DateOffset(months=4)
+    sub   = ml[
+        ml["district_id"].isin(sf["district_id"]) &
+        (ml["month"] >= start) & (ml["month"] < end)
+    ]
+    return int(sub["article_count"].sum())
+
+
+def _articles_for_country(country):
+    """Total article count across all months for districts belonging to this country."""
+    dists = preds[preds.country == country]["district_id"].unique()
+    return int(ml[ml["district_id"].isin(dists)]["article_count"].sum())
+
+
+# ── Build per-fold summary rows ────────────────────────────────────────────────
 fold_rows = []
 for fid in fids:
     sf    = preds[preds.fold_id == fid]
@@ -113,7 +136,6 @@ for fid in fids:
     n_tot = len(sf)
     n_pos = int(y.sum())
     n_neg = n_tot - n_pos
-    prev  = n_pos / n_tot if n_tot else 0.0
 
     pr_ar = pr_full = float("nan")
     if n_pos >= 2 and n_neg >= 2:
@@ -123,32 +145,46 @@ for fid in fids:
         except Exception:
             pass
 
-    regime_counts = sf["regime"].value_counts().to_dict()
-
+    rc = sf["regime"].value_counts().to_dict()
     fold_rows.append({
-        "fold_id":   fid,
-        "fold_lbl":  fold_dates[fid],
-        "n_tot":     n_tot,
-        "n_pos":     n_pos,
-        "n_neg":     n_neg,
-        "prev":      prev,
-        "pr_ar":     pr_ar,
-        "pr_full":   pr_full,
-        "onset":     regime_counts.get("onset",    0),
-        "chronic":   regime_counts.get("chronic",  0),
-        "recovery":  regime_counts.get("recovery", 0),
-        "stable":    regime_counts.get("stable",   0),
+        "fold_id":  fid,
+        "fold_lbl": fold_dates[fid],
+        "n_tot":    n_tot,
+        "articles": _articles_for_fold(fid),
+        "pr_ar":    pr_ar,
+        "pr_full":  pr_full,
+        **{r: rc.get(r, 0) for r in REGIME_ORDER},
     })
 
-fdf = pd.DataFrame(fold_rows)   # 7 rows
+fdf = pd.DataFrame(fold_rows)
 
-# ── Build per-country summary rows (for fig7b) ────────────────────────────────
+# Volatility per fold: fraction of district-regime pairs that changed across folds
+# For fig7a (time view) we compute cross-district mean volatility for each fold pair.
+# Simpler and more meaningful: for each fold, report fraction of districts that
+# switched regime vs the previous fold (only meaningful from fold 2 onward).
+# For fold 1 there is no prior, so we show the inter-fold switch rate vs fold 2.
+district_regime = preds.pivot_table(index="district_id", columns="fold_id",
+                                    values="regime", aggfunc="first")
+
+fold_volatility = {}
+prev_col = None
+for fid in fids:
+    if prev_col is None:
+        fold_volatility[fid] = float("nan")   # no prior fold
+    else:
+        both = district_regime[[prev_col, fid]].dropna()
+        switched = (both[prev_col] != both[fid]).mean()
+        fold_volatility[fid] = float(switched)
+    prev_col = fid
+
+fdf["volatility"] = fdf["fold_id"].map(fold_volatility)
+
+# ── Build per-country summary rows ────────────────────────────────────────────
 country_rows = []
 for c in sorted(preds["country"].unique()):
     sub   = preds[preds.country == c]
     y     = sub["target_crisis_binary"].values.astype(int)
-    n_pos = int(y.sum()); n_neg = int((1-y).sum()); n_tot = len(sub)
-    prev  = n_pos / n_tot if n_tot else 0.0
+    n_pos = int(y.sum()); n_neg = int((1 - y).sum()); n_tot = len(sub)
     can_score = (n_pos >= 2 and n_neg >= 2)
     pr_ar = pr_full = float("nan")
     if can_score:
@@ -158,24 +194,147 @@ for c in sorted(preds["country"].unique()):
         except Exception:
             can_score = False
 
+    # Volatility: fraction of consecutive fold-pairs where district switches regime
     fold_crisis = sub.groupby("fold_id")["target_crisis_binary"].mean()
     regime_seq  = (fold_crisis >= 0.5).astype(int)
     vol = float((regime_seq.diff().abs().dropna() > 0).mean()) if len(regime_seq) > 1 else 0.0
-    oc  = int(sub[sub.regime.isin(["onset", "chronic"])].shape[0])
 
+    rc = sub["regime"].value_counts().to_dict()
     country_rows.append({
-        "country": c, "short": SHORT.get(c, c),
-        "region":  COUNTRY_REGION.get(c, "Other"),
-        "n_tot": n_tot, "n_pos": n_pos, "n_neg": n_neg,
-        "prev": prev, "can_score": can_score,
-        "pr_ar": pr_ar, "pr_full": pr_full,
-        "volatility": vol, "onset_chronic": oc,
+        "country":   c,
+        "short":     SHORT.get(c, c),
+        "region":    COUNTRY_REGION.get(c, "Other"),
+        "n_tot":     n_tot,
+        "articles":  _articles_for_country(c),
+        "can_score": can_score,
+        "pr_ar":     pr_ar,
+        "pr_full":   pr_full,
+        "volatility": vol,
+        **{r: rc.get(r, 0) for r in REGIME_ORDER},
     })
 
 cdf = pd.DataFrame(country_rows)
 cdf["region_rank"] = cdf["region"].map(region_rank).fillna(99)
-cdf = cdf.sort_values(["region_rank", "prev"], ascending=[True, False]).reset_index(drop=True)
+cdf = cdf.sort_values(["region_rank", "pr_ar"], ascending=[True, False]).reset_index(drop=True)
 n_countries = len(cdf)
+
+
+# ── Shared panel drawing helpers ───────────────────────────────────────────────
+def _fmt_k(n):
+    """Format large integers as e.g. 1.2M or 345K."""
+    if n >= 1_000_000:
+        return f"{n/1_000_000:.1f}M"
+    if n >= 1_000:
+        return f"{n/1_000:.0f}K"
+    return str(int(n))
+
+
+def _panel_news(ax, df, y_col, art_col, n_rows, ylabel_col=None, labels=None,
+                region_breaks=None):
+    """Panel 1: horizontal bar of total article count."""
+    max_art = max(int(df[art_col].max()), 1)
+    for i, row in df.iterrows():
+        if region_breaks and i in region_breaks:
+            ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
+        val = int(row[art_col])
+        ax.barh(i, val, height=0.68, color=NEWS_COL, alpha=0.85, zorder=3)
+        ax.text(val + max_art * 0.02, i, _fmt_k(val),
+                va="center", ha="left", fontsize=6.8, color="#444444")
+    ax.set_xlim(0, max_art * 1.22)
+    ax.set_xlabel("Total articles", fontsize=8.5, labelpad=5)
+    ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
+    _despine(ax)
+    if labels is not None:
+        ax.set_yticks(np.arange(n_rows))
+        ax.set_yticklabels(labels, fontsize=9)
+    ax.set_ylim(n_rows - 0.5, -0.5)
+
+
+def _panel_regime(ax, df, n_rows, region_breaks=None):
+    """Panel 2: stacked bar of observations by regime."""
+    max_n = max(int(df[[r for r in REGIME_ORDER]].sum(axis=1).max()), 1)
+    for i, row in df.iterrows():
+        if region_breaks and i in region_breaks:
+            ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
+        left = 0
+        for reg in REGIME_ORDER:
+            val = int(row[reg])
+            if val > 0:
+                ax.barh(i, val, height=0.68, color=REGIME_COLOURS[reg],
+                        left=left, zorder=3)
+                if val >= 12:
+                    ax.text(left + val / 2, i, str(val), ha="center", va="center",
+                            fontsize=7, color="white", fontweight="bold")
+                left += val
+    ax.set_xlim(0, max_n * 1.05)
+    ax.set_xlabel("Observations", fontsize=8.5, labelpad=5)
+    ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
+    _despine(ax)
+    ax.set_ylim(n_rows - 0.5, -0.5)
+    # legend
+    leg = [mpatches.Patch(color=REGIME_COLOURS[r], label=r.capitalize())
+           for r in REGIME_ORDER]
+    ax.legend(handles=leg, fontsize=7.5, loc="upper right",
+              framealpha=0.95, ncol=2, handlelength=1.0, handletextpad=0.4)
+
+
+def _panel_volatility(ax, df, n_rows, region_breaks=None):
+    """Panel 3: horizontal bar of volatility score (0–1)."""
+    for i, row in df.iterrows():
+        if region_breaks and i in region_breaks:
+            ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
+        vol = row["volatility"]
+        if not np.isfinite(vol):
+            ax.text(0.5, i, "n/a", ha="center", va="center",
+                    fontsize=7, color="#AAAAAA", style="italic")
+            continue
+        ax.barh(i, vol, height=0.68, color="#5B9BD5", alpha=0.85, zorder=3)
+        if vol > 0.04:
+            ax.text(vol + 0.025, i, f"{vol:.2f}",
+                    va="center", ha="left", fontsize=6.8, color="#444444")
+    ax.set_xlim(0, 1.12)
+    ax.set_xlabel("Volatility score (0–1)", fontsize=8.5, labelpad=5)
+    ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
+    _despine(ax)
+    ax.set_ylim(n_rows - 0.5, -0.5)
+
+
+def _panel_prauc(ax, df, n_rows, region_breaks=None, delta_fontsize=7.5):
+    """Panel 4: PR-AUC dot+arrow AR-Only -> AR+News."""
+    for i, row in df.iterrows():
+        if region_breaks and i in region_breaks:
+            ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
+        if not (np.isfinite(row["pr_ar"]) and np.isfinite(row["pr_full"])):
+            ax.text(0.75, i, "insufficient data", ha="center", va="center",
+                    fontsize=6.5, color="#AAAAAA", style="italic")
+            continue
+        ax.annotate("", xy=(row["pr_full"], i), xytext=(row["pr_ar"], i),
+                    arrowprops=dict(arrowstyle="->", color="#333333",
+                                   lw=1.5, mutation_scale=14))
+        ax.scatter(row["pr_ar"],   i, color=MODEL_COLOURS["AR-Only"],
+                   s=72, zorder=5, edgecolors="white", lw=0.5)
+        ax.scatter(row["pr_full"], i, marker="s", color=MODEL_COLOURS["AR+News"],
+                   s=72, zorder=5, edgecolors="white", lw=0.5)
+        delta = row["pr_full"] - row["pr_ar"]
+        ax.text(1.03, i, f"{delta:+.3f}", transform=ax.get_yaxis_transform(),
+                va="center", ha="left", fontsize=delta_fontsize,
+                color=DELTA_POS if delta >= 0 else DELTA_NEG)
+
+    ax.set_xlim(0.5, 1.0)
+    ax.axvline(0.75, color="#AAAAAA", lw=0.8, ls=":")
+    ax.set_xlabel("PR-AUC", fontsize=8.5, labelpad=5)
+    ax.text(1.03, -0.75, "delta", transform=ax.get_yaxis_transform(),
+            va="top", ha="left", fontsize=delta_fontsize - 0.5,
+            color="#333333", fontweight="bold")
+    ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
+    _despine(ax)
+    ax.set_ylim(n_rows - 0.5, -0.5)
+    leg = [Line2D([0],[0], marker="o", color="w",
+                  markerfacecolor=MODEL_COLOURS["AR-Only"], ms=8, label="AR-Only"),
+           Line2D([0],[0], marker="s", color="w",
+                  markerfacecolor=MODEL_COLOURS["AR+News"], ms=8, label="AR+News")]
+    ax.legend(handles=leg, fontsize=7.5, loc="upper left", frameon=True,
+              handlelength=1.0, handletextpad=0.4)
 
 
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -186,107 +345,20 @@ print("Building fig7a_time ...")
 fig, axes = plt.subplots(
     1, 4,
     figsize=(20, 5),
-    gridspec_kw={"wspace": 0.06, "width_ratios": [1.4, 1.3, 1.2, 0.9]},
+    gridspec_kw={"wspace": 0.08, "width_ratios": [1.2, 1.3, 0.85, 1.2]},
     sharey=True,
 )
 
-y_pos = np.arange(n_folds)
+labels_a = fdf["fold_lbl"].tolist()
 
-def _fmt(ax, title, xlabel):
-    ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
-    ax.set_xlabel(xlabel, fontsize=8.5, labelpad=5)
-    ax.set_ylim(n_folds - 0.5, -0.5)
-    _despine(ax)
-
-# ── T1: Crisis prevalence stacked bar ────────────────────────────────────────
-ax = axes[0]
-for i, row in fdf.iterrows():
-    fp = row["n_pos"] / row["n_tot"]
-    fn = row["n_neg"] / row["n_tot"]
-    ax.barh(i, fp, height=0.65, color=CRISIS_COL,    zorder=3)
-    ax.barh(i, fn, height=0.65, color=NONCRISIS_COL, zorder=3, left=fp)
-    pct = f"{fp*100:.0f}%"
-    if fp >= 0.12:
-        ax.text(fp / 2, i, pct, ha="center", va="center",
-                fontsize=8, color="white", fontweight="bold")
-    else:
-        ax.text(fp + 0.02, i, pct, ha="left", va="center",
-                fontsize=8, color=CRISIS_COL, fontweight="bold")
-    ax.text(1.03, i, f"n={row['n_tot']}", transform=ax.get_yaxis_transform(),
-            va="center", ha="left", fontsize=7.5, color="#555555")
-
-ax.set_yticks(y_pos)
-ax.set_yticklabels(fdf["fold_lbl"].tolist(), fontsize=9)
-ax.set_xlim(0, 1)
-ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
-_fmt(ax, "T1 — Crisis prevalence per test period", "Fraction of observations")
-prev_legend = [mpatches.Patch(color=CRISIS_COL,    label="Crisis (IPC>=3)"),
-               mpatches.Patch(color=NONCRISIS_COL, label="Non-crisis")]
-ax.legend(handles=prev_legend, fontsize=8, loc="upper right", framealpha=0.95)
-
-# ── T2: AR-Only vs AR+News PR-AUC dot+arrow ──────────────────────────────────
-ax = axes[1]
-for i, row in fdf.iterrows():
-    if not (np.isfinite(row["pr_ar"]) and np.isfinite(row["pr_full"])):
-        continue
-    ax.annotate("", xy=(row["pr_full"], i), xytext=(row["pr_ar"], i),
-                arrowprops=dict(arrowstyle="->", color="#333333",
-                                lw=1.5, mutation_scale=14))
-    ax.scatter(row["pr_ar"],   i, color=MODEL_COLOURS["AR-Only"],
-               s=80, zorder=5, edgecolors="white", lw=0.5)
-    ax.scatter(row["pr_full"], i, marker="s", color=MODEL_COLOURS["AR+News"],
-               s=80, zorder=5, edgecolors="white", lw=0.5)
-    delta = row["pr_full"] - row["pr_ar"]
-    ax.text(1.03, i, f"{delta:+.3f}", transform=ax.get_yaxis_transform(),
-            va="center", ha="left", fontsize=7.5,
-            color=DELTA_POS if delta >= 0 else DELTA_NEG)
-
-ax.set_xlim(0.5, 1.0)
-ax.axvline(0.75, color="#AAAAAA", lw=0.8, ls=":")
-ax.text(1.03, -0.7, "delta", transform=ax.get_yaxis_transform(),
-        va="top", ha="left", fontsize=7.5, color="#333333", fontweight="bold")
-_fmt(ax, "T2 — AR-Only vs AR+News PR-AUC per test period", "PR-AUC")
-leg_elems = [Line2D([0],[0], marker="o", color="w",
-                    markerfacecolor=MODEL_COLOURS["AR-Only"], ms=9, label="AR-Only"),
-             Line2D([0],[0], marker="s", color="w",
-                    markerfacecolor=MODEL_COLOURS["AR+News"], ms=9, label="AR+News")]
-ax.legend(handles=leg_elems, fontsize=8, loc="upper left", frameon=True)
-
-# ── T3: Regime breakdown stacked bar ─────────────────────────────────────────
-ax = axes[2]
-for i, row in fdf.iterrows():
-    left = 0
-    for reg in ["onset", "chronic", "recovery", "stable"]:
-        val = row[reg]
-        if val > 0:
-            ax.barh(i, val, height=0.65, color=REGIME_COLOURS[reg],
-                    left=left, zorder=3)
-            if val >= 15:
-                ax.text(left + val / 2, i, str(val), ha="center", va="center",
-                        fontsize=7.5, color="white", fontweight="bold")
-            left += val
-
-ax.set_xlim(0, fdf[["onset","chronic","recovery","stable"]].sum(axis=1).max() * 1.05)
-_fmt(ax, "T3 — Regime breakdown per test period", "Number of observations")
-reg_legend = [mpatches.Patch(color=REGIME_COLOURS[r], label=r.capitalize())
-              for r in ["onset", "chronic", "recovery", "stable"]]
-ax.legend(handles=reg_legend, fontsize=8, loc="upper right", framealpha=0.95, ncol=2)
-
-# ── T4: Onset+chronic count bar ───────────────────────────────────────────────
-ax = axes[3]
-max_oc = max(int((fdf["onset"] + fdf["chronic"]).max()), 1)
-for i, row in fdf.iterrows():
-    oc = row["onset"] + row["chronic"]
-    ax.barh(i, oc, height=0.65, color=REGIME_COLOURS["chronic"], alpha=0.85, zorder=3)
-    ax.text(oc + max_oc * 0.02, i, str(int(oc)),
-            va="center", ha="left", fontsize=8, color="#555555")
-
-ax.set_xlim(0, max_oc * 1.25)
-_fmt(ax, "T4 — Onset+chronic\nper test period", "Observations")
+_panel_news(axes[0], fdf, "fold_id", "articles", n_folds, labels=labels_a)
+_panel_regime(axes[1], fdf, n_folds)
+_panel_volatility(axes[2], fdf, n_folds)
+_panel_prauc(axes[3], fdf, n_folds)
 
 fig.suptitle(
-    "Figure 7a — Model performance and crisis characteristics across 7 test periods",
-    fontsize=11, fontweight="bold", y=1.03,
+    "Figure 7a — News volume, regime composition, volatility and PR-AUC across 7 test periods",
+    fontsize=10.5, fontweight="bold", y=1.03,
 )
 fig.savefig(FIGURES_DIR / "fig7a_time.pdf", format="pdf", bbox_inches="tight", dpi=300)
 plt.close(fig)
@@ -298,122 +370,34 @@ print("  Saved fig7a_time.pdf")
 # ═══════════════════════════════════════════════════════════════════════════════
 print("Building fig7b_space ...")
 
-fig_h_sp = max(7, n_countries * 0.44)
+# Identify region break rows (first row of each new region after the first)
+region_breaks_b = set()
+prev_r = None
+for i, row in cdf.iterrows():
+    r = row["region"]
+    if r != prev_r and i > 0:
+        region_breaks_b.add(i)
+    prev_r = r
+
+fig_h_sp = max(8, n_countries * 0.50)
 fig, axes = plt.subplots(
     1, 4,
     figsize=(22, fig_h_sp),
-    gridspec_kw={"wspace": 0.04, "width_ratios": [1.5, 1.3, 0.85, 0.85]},
+    gridspec_kw={"wspace": 0.06, "width_ratios": [1.2, 1.3, 0.85, 1.2]},
     sharey=True,
 )
 
-y_pos = np.arange(n_countries)
+labels_b = cdf["short"].tolist()
 
-# ── S1: Prevalence stacked bar ────────────────────────────────────────────────
-ax = axes[0]
-ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
-prev_region = None
-for i, row in cdf.iterrows():
-    if row["region"] != prev_region and i > 0:
-        ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
-    prev_region = row["region"]
-    tot = row["n_tot"]
-    fp = row["n_pos"] / tot; fn = row["n_neg"] / tot
-    ax.barh(i, fp, color=CRISIS_COL,    height=0.72, zorder=3)
-    ax.barh(i, fn, left=fp, color=NONCRISIS_COL, height=0.72, zorder=3)
-    pct = f"{fp*100:.0f}%"
-    if fp >= 0.12:
-        ax.text(fp / 2, i, pct, ha="center", va="center", fontsize=7.5,
-                color="white", fontweight="bold")
-    else:
-        ax.text(fp + 0.02, i, pct, ha="left", va="center", fontsize=7.5,
-                color=CRISIS_COL, fontweight="bold")
-    ax.text(1.03, i, f"n={tot}", transform=ax.get_yaxis_transform(),
-            va="center", ha="left", fontsize=6.5, color="#555555")
-
-ax.set_yticks(y_pos)
-ax.set_yticklabels(cdf["short"].tolist(), fontsize=9)
-ax.set_ylim(n_countries - 0.5, -0.5)
-ax.set_xlim(0, 1)
-ax.set_xlabel("Fraction of test-set observations", fontsize=8.5, labelpad=5)
-ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
-prev_legend = [mpatches.Patch(color=CRISIS_COL,    label="Crisis (IPC>=3)"),
-               mpatches.Patch(color=NONCRISIS_COL, label="Non-crisis")]
-ax.legend(handles=prev_legend, fontsize=7.5, loc="upper right", framealpha=0.95)
-_despine(ax)
-
-# ── S2: PR-AUC dot+arrow ──────────────────────────────────────────────────────
-ax = axes[1]
-ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
-prev_region = None
-for i, row in cdf.iterrows():
-    if row["region"] != prev_region and i > 0:
-        ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
-    prev_region = row["region"]
-    if not row["can_score"]:
-        ax.text(0.5, i, "insufficient class mix", ha="center", va="center",
-                fontsize=7, color="#AAAAAA", style="italic")
-        continue
-    ax.annotate("", xy=(row["pr_full"], i), xytext=(row["pr_ar"], i),
-                arrowprops=dict(arrowstyle="->", color="#333333", lw=1.5, mutation_scale=14))
-    ax.scatter(row["pr_ar"],   i, color=MODEL_COLOURS["AR-Only"],
-               s=80, zorder=5, edgecolors="white", lw=0.5)
-    ax.scatter(row["pr_full"], i, marker="s", color=MODEL_COLOURS["AR+News"],
-               s=80, zorder=5, edgecolors="white", lw=0.5)
-    delta = row["pr_full"] - row["pr_ar"]
-    ax.text(1.03, i, f"{delta:+.2f}", transform=ax.get_yaxis_transform(),
-            va="center", ha="left", fontsize=7,
-            color=DELTA_POS if delta >= 0 else DELTA_NEG)
-
-ax.set_xlim(0, 1)
-ax.set_xlabel("PR-AUC", fontsize=8.5, labelpad=5)
-ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
-ax.text(1.03, -0.8, "delta", transform=ax.get_yaxis_transform(),
-        va="top", ha="left", fontsize=7, color="#333333", fontweight="bold")
-leg_elems = [Line2D([0],[0], marker="o", color="w",
-                    markerfacecolor=MODEL_COLOURS["AR-Only"], ms=9, label="AR-Only"),
-             Line2D([0],[0], marker="s", color="w",
-                    markerfacecolor=MODEL_COLOURS["AR+News"], ms=9, label="AR+News")]
-ax.legend(handles=leg_elems, fontsize=7.5, loc="upper right", frameon=True)
-_despine(ax)
-
-# ── S3: Volatility bar ────────────────────────────────────────────────────────
-ax = axes[2]
-ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
-prev_region = None
-for i, row in cdf.iterrows():
-    if row["region"] != prev_region and i > 0:
-        ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
-    prev_region = row["region"]
-    ax.barh(i, row["volatility"], height=0.72, color="#5B9BD5", alpha=0.85, zorder=3)
-    if row["volatility"] > 0.05:
-        ax.text(row["volatility"] + 0.02, i, f"{row['volatility']:.2f}",
-                va="center", ha="left", fontsize=6.5, color="#555555")
-
-ax.set_xlim(0, 1.05)
-ax.set_xlabel("Fraction of folds\nwith regime change", fontsize=8.5, labelpad=5)
-_despine(ax)
-
-# ── S4: Onset+chronic count bar ───────────────────────────────────────────────
-ax = axes[3]
-ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
-max_oc = max(int(cdf["onset_chronic"].max()), 1)
-prev_region = None
-for i, row in cdf.iterrows():
-    if row["region"] != prev_region and i > 0:
-        ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
-    prev_region = row["region"]
-    ax.barh(i, row["onset_chronic"], height=0.72, color=REGIME_COLOURS["chronic"], alpha=0.85, zorder=3)
-    if row["onset_chronic"] > 0:
-        ax.text(row["onset_chronic"] + max_oc * 0.02, i, str(int(row["onset_chronic"])),
-                va="center", ha="left", fontsize=6.5, color="#555555")
-
-ax.set_xlim(0, max_oc * 1.18)
-ax.set_xlabel("Onset + chronic\nobservations (all folds)", fontsize=8.5, labelpad=5)
-_despine(ax)
+_panel_news(axes[0], cdf, "country", "articles", n_countries,
+            labels=labels_b, region_breaks=region_breaks_b)
+_panel_regime(axes[1], cdf, n_countries, region_breaks=region_breaks_b)
+_panel_volatility(axes[2], cdf, n_countries, region_breaks=region_breaks_b)
+_panel_prauc(axes[3], cdf, n_countries, region_breaks=region_breaks_b, delta_fontsize=7)
 
 fig.suptitle(
-    "Figure 7b — Country-level characteristics and model performance (space)",
-    fontsize=11, fontweight="bold", y=1.003,
+    "Figure 7b — News volume, regime composition, volatility and PR-AUC by country",
+    fontsize=10.5, fontweight="bold", y=1.003,
 )
 fig.savefig(FIGURES_DIR / "fig7b_space.pdf", format="pdf", bbox_inches="tight", dpi=300)
 plt.close(fig)
