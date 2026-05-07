@@ -49,3 +49,7 @@ temp_*
 .idea/
 *.sublime-project
 .claude/
+
+# Large choropleth figures (>50 MB — regenerate with: python 06_paper_figures.py)
+figures/fig1a_ipc_choropleth.pdf
+figures/fig1b_news_choropleth.pdf
