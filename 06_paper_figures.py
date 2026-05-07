@@ -530,7 +530,7 @@ def figure_2() -> None:
     # imshow expects (rows=themes, cols=periods)
     binned_a = _quintile_bin(pivot_a.values).T   # shape (n_themes, n_periods)
 
-    fig, ax = plt.subplots(figsize=(14, 8))
+    fig, ax = plt.subplots(figsize=(14, 14))
     ax.grid(False)
     im = ax.imshow(binned_a, aspect="auto", cmap=cmap5, vmin=0, vmax=4,
                    interpolation="nearest", rasterized=True)
@@ -614,7 +614,7 @@ def figure_2() -> None:
             prev_r = r
     region_info.append((prev_r, r_start, n_countries_b - 1))
 
-    fig, ax = plt.subplots(figsize=(max(16, n_countries_b * 0.80), 5.5))
+    fig, ax = plt.subplots(figsize=(max(16, n_countries_b * 0.80), 14))
     ax.grid(False)
 
     # imshow rasterized at high DPI → pixels in PDF, no vector seam artifacts
