@@ -573,13 +573,13 @@ def figure_2() -> None:
                       pad=0.02, shrink=0.90, aspect=20, ticks=[0, 1, 2, 3, 4])
     bnd_a = _quintile_boundaries(pivot_a.values)
     cb.ax.set_yticklabels([
-        f"Q1  <{_fmt_val(bnd_a[0])}",
-        f"Q2  <{_fmt_val(bnd_a[1])}",
-        f"Q3  <{_fmt_val(bnd_a[2])}",
-        f"Q4  <{_fmt_val(bnd_a[3])}",
-        f"Q5  ≥{_fmt_val(bnd_a[3])}",
+        f"<{_fmt_val(bnd_a[0])}",
+        f"{_fmt_val(bnd_a[0])}–{_fmt_val(bnd_a[1])}",
+        f"{_fmt_val(bnd_a[1])}–{_fmt_val(bnd_a[2])}",
+        f"{_fmt_val(bnd_a[2])}–{_fmt_val(bnd_a[3])}",
+        f"≥{_fmt_val(bnd_a[3])}",
     ], fontsize=8)
-    cb.set_label("Relative coverage (quintile)", fontsize=8, labelpad=6)
+    cb.set_label("Relative coverage", fontsize=8, labelpad=6)
     # Centre the heatmap vertically: compute fraction of figure height used by
     # the actual cell grid and distribute the remaining space equally top/bottom.
     n_rows = len(theme_labels)
@@ -667,13 +667,13 @@ def figure_2() -> None:
     cb = fig.colorbar(im, cax=cbar_ax, orientation="vertical", ticks=[0, 1, 2, 3, 4])
     bnd_b = _quintile_boundaries(raw_b)
     cb.ax.set_yticklabels([
-        f"Q1  <{_fmt_val(bnd_b[0])}",
-        f"Q2  <{_fmt_val(bnd_b[1])}",
-        f"Q3  <{_fmt_val(bnd_b[2])}",
-        f"Q4  <{_fmt_val(bnd_b[3])}",
-        f"Q5  ≥{_fmt_val(bnd_b[3])}",
+        f"<{_fmt_val(bnd_b[0])}",
+        f"{_fmt_val(bnd_b[0])}–{_fmt_val(bnd_b[1])}",
+        f"{_fmt_val(bnd_b[1])}–{_fmt_val(bnd_b[2])}",
+        f"{_fmt_val(bnd_b[2])}–{_fmt_val(bnd_b[3])}",
+        f"≥{_fmt_val(bnd_b[3])}",
     ], fontsize=8)
-    cb.set_label("Relative coverage (quintile)", fontsize=8, labelpad=6)
+    cb.set_label("Relative coverage", fontsize=8, labelpad=6)
     # Render to PNG buffer at 600 DPI (eliminates imshow vector seam artifacts),
     # then embed that raster image inside a PDF using Pillow + PdfPages.
     import io
