@@ -518,33 +518,48 @@ def figure_2() -> None:
         cb.set_label("Relative coverage", fontsize=9)
         return cb
 
-    # 7 test periods only (fold test windows)
+    # All 11 IPC periods (training + test)
     test_periods = sorted(pd.read_csv(RESULTS_DIR / "fold_results.csv")
                           ["test_start"].apply(lambda s: s[:7]).unique())
 
-    # ── Fig 2a — theme × 7 test periods ──────────────────────────────────
-    pivot_a_all = (ds.groupby("period_label")[rel_cols].mean().sort_index())
-    pivot_a_all.columns = theme_labels
-    pivot_a  = pivot_a_all.loc[pivot_a_all.index.isin(test_periods)]
-    periods  = list(pivot_a.index)   # exactly 7
+    # ── Fig 2a — theme × all 11 periods ──────────────────────────────────
+    pivot_a = (ds.groupby("period_label")[rel_cols].mean().sort_index())
+    pivot_a.columns = theme_labels
+    periods   = list(pivot_a.index)   # all 11
     n_periods = len(periods)
     # imshow expects (rows=themes, cols=periods)
     binned_a = _quintile_bin(pivot_a.values).T   # shape (n_themes, n_periods)
 
-    fig, ax = plt.subplots(figsize=(10, 5))
+    fig, ax = plt.subplots(figsize=(14, 5))
     ax.grid(False)
     im = ax.imshow(binned_a, aspect="auto", cmap=cmap5, vmin=0, vmax=4,
                    interpolation="nearest", rasterized=True)
 
-    # Thin white separator between every period
+    # White separator between every period
     for col in range(n_periods - 1):
         ax.axvline(col + 0.5, color="white", lw=2.0, zorder=3)
+
+    # Bold dark line marking train/test boundary (before first test period)
+    first_test_idx = periods.index(min(test_periods))
+    ax.axvline(first_test_idx - 0.5, color="#222222", lw=2.5, zorder=5,
+               solid_capstyle="butt")
+
+    # Shade training region lightly
+    ax.axvspan(-0.5, first_test_idx - 0.5, color="#F0F0F0", alpha=0.25, zorder=2)
+
+    # Annotations for training / test regions
+    ax.text((first_test_idx - 1) / 2, -0.85, "Training",
+            ha="center", va="top", fontsize=8, color="#666666",
+            fontstyle="italic", transform=ax.get_xaxis_transform())
+    ax.text((first_test_idx + n_periods - 1) / 2, -0.85, "Test",
+            ha="center", va="top", fontsize=8, color="#222222",
+            fontstyle="italic", transform=ax.get_xaxis_transform())
 
     ax.set_xticks(range(n_periods))
     ax.set_xticklabels(periods, rotation=35, ha="right", fontsize=9)
     ax.set_yticks(range(len(theme_labels)))
     ax.set_yticklabels(theme_labels, fontsize=9)
-    ax.set_xlabel("Test period", labelpad=6)
+    ax.set_xlabel("IPC period", labelpad=6)
     ax.set_ylabel("News theme", labelpad=6)
     ax.spines[:].set_visible(False)
 
