@@ -309,7 +309,7 @@ def _panel_prauc(ax, df, n_rows, region_breaks=None, delta_fontsize=7.5):
         if region_breaks and i in region_breaks:
             ax.axhline(i - 0.5, color="#555555", lw=0.9, ls="--", alpha=0.45)
         if not (np.isfinite(row["pr_ar"]) and np.isfinite(row["pr_full"])):
-            ax.text(0.75, i, "insufficient data", ha="center", va="center",
+            ax.text(0.5, i, "insufficient data", ha="center", va="center",
                     fontsize=6.5, color="#AAAAAA", style="italic")
             continue
         ax.annotate("", xy=(row["pr_full"], i), xytext=(row["pr_ar"], i),
@@ -324,8 +324,8 @@ def _panel_prauc(ax, df, n_rows, region_breaks=None, delta_fontsize=7.5):
                 va="center", ha="left", fontsize=delta_fontsize,
                 color=DELTA_POS if delta >= 0 else DELTA_NEG)
 
-    ax.set_xlim(0.5, 1.0)
-    ax.axvline(0.75, color="#AAAAAA", lw=0.8, ls=":")
+    ax.set_xlim(0.0, 1.0)
+    ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
     ax.set_xlabel("PR-AUC", fontsize=8.5, labelpad=5)
     ax.text(1.03, -0.75, "delta", transform=ax.get_yaxis_transform(),
             va="top", ha="left", fontsize=delta_fontsize - 0.5,
