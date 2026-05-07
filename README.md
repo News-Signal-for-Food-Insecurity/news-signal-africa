@@ -129,7 +129,17 @@ Rolling CV null test (1,000 permutations): within each permutation, all 18 news 
 | AR+News | 0.8711 | 0.9337 |
 | Delta | +0.0365 | +0.0268 |
 
-**Test set:** 2,148 observations across 7 folds spanning Feb 2022 – May 2024.
+**Test set:** 2,148 observations across 7 folds spanning Feb 2022 – Feb 2024.
+
+### Sensitivity check (28-month training window, 5 folds)
+
+| Model | Mean PR-AUC |
+|-------|-------------|
+| AR-only | 0.8113 |
+| AR+News | 0.8592 |
+| Delta | +0.0478 |
+
+Results are directionally consistent with the 2-year primary window. The larger delta (+0.0478 vs +0.0365) reflects the slightly different fold coverage with a 28-month training window.
 
 ### Null test (1,000-permutation rolling CV null)
 
