@@ -194,7 +194,6 @@ y_pos = np.arange(n_folds)
 
 def _fmt(ax, title, xlabel):
     ax.grid(True, axis="x", alpha=0.18, lw=0.5, ls="--")
-    ax.set_title(title, fontsize=9, fontweight="bold", pad=6)
     ax.set_xlabel(xlabel, fontsize=8.5, labelpad=5)
     ax.set_ylim(n_folds - 0.5, -0.5)
     _despine(ax)
@@ -336,7 +335,6 @@ ax.set_yticklabels(cdf["short"].tolist(), fontsize=9)
 ax.set_ylim(n_countries - 0.5, -0.5)
 ax.set_xlim(0, 1)
 ax.set_xlabel("Fraction of test-set observations", fontsize=8.5, labelpad=5)
-ax.set_title("S1 — Crisis Prevalence", fontsize=9, fontweight="bold", pad=6)
 ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
 prev_legend = [mpatches.Patch(color=CRISIS_COL,    label="Crisis (IPC>=3)"),
                mpatches.Patch(color=NONCRISIS_COL, label="Non-crisis")]
@@ -368,7 +366,6 @@ for i, row in cdf.iterrows():
 
 ax.set_xlim(0, 1)
 ax.set_xlabel("PR-AUC", fontsize=8.5, labelpad=5)
-ax.set_title("S2 — AR-Only vs AR+News PR-AUC", fontsize=9, fontweight="bold", pad=6)
 ax.axvline(0.5, color="#AAAAAA", lw=0.8, ls=":")
 ax.text(1.03, -0.8, "delta", transform=ax.get_yaxis_transform(),
         va="top", ha="left", fontsize=7, color="#333333", fontweight="bold")
@@ -394,7 +391,6 @@ for i, row in cdf.iterrows():
 
 ax.set_xlim(0, 1.05)
 ax.set_xlabel("Fraction of folds\nwith regime change", fontsize=8.5, labelpad=5)
-ax.set_title("S3 — Volatility", fontsize=9, fontweight="bold", pad=6)
 _despine(ax)
 
 # ── S4: Onset+chronic count bar ───────────────────────────────────────────────
@@ -413,7 +409,6 @@ for i, row in cdf.iterrows():
 
 ax.set_xlim(0, max_oc * 1.18)
 ax.set_xlabel("Onset + chronic\nobservations (all folds)", fontsize=8.5, labelpad=5)
-ax.set_title("S4 — Crisis Frequency", fontsize=9, fontweight="bold", pad=6)
 _despine(ax)
 
 fig.suptitle(
