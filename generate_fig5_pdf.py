@@ -173,65 +173,74 @@ def regime_table(reg):
 
 # ── Narrative per fold ────────────────────────────────────────────────────────
 FOLD_NARRATIVES = {
-    1: ("News lifts onset recall sharply; AR-Only history is thin",
-        "Feb 2022 is early in the test window — IPC history is still sparse for newly "
-        "deteriorating districts. AR-Only has little lagged signal to work from for the "
-        "11 onset cases, achieving only 9% recall. AR+News lifts this to 55% by picking "
-        "up conflict and displacement coverage that preceded the assessments. The 42 "
-        "chronic cases drag the combined model slightly (news lowers their probability "
-        "by -0.120 on average) but the net PR-AUC gain of +0.012 is positive. "
-        "ROC-AUC is near-identical (0.951 vs 0.950) — the separation happens at the "
-        "positive-class precision end, not across the full ranking."),
-    2: ("AR-Only dominates; news adds noise on a stable, predictable period",
-        "Jun 2022 is one of the best periods for AR-Only (PR-AUC 0.886, ROC-AUC 0.972). "
-        "With only 2 onset cases, there is almost no new-crisis signal for news to detect. "
-        "The 64 chronic cases are well-captured by lagged IPC history alone, and news "
-        "features lower their predicted probabilities by -0.063 on average, costing "
-        "precision. Delta PR-AUC = -0.013. When history is a reliable guide and no "
-        "new crises are emerging, adding news introduces more noise than signal."),
-    3: ("News cannot detect onset; AR-Only also struggles — a hard period",
-        "Oct 2022: 5 onset cases with 0% recall for both models — neither AR history "
-        "nor GDELT coverage signals the new deteriorations at this threshold. Chronic "
-        "dominates (66 cases) and news pulls their probabilities down sharply (-0.287), "
-        "hurting precision. Delta PR-AUC = -0.012. This period illustrates a ceiling: "
-        "when crisis onset is geographically diffuse and GDELT coverage does not "
-        "concentrate before the IPC assessment date, news cannot help."),
-    4: ("News rescues AR-Only on a period of rising prevalence and new onsets",
-        "Feb 2023 sees a jump to 26 onset cases and prevalence rising to 30%. AR-Only "
-        "PR-AUC drops to 0.844 — the lagged IPC signal is weakening as crises spread "
-        "to districts with no prior history. AR+News recovers to 0.885 (+0.040). News "
-        "features add +0.226 mean delta probability to onset cases and +0.030 to chronic "
-        "cases — a broad lift across crisis types. ROC-AUC also improves (0.921 to 0.944). "
-        "This is the pattern where news earns its keep: new-onset districts where "
-        "IPC history alone cannot anticipate the deterioration."),
-    5: ("Largest gain: AR-Only collapses, news rescues the model",
-        "Jun 2023 is the standout fold. AR-Only PR-AUC falls to 0.679 and ROC-AUC to "
-        "0.675 — a near-random classifier for this period. 43 onset and 72 chronic cases "
+    1: ("News dramatically lifts onset recall; AR history is thin for new deteriorations",
+        "Feb 2022 is the earliest test fold — IPC history is sparse for newly deteriorating "
+        "districts. The 11 onset cases are poorly covered by lagged IPC signal: AR-Only "
+        "achieves just 9% onset recall at threshold 0.5. AR+News lifts this to 73% (+0.524 "
+        "mean delta probability on onset cases) by picking up conflict and displacement "
+        "coverage that preceded the assessments. The 42 chronic cases also benefit slightly "
+        "(delta +0.107). Stable districts are lifted as well (+0.215), suggesting news "
+        "volume adds general upward pressure on predictions, but the net PR-AUC gain of "
+        "+0.009 is positive and ROC-AUC moves from 0.960 to 0.954 — a modest trade-off "
+        "where precision improvements on onset are partially offset by false positives "
+        "among stable districts."),
+    2: ("AR-Only peaks; news adds noise on a highly stable, predictable period",
+        "Jun 2022 is the best fold for AR-Only (PR-AUC 0.907, ROC-AUC 0.978). With only "
+        "2 onset cases, there is almost no new-crisis signal for news to detect — and "
+        "news actually hurts these 2 cases sharply (delta −0.566, dropping recall from "
+        "100% to 0%). The 64 chronic cases are near-perfectly captured by lagged IPC "
+        "history alone, and news lowers their probabilities by −0.053 on average. All "
+        "regimes see a negative news delta. Delta PR-AUC = −0.003. When history is a "
+        "near-perfect guide and no new crises are emerging, adding news introduces "
+        "more noise than signal."),
+    3: ("News hurts both onset and chronic; a period where coverage contradicts IPC trajectory",
+        "Oct 2022: 5 onset cases with 20% recall for AR-Only — already weak. News "
+        "reverses this to 0% (delta −0.250), actively moving onset cases away from "
+        "threshold. Chronic dominates (66 cases) and news pulls their probabilities "
+        "down by −0.095 on average, also costing recall (100% to 92%). All four "
+        "regimes show negative news deltas. Delta PR-AUC = −0.024, the largest "
+        "negative fold. This period illustrates the failure mode: when GDELT coverage "
+        "patterns do not align with impending IPC deteriorations — either because "
+        "crises are geographically diffuse, temporally displaced, or in areas with "
+        "limited English-language coverage — news features actively mislead the model."),
+    4: ("News rescues a period of rising prevalence by lifting chronic detection",
+        "Feb 2023 sees a jump to 102 crisis cases (30% prevalence) and AR-Only PR-AUC "
+        "drops to 0.862. AR+News recovers to 0.885 (+0.023). The gain is driven "
+        "primarily by the 76 chronic cases: news adds +0.065 mean delta probability, "
+        "lifting chronic recall from 84% to 92%. The 26 onset cases are not helped "
+        "(delta −0.020, recall stays near 0%) — news does not detect these new "
+        "deteriorations. ROC-AUC improves substantially (0.929 to 0.949), indicating "
+        "that the probability ranking across all districts improves even where "
+        "threshold-level recall does not change."),
+    5: ("Largest gain: AR-Only collapses, news rescues the model on onset cases",
+        "Jun 2023 is the standout fold. AR-Only PR-AUC falls to 0.714 and ROC-AUC to "
+        "0.758 — a near-random classifier for this period. 43 onset and 72 chronic cases "
         "at 33.7% prevalence overwhelm the lagged IPC signal. AR+News recovers to "
-        "PR-AUC 0.828 and ROC-AUC 0.929 — a +0.149 PR-AUC gain. News lifts onset "
-        "recall from 0% to 23% and adds +0.096 mean delta probability to onset cases "
-        "and +0.244 to chronic cases. This is the strongest evidence that GDELT "
-        "coverage carries genuine pre-crisis signal: it partially compensates for a "
-        "period where IPC history completely fails."),
-    6: ("AR-Only partially recovers but news cannot help chronic cases",
+        "PR-AUC 0.887 and ROC-AUC 0.952 — a +0.174 PR-AUC gain. News lifts onset "
+        "recall from 2% to 9% (delta +0.228) — a modest absolute recall lift but "
+        "a massive improvement in probability ranking for onset districts. Chronic "
+        "cases are nearly unaffected (delta −0.017, recall 100% to 97%). This is the "
+        "strongest evidence that GDELT coverage carries genuine pre-crisis signal: "
+        "it partially compensates for a period where IPC history completely fails."),
+    6: ("Effectively neutral; onset recall unchanged, chronic barely moves",
         "Oct 2023 has the highest prevalence in the test set (42.3%, 145 positives). "
-        "AR-Only PR-AUC is 0.759 — better than fold 5 but still weak. AR+News is "
-        "0.746 (-0.013), a small degradation. The 53 onset cases benefit from news "
-        "strongly (+0.284 delta, 23% to 53% recall lift). But the 92 chronic cases "
-        "are hurt severely: news lowers their probabilities by -0.373 on average. "
-        "At very high crisis prevalence, the model trained on balanced classes "
-        "struggles to assign high enough probabilities to chronic cases already "
-        "well-identified by AR history, while news features add false confidence "
-        "to stable districts. The onset gain is cancelled by the chronic drag."),
-    7: ("Modest improvement; onset detection without recall lift",
-        "Feb 2024: 36 onset cases, 0% recall for both models at threshold 0.5 — "
-        "neither model is confident enough to flag new crisis districts. Yet "
-        "PR-AUC improves from 0.648 to 0.697 (+0.049), indicating that news features "
-        "improve the probability ranking even without pushing cases above threshold. "
-        "Chronic cases show a small news drag (-0.042). The improvement is real but "
-        "modest — the ranking is better, but actionable recall at 0.5 is not achieved. "
-        "This suggests the model would benefit from a lower operating threshold "
-        "for early-warning purposes in this period."),
+        "Both models perform moderately: AR-Only PR-AUC 0.851, AR+News 0.849 "
+        "(delta −0.003). Despite 53 onset cases, news adds almost no delta to onset "
+        "(+0.019, recall flat at 23%). The 92 chronic cases are already at 100% "
+        "recall under AR-Only and news barely changes this (−0.029 delta, 99% recall). "
+        "At very high crisis prevalence, the AR lag features are already strong "
+        "and news cannot improve on them. The model is operating close to its "
+        "ceiling for chronic detection and news neither helps nor hurts meaningfully."),
+    7: ("Meaningful ranking improvement; PR-AUC gains +0.079 despite 0% onset recall at threshold",
+        "Feb 2024: 36 onset cases, 3% recall for both models at threshold 0.5 — "
+        "neither model is confident enough to flag most new crisis districts. Yet "
+        "PR-AUC improves from 0.710 to 0.788 (+0.079), indicating that news features "
+        "substantially improve the probability ranking even without pushing cases "
+        "above the classification threshold. Chronic cases show a small positive news "
+        "effect (+0.038 delta). The large negative delta on recovery cases (−0.383, "
+        "recall dropping from 100% to 38%) is a localised cost. The improvement in "
+        "PR-AUC ranking is real and meaningful — it would translate to actionable "
+        "early warning under a lower operating threshold."),
 }
 
 # ── Build PDF ─────────────────────────────────────────────────────────────────
@@ -287,7 +296,11 @@ advance(GAP_S)
 hline(cur(), color="#AAAAAA")
 advance(LINE_H * 0.3)
 
-body("News helps in 4 of 7 folds (delta > 0). The largest gain is Fold 5 (Jun 2023, +0.149) where")
+# Compute summary stats dynamically
+_n_helps  = sum(1 for fs in fold_stats if fs["delta_pr"] > 0)
+_best     = max(fold_stats, key=lambda fs: fs["delta_pr"])
+body(f"News helps in {_n_helps} of {len(fold_stats)} folds (delta > 0). The largest gain is "
+     f"Fold {_best['fid']} ({_best['date']}, {_best['delta_pr']:+.3f}) where")
 body("AR-Only collapses to near-random performance. The three negative folds share a common")
 body("pattern: low onset count, strong chronic dominance, and stable IPC history that AR alone handles well.")
 

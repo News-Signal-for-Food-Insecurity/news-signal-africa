@@ -59,6 +59,20 @@ oc_min = int(dm["onset_chronic_count"].min())
 oc_max = int(dm["onset_chronic_count"].max())
 prauc_ar_med = dm["prauc_ar"].median()
 
+# ── Section 5 cross-figure regressions ────────────────────────────────────────
+y_delta = dm["delta_prauc"].values
+x_vol   = dm["volatility"].values
+mask_vd = np.isfinite(x_vol) & np.isfinite(y_delta)
+_, _, r_vol_delta, p_vol_delta, _ = linregress(x_vol[mask_vd], y_delta[mask_vd])
+
+x_oc2   = dm["onset_chronic_count"].astype(float).values
+mask_od = np.isfinite(x_oc2) & np.isfinite(y_delta)
+_, _, r_oc_delta, p_oc_delta, _ = linregress(x_oc2[mask_od], y_delta[mask_od])
+
+x_art2  = np.log10(dm["mean_articles_month"].clip(lower=1).values)
+mask_ad = np.isfinite(x_art2) & np.isfinite(y_delta)
+_, _, r_art_delta, p_art_delta, _ = linregress(x_art2[mask_ad], y_delta[mask_ad])
+
 # ── Canvas helpers ────────────────────────────────────────────────────────────
 plt.rcParams.update({
     "font.family":  "serif",
@@ -272,13 +286,21 @@ body("and for related reasons: both are proxies for how much positive-class sign
 body("has access to within a district's history.  Districts with richer, more varied crisis")
 body("histories give the lag-based AR model more to work with.")
 body("")
-body("Volatility does predict ΔPR-AUC, but negatively (r = −0.566, p < 0.001): districts where")
-body("the AR model already performs well tend to gain less from news — there is less room for")
-body("improvement.  The flip side is that low-volatility districts, where the AR model struggles,")
-body("are exactly where news has the most potential to add value.")
+_p_vd_str = f"p = {p_vol_delta:.3f}" if p_vol_delta >= 0.001 else "p < 0.001"
+_p_od_str = f"p = {p_oc_delta:.3f}" if p_oc_delta >= 0.001 else "p < 0.001"
+_p_ad_str = f"p = {p_art_delta:.3f}" if p_art_delta >= 0.001 else "p < 0.001"
+_dir_vd   = "positively" if r_vol_delta >= 0 else "negatively"
+body(f"Volatility {'does' if p_vol_delta < 0.05 else 'does not'} predict ΔPR-AUC "
+     f"(r = {r_vol_delta:+.3f}, {_p_vd_str}){':' if p_vol_delta < 0.05 else '.'}"
+     f"{' districts where' if p_vol_delta < 0.05 else ''}")
+if p_vol_delta < 0.05:
+    body("the AR model already performs well tend to gain less from news — there is less room for")
+    body("improvement.  The flip side is that low-volatility districts, where the AR model struggles,")
+    body("are exactly where news has the most potential to add value.")
 body("")
-body("Crisis frequency (onset+chronic count) does not predict ΔPR-AUC (r = 0.072, p = 0.54),")
-body("nor does news volume (r = 0.081, p = 0.50).  News benefit is not driven by how crisis-prone")
+body(f"Crisis frequency (onset+chronic count) {'does' if p_oc_delta < 0.05 else 'does not'} "
+     f"predict ΔPR-AUC (r = {r_oc_delta:+.3f}, {_p_od_str}),")
+body(f"nor does news volume (r = {r_art_delta:+.3f}, {_p_ad_str}).  News benefit is not driven by how crisis-prone")
 body("a district is or how much coverage it receives — it depends on whether GDELT coverage")
 body("carries a pre-crisis signal that arrives before the IPC assessment does.")
 
