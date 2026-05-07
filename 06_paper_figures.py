@@ -530,7 +530,11 @@ def figure_2() -> None:
     # imshow expects (rows=themes, cols=periods)
     binned_a = _quintile_bin(pivot_a.values).T   # shape (n_themes, n_periods)
 
-    fig, ax = plt.subplots(figsize=(14, 14))
+    n_themes_a = len(theme_labels)
+    # Cell height in inches so all themes fill the figure comfortably
+    cell_h = 0.9
+    fig_h  = max(14, n_themes_a * cell_h + 3)
+    fig, ax = plt.subplots(figsize=(14, fig_h))
     ax.grid(False)
     im = ax.imshow(binned_a, aspect="auto", cmap=cmap5, vmin=0, vmax=4,
                    interpolation="nearest", rasterized=True)
@@ -575,7 +579,17 @@ def figure_2() -> None:
         f"≥{_fmt_val(bnd_a[3])}",
     ], fontsize=8)
     cb.set_label("Relative coverage", fontsize=8, labelpad=6)
-    fig.tight_layout(pad=0.8)
+    # Centre the heatmap vertically: compute fraction of figure height used by
+    # the actual cell grid and distribute the remaining space equally top/bottom.
+    n_rows = len(theme_labels)
+    n_cols = n_periods
+    # Estimated data area as fraction of figure height (tight_layout leaves ~0.10 for labels)
+    label_margin = 1.6 / fig_h   # inches reserved for x-axis labels + title
+    cell_fraction = (n_rows * cell_h) / fig_h
+    slack = 1.0 - cell_fraction - label_margin
+    top_margin = 1.0 - max(0.02, slack / 2)
+    bot_margin = max(0.02, label_margin + slack / 2)
+    fig.subplots_adjust(left=0.18, right=0.88, top=top_margin, bottom=bot_margin)
     save_pdf(fig, "fig2a_topic_heatmap")
 
     # ── Fig 2b — country × theme, grouped by region ───────────────────────
