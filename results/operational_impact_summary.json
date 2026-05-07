@@ -1,16 +1,16 @@
 {
   "window_2yr": {
-    "total_net_saves": 32,
+    "total_net_saves": 0,
     "total_crises": 636,
-    "pct_net_saves": 5.031446540880504,
-    "total_full_only": 32,
-    "total_ar_only": 0,
-    "total_both_detect": 473,
-    "total_neither": 131
+    "pct_net_saves": 0.0,
+    "total_full_only": 23,
+    "total_ar_only": 23,
+    "total_both_detect": 442,
+    "total_neither": 148
   },
   "window_sensitivity": {
-    "total_net_saves": 54,
+    "total_net_saves": 2,
     "total_crises": 517,
-    "pct_net_saves": 10.444874274661508
+    "pct_net_saves": 0.3868471953578337
   }
 }

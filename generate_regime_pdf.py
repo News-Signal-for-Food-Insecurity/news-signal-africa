@@ -59,6 +59,10 @@ n_fp_stable_full = int((stable["prob_combined"] >= THRESHOLD).sum())
 fp_ar_recovery   = (recovery["prob_ar"]       >= THRESHOLD).mean()
 fp_full_recovery = (recovery["prob_combined"] >= THRESHOLD).mean()
 
+chronic_delta = crisis_chronic["prob_combined"] - crisis_chronic["prob_ar"]
+chronic_pct_negative = (chronic_delta < 0).mean()
+chronic_median_shift = chronic_delta.median()
+
 total_non_crisis = n_stable + n_recovery
 total_fp_ar   = int((stable["prob_ar"] >= THRESHOLD).sum()) + int((recovery["prob_ar"] >= THRESHOLD).sum())
 total_fp_full = int((stable["prob_combined"] >= THRESHOLD).sum()) + int((recovery["prob_combined"] >= THRESHOLD).sum())
@@ -253,7 +257,7 @@ body("")
 body("These are districts already in crisis last period.  The model knows this through ipc_lag_1,")
 body("which alone pushes the predicted probability well above 0.5 — no news is needed.  Both models")
 body("detect every chronic crisis in every fold.  Adding news information actually lowers the predicted")
-body(f"probability for 68.7% of chronic cases (median shift −0.082), because news coverage of a chronic")
+body(f"probability for {100*chronic_pct_negative:.1f}% of chronic cases (median shift {chronic_median_shift:+.3f}), because news coverage of a chronic")
 body("crisis looks different from news coverage of an emerging one.  The AR margin is wide enough that")
 body("this makes no difference to detection — but it illustrates the models are using different signals.")
 
@@ -293,7 +297,10 @@ for fid, n_on, r_ar, r_full, net in fold_onset_rows:
     advance(LINE_H * 0.95)
 
 advance(GAP_P)
-body(f"All {net_saves} net saves come from onset.  News works in 4 of 7 folds; in the other 3,")
+_n_onset_folds_pos = sum(1 for _, _, _, _, net in fold_onset_rows if net > 0)
+_n_onset_folds_neg = len(fold_onset_rows) - _n_onset_folds_pos
+body(f"Net onset saves: {net_saves} total.  News improves onset detection in "
+     f"{_n_onset_folds_pos} of {len(fold_onset_rows)} folds; in the other {_n_onset_folds_neg},")
 body("neither model detects a single onset crisis — the news signal was not strong enough.")
 
 # ── Page 2 ───────────────────────────────────────────────────────────────────
@@ -347,8 +354,8 @@ body(f"against the {net_saves} additional onset crises it correctly detects.")
 
 # ── 8. Net Balance ────────────────────────────────────────────────────────────
 section_head("8. Net Balance")
-body(f"AR+News uniquely detects {n_full_only} crisis cases that AR-Only misses — all of them onset.")
-body(f"AR+News loses 0 detections that AR-Only makes — no regressions in chronic or any other regime.")
+body(f"AR+News uniquely detects {n_full_only} crisis cases that AR-Only misses.")
+body(f"AR+News loses {n_ar_only} detection(s) that AR-Only makes — net regression {'none' if n_ar_only == 0 else 'mainly in chronic'}.")
 body(f"Net saves: +{net_saves}  ({pct_saves:.1f}% of {total_crisis:,} crisis observations).  "
      f"Both detect: {n_both}.  Neither detects: {n_neither} ({100*n_neither/total_crisis:.1f}%).")
 body("")

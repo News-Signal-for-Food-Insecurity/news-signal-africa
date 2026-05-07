@@ -289,20 +289,43 @@ body("")
 _p_vd_str = f"p = {p_vol_delta:.3f}" if p_vol_delta >= 0.001 else "p < 0.001"
 _p_od_str = f"p = {p_oc_delta:.3f}" if p_oc_delta >= 0.001 else "p < 0.001"
 _p_ad_str = f"p = {p_art_delta:.3f}" if p_art_delta >= 0.001 else "p < 0.001"
-_dir_vd   = "positively" if r_vol_delta >= 0 else "negatively"
-body(f"Volatility {'does' if p_vol_delta < 0.05 else 'does not'} predict ΔPR-AUC "
-     f"(r = {r_vol_delta:+.3f}, {_p_vd_str}){':' if p_vol_delta < 0.05 else '.'}"
-     f"{' districts where' if p_vol_delta < 0.05 else ''}")
+
+# Volatility vs delta_prauc
 if p_vol_delta < 0.05:
-    body("the AR model already performs well tend to gain less from news — there is less room for")
-    body("improvement.  The flip side is that low-volatility districts, where the AR model struggles,")
-    body("are exactly where news has the most potential to add value.")
+    _dir = "positively" if r_vol_delta > 0 else "negatively"
+    body(f"Volatility predicts delta_PR-AUC {_dir} (r = {r_vol_delta:+.3f}, {_p_vd_str}): districts where")
+    if r_vol_delta < 0:
+        body("the AR model already performs well tend to gain less from news — there is less room for")
+        body("improvement.  Low-volatility districts, where the AR model struggles, are where news has")
+        body("the most potential to add value.")
+    else:
+        body("districts with more regime transitions see larger gains from news features.")
+else:
+    body(f"Volatility does not predict delta_PR-AUC (r = {r_vol_delta:+.3f}, {_p_vd_str}): whether a district")
+    body("frequently switches between crisis and non-crisis states has no bearing on how much news")
+    body("features improve the combined model relative to AR-Only.")
 body("")
-body(f"Crisis frequency (onset+chronic count) {'does' if p_oc_delta < 0.05 else 'does not'} "
-     f"predict ΔPR-AUC (r = {r_oc_delta:+.3f}, {_p_od_str}),")
-body(f"nor does news volume (r = {r_art_delta:+.3f}, {_p_ad_str}).  News benefit is not driven by how crisis-prone")
-body("a district is or how much coverage it receives — it depends on whether GDELT coverage")
-body("carries a pre-crisis signal that arrives before the IPC assessment does.")
+
+# Crisis frequency vs delta_prauc
+if p_oc_delta < 0.05:
+    _dir2 = "positively" if r_oc_delta > 0 else "negatively"
+    body(f"Crisis frequency (onset+chronic count) does predict delta_PR-AUC {_dir2}")
+    body(f"(r = {r_oc_delta:+.3f}, {_p_od_str}): districts with more crisis observations")
+    if r_oc_delta > 0:
+        body("across folds tend to gain more from news features, possibly because established")
+        body("crisis contexts have richer GDELT thematic coverage that the model can leverage.")
+    else:
+        body("across folds tend to gain less from news — the AR signal is already strong.")
+else:
+    body(f"Crisis frequency (onset+chronic count) does not predict delta_PR-AUC")
+    body(f"(r = {r_oc_delta:+.3f}, {_p_od_str}).  How often a district has been in crisis")
+    body("does not determine how much it benefits from news features.")
+body("")
+
+# News volume vs delta_prauc
+body(f"News volume does not predict delta_PR-AUC (r = {r_art_delta:+.3f}, {_p_ad_str}).")
+body("Coverage quantity is not the bottleneck — signal quality and timing relative to IPC")
+body("assessments determine whether GDELT features carry genuine pre-crisis information.")
 
 # ── Close ─────────────────────────────────────────────────────────────────────
 _add_footer(fig)
