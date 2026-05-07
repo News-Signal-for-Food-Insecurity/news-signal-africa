@@ -536,7 +536,7 @@ def figure_2() -> None:
     fig_h  = max(14, n_themes_a * cell_h + 3)
     fig, ax = plt.subplots(figsize=(14, fig_h))
     ax.grid(False)
-    im = ax.imshow(binned_a, aspect="auto", cmap=cmap5, vmin=0, vmax=4,
+    im = ax.imshow(binned_a, aspect="auto", cmap=cmap5, vmin=-0.5, vmax=4.5,
                    interpolation="nearest", rasterized=True)
 
     # White separator between every period
@@ -567,18 +567,19 @@ def figure_2() -> None:
     ax.set_ylabel("News theme", labelpad=6)
     ax.spines[:].set_visible(False)
 
-    # Vertical colorbar — labels show actual boundary values
+    # Colorbar: ticks at band centres (0..4), boundaries at 0.5 steps so labels
+    # align exactly with the colour transitions in the ListedColormap.
     cb = fig.colorbar(im, ax=ax, orientation="vertical",
                       pad=0.02, shrink=0.90, aspect=20, ticks=[0, 1, 2, 3, 4])
     bnd_a = _quintile_boundaries(pivot_a.values)
     cb.ax.set_yticklabels([
-        f"<{_fmt_val(bnd_a[0])}",
-        f"<{_fmt_val(bnd_a[1])}",
-        f"<{_fmt_val(bnd_a[2])}",
-        f"<{_fmt_val(bnd_a[3])}",
-        f"≥{_fmt_val(bnd_a[3])}",
+        f"Q1  <{_fmt_val(bnd_a[0])}",
+        f"Q2  <{_fmt_val(bnd_a[1])}",
+        f"Q3  <{_fmt_val(bnd_a[2])}",
+        f"Q4  <{_fmt_val(bnd_a[3])}",
+        f"Q5  ≥{_fmt_val(bnd_a[3])}",
     ], fontsize=8)
-    cb.set_label("Relative coverage", fontsize=8, labelpad=6)
+    cb.set_label("Relative coverage (quintile)", fontsize=8, labelpad=6)
     # Centre the heatmap vertically: compute fraction of figure height used by
     # the actual cell grid and distribute the remaining space equally top/bottom.
     n_rows = len(theme_labels)
@@ -632,7 +633,7 @@ def figure_2() -> None:
     ax.grid(False)
 
     # imshow rasterized at high DPI → pixels in PDF, no vector seam artifacts
-    im = ax.imshow(binned_b, aspect="auto", cmap=cmap5, vmin=0, vmax=4,
+    im = ax.imshow(binned_b, aspect="auto", cmap=cmap5, vmin=-0.5, vmax=4.5,
                    interpolation="nearest", rasterized=True)
 
     # Only draw dark lines at region boundaries — no white lines between countries.
@@ -666,13 +667,13 @@ def figure_2() -> None:
     cb = fig.colorbar(im, cax=cbar_ax, orientation="vertical", ticks=[0, 1, 2, 3, 4])
     bnd_b = _quintile_boundaries(raw_b)
     cb.ax.set_yticklabels([
-        f"<{_fmt_val(bnd_b[0])}",
-        f"<{_fmt_val(bnd_b[1])}",
-        f"<{_fmt_val(bnd_b[2])}",
-        f"<{_fmt_val(bnd_b[3])}",
-        f"≥{_fmt_val(bnd_b[3])}",
+        f"Q1  <{_fmt_val(bnd_b[0])}",
+        f"Q2  <{_fmt_val(bnd_b[1])}",
+        f"Q3  <{_fmt_val(bnd_b[2])}",
+        f"Q4  <{_fmt_val(bnd_b[3])}",
+        f"Q5  ≥{_fmt_val(bnd_b[3])}",
     ], fontsize=8)
-    cb.set_label("Relative coverage", fontsize=8, labelpad=6)
+    cb.set_label("Relative coverage (quintile)", fontsize=8, labelpad=6)
     # Render to PNG buffer at 600 DPI (eliminates imshow vector seam artifacts),
     # then embed that raster image inside a PDF using Pillow + PdfPages.
     import io
