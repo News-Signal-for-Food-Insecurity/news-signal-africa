@@ -130,29 +130,17 @@ def _articles_for_country(country):
 
 # ── Build per-fold summary rows ────────────────────────────────────────────────
 fold_rows = []
-for fid in fids:
-    sf    = preds[preds.fold_id == fid]
-    y     = sf["target_crisis_binary"].values.astype(int)
-    n_tot = len(sf)
-    n_pos = int(y.sum())
-    n_neg = n_tot - n_pos
-
-    pr_ar = pr_full = float("nan")
-    if n_pos >= 2 and n_neg >= 2:
-        try:
-            pr_ar   = average_precision_score(y, sf["prob_ar"].values)
-            pr_full = average_precision_score(y, sf["prob_combined"].values)
-        except Exception:
-            pass
-
-    rc = sf["regime"].value_counts().to_dict()
+for _, fr in fold_df.iterrows():
+    fid = int(fr.fold_id)
+    sf  = preds[preds.fold_id == fid]
+    rc  = sf["regime"].value_counts().to_dict()
     fold_rows.append({
         "fold_id":  fid,
         "fold_lbl": fold_dates[fid],
-        "n_tot":    n_tot,
+        "n_tot":    int(fr.n_test),
         "articles": _articles_for_fold(fid),
-        "pr_ar":    pr_ar,
-        "pr_full":  pr_full,
+        "pr_ar":    float(fr.ar_pr_auc),    # directly from fold_results.csv
+        "pr_full":  float(fr.full_pr_auc),  # directly from fold_results.csv
         **{r: rc.get(r, 0) for r in REGIME_ORDER},
     })
 
@@ -356,10 +344,6 @@ _panel_regime(axes[1], fdf, n_folds)
 _panel_volatility(axes[2], fdf, n_folds)
 _panel_prauc(axes[3], fdf, n_folds)
 
-fig.suptitle(
-    "Figure 7a — News volume, regime composition, volatility and PR-AUC across 7 test periods",
-    fontsize=10.5, fontweight="bold", y=1.03,
-)
 fig.savefig(FIGURES_DIR / "fig7a_time.pdf", format="pdf", bbox_inches="tight", dpi=300)
 plt.close(fig)
 print("  Saved fig7a_time.pdf")
@@ -395,10 +379,6 @@ _panel_regime(axes[1], cdf, n_countries, region_breaks=region_breaks_b)
 _panel_volatility(axes[2], cdf, n_countries, region_breaks=region_breaks_b)
 _panel_prauc(axes[3], cdf, n_countries, region_breaks=region_breaks_b, delta_fontsize=7)
 
-fig.suptitle(
-    "Figure 7b — News volume, regime composition, volatility and PR-AUC by country",
-    fontsize=10.5, fontweight="bold", y=1.003,
-)
 fig.savefig(FIGURES_DIR / "fig7b_space.pdf", format="pdf", bbox_inches="tight", dpi=300)
 plt.close(fig)
 print("  Saved fig7b_space.pdf")
