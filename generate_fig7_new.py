@@ -58,22 +58,30 @@ plt.rcParams.update({
 })
 
 COUNTRY_REGION = {
-    "Burkina Faso":   "West Africa",    "Burundi":    "East Africa",
-    "Cameroon":       "Central Africa", "Chad":       "Central Africa",
-    "Ethiopia":       "East Africa",    "Kenya":      "East Africa",
-    "Madagascar":     "East Africa",    "Malawi":     "East Africa",
-    "Mali":           "West Africa",    "Mozambique": "East Africa",
-    "Niger":          "West Africa",    "Nigeria":    "West Africa",
-    "Somalia":        "East Africa",    "South Sudan":"East Africa",
-    "Sudan":          "North Africa",
-    "The Democratic Republic of the": "Central Africa",
-    "Uganda":         "East Africa",    "Zimbabwe":   "East Africa",
+    "Burkina Faso":                  "West Africa",
+    "Burundi":                       "East Africa",
+    "Cameroon":                      "Central Africa",
+    "Chad":                          "Central Africa",
+    "Democratic Republic of the Congo": "Central Africa",
+    "Ethiopia":                      "East Africa",
+    "Kenya":                         "East Africa",
+    "Madagascar":                    "Southern Africa",
+    "Malawi":                        "Southern Africa",
+    "Mali":                          "West Africa",
+    "Mozambique":                    "Southern Africa",
+    "Niger":                         "West Africa",
+    "Nigeria":                       "West Africa",
+    "Somalia":                       "East Africa",
+    "South Sudan":                   "East Africa",
+    "Sudan":                         "North Africa",
+    "Uganda":                        "East Africa",
+    "Zimbabwe":                      "Southern Africa",
 }
 REGION_ORDER = ["East Africa", "West Africa", "Central Africa", "North Africa", "Southern Africa"]
 region_rank  = {r: i for i, r in enumerate(REGION_ORDER)}
 
 SHORT = {
-    "The Democratic Republic of the": "DRC",
+    "Democratic Republic of the Congo": "DRC",
     "South Sudan":  "S. Sudan",
     "Burkina Faso": "Burkina F.",
 }

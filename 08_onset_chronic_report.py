@@ -54,12 +54,8 @@ PRED_PATH    = RESULTS_DIR / "fold_results.csv"
 PREDS_PATH   = RESULTS_DIR / "fold_predictions.csv"
 FI_PATH      = RESULTS_DIR / "feature_importance.csv"
 SUMMARY_PATH = RESULTS_DIR / "metrics_summary.json"
-SENS_PATH    = BASE_DIR / "results" / "window_sensitivity" / "metrics_summary.json"
-SHUF_PATH    = BASE_DIR / "results" / "shuffle_test" / "config.json"
-# delta permutation test removed — main shuffle test (04_temporal_shuffle_test.py)
-# now reports p_value_delta in shuffle_test/config.json. delta_cfg is built from shuf.
-IMPACT_PATH  = BASE_DIR / "results" / "operational_impact_summary.json"
-NULL_CSV     = BASE_DIR / "results" / "shuffle_test" / "null_distribution.csv"
+SHUF_PATH    = BASE_DIR / "results" / "shuffle_test_v3" / "config.json"
+NULL_CSV     = BASE_DIR / "results" / "shuffle_test_v3" / "null_distribution.csv"
 
 # ---------------------------------------------------------------------------
 # Style constants  (match 06_paper_figures.py exactly)
@@ -68,7 +64,7 @@ REGIME_COLOURS = {
     "onset":    "#D62728",
     "chronic":  "#FF7F0E",
     "recovery": "#2CA02C",
-    "stable":   "#1F77B4",
+    "stable":   "#7F7F7F",
 }
 MODEL_COLOURS = {
     "AR-Only": "#1f77b4",
@@ -109,20 +105,21 @@ def load_data():
     preds["ipc_period_start"] = pd.to_datetime(preds["ipc_period_start"])
     fold_results = pd.read_csv(PRED_PATH)
     fi = pd.read_csv(FI_PATH)
-    with open(SUMMARY_PATH)  as f: summary   = json.load(f)
-    with open(SENS_PATH)     as f: sens      = json.load(f)
-    with open(SHUF_PATH)     as f: shuf      = json.load(f)
-    # Adapter: the corrected main shuffle test reports both PR-AUC and delta
-    # statistics. Map them to the keys this script previously consumed from
-    # the (now-removed) delta_permutation_test/config.json.
+    with open(SUMMARY_PATH) as f: summary = json.load(f)
+    sens   = {}   # sensitivity analysis not run — omit gracefully
+    impact = {}   # operational impact summary not run — omit gracefully
+    with open(SHUF_PATH) as f: shuf = json.load(f)
+    # Map v3 config keys to the keys this script consumes
+    fold_df   = fold_results
+    real_ar   = float(fold_df["ar_pr_auc"].mean())
+    real_full = float(fold_df["full_pr_auc"].mean())
     delta_cfg = {
-        "p_value":         shuf.get("p_value_delta"),
-        "null_mean_delta": shuf.get("null_mean_delta"),
-        "null_std_delta":  shuf.get("null_std_delta"),
-        "n_permutations":  shuf.get("n_permutations"),
-        "observed_delta":  shuf.get("real_mean_delta"),
+        "p_value":         shuf.get("p_value_prauc"),
+        "null_mean_delta": None,
+        "null_std_delta":  None,
+        "n_permutations":  shuf.get("n_models"),
+        "observed_delta":  real_full - real_ar,
     }
-    with open(IMPACT_PATH)   as f: impact    = json.load(f)
     null_df = pd.read_csv(NULL_CSV) if NULL_CSV.exists() else None
     return preds, fold_results, fi, summary, sens, shuf, delta_cfg, impact, null_df
 
@@ -466,9 +463,9 @@ def build_report(preds, fold_results, fi, summary, sens, shuf, delta_cfg, impact
     real_ar_roc  = summary["ar_roc_auc"]["mean"]
     real_full_roc= summary["full_roc_auc"]["mean"]
 
-    sens_ar_pr   = sens["ar_pr_auc"]["mean"]
-    sens_full_pr = sens["full_pr_auc"]["mean"]
-    sens_delta   = sens["delta_pr_auc"]["mean"]
+    sens_ar_pr   = sens.get("ar_pr_auc", {}).get("mean", np.nan)
+    sens_full_pr = sens.get("full_pr_auc", {}).get("mean", np.nan)
+    sens_delta   = sens.get("delta_pr_auc", {}).get("mean", np.nan)
 
     null_mean_delta  = shuf.get("null_mean_delta", np.nan)
     null_std_delta   = shuf.get("null_std_delta",  np.nan)
@@ -477,13 +474,14 @@ def build_report(preds, fold_results, fi, summary, sens, shuf, delta_cfg, impact
     delta_null_mean  = delta_cfg.get("null_mean_delta", np.nan)
     delta_null_std   = delta_cfg.get("null_std_delta",  np.nan)
 
-    net_saves_2yr  = impact["window_2yr"]["total_net_saves"]
-    pct_saves_2yr  = impact["window_2yr"]["pct_net_saves"]
-    total_crises   = impact["window_2yr"]["total_crises"]
-    both_detect    = impact["window_2yr"]["total_both_detect"]
-    full_only_tot  = impact["window_2yr"]["total_full_only"]
-    ar_only_tot    = impact["window_2yr"]["total_ar_only"]
-    neither_tot    = impact["window_2yr"]["total_neither"]
+    _imp = impact.get("window_2yr", {})
+    net_saves_2yr  = _imp.get("total_net_saves", np.nan)
+    pct_saves_2yr  = _imp.get("pct_net_saves", np.nan)
+    total_crises   = _imp.get("total_crises", np.nan)
+    both_detect    = _imp.get("total_both_detect", np.nan)
+    full_only_tot  = _imp.get("total_full_only", np.nan)
+    ar_only_tot    = _imp.get("total_ar_only", np.nan)
+    neither_tot    = _imp.get("total_neither", np.nan)
 
     onset_crisis  = onset[onset["target_crisis_binary"] == 1]
     chronic_crisis= chronic[chronic["target_crisis_binary"] == 1]
@@ -592,15 +590,19 @@ def build_report(preds, fold_results, fi, summary, sens, shuf, delta_cfg, impact
             y = row(ax, m[0], m[1], y)
 
         y -= 0.01
-        n_perms = shuf.get("n_permutations", delta_cfg.get("n_permutations", "?"))
+        n_perms = shuf.get("n_models", shuf.get("n_permutations", delta_cfg.get("n_permutations", "?")))
         y = section(ax, f"3.  Permutation / Shuffle Tests  (n = {n_perms} permutations each)", y)
+
+        def _fmt(v, fmt="+.4f"):
+            return f"{v:{fmt}}" if v is not None and not (isinstance(v, float) and np.isnan(v)) else "n/a"
+
         test_rows = [
-            ("Temporal shuffle test — null delta mean", f"{null_mean_delta:+.4f}  ±  {null_std_delta:.4f}"),
-            ("Temporal shuffle test — real delta",      f"{real_delta:+.4f}"),
-            ("Temporal shuffle test — p-value",         f"{shuf_pval:.4f}", True),
-            ("Delta permutation test — null delta mean", f"{delta_null_mean:+.4f}  ±  {delta_null_std:.4f}"),
-            ("Delta permutation test — observed delta",  f"{real_delta:+.4f}"),
-            ("Delta permutation test — p-value",         f"{delta_pval:.4f}", True),
+            ("Null shuffle — null PR-AUC mean",  _fmt(shuf.get("null_mean_pr_auc"), ".4f")),
+            ("Null shuffle — real PR-AUC",        _fmt(real_full_pr, ".4f")),
+            ("Null shuffle — p-value (PR-AUC)",   _fmt(shuf.get("p_value_prauc"), ".4f"), True),
+            ("Null shuffle — null delta mean",    _fmt(null_mean_delta)),
+            ("Null shuffle — real delta",         _fmt(real_delta)),
+            ("Null shuffle — p-value (delta)",    _fmt(shuf_pval, ".4f"), True),
         ]
         for m in test_rows:
             bold = m[2] if len(m) > 2 else False
@@ -608,17 +610,20 @@ def build_report(preds, fold_results, fi, summary, sens, shuf, delta_cfg, impact
 
         y -= 0.01
         y = section(ax, f"4.  Operational Impact  (2-year window, threshold = {THRESHOLD})", y)
-        op_rows = [
-            ("Total crisis observations",      f"{total_crises}"),
-            ("Both models detect",              f"{both_detect}  ({100*both_detect/total_crises:.1f}%)"),
-            ("AR+News only detects (net saves)",f"{full_only_tot}  ({100*full_only_tot/total_crises:.1f}%)"),
-            ("AR-Only only detects (net losses)",f"{ar_only_tot}  ({100*ar_only_tot/total_crises:.1f}%)"),
-            ("Neither detects",                f"{neither_tot}  ({100*neither_tot/total_crises:.1f}%)"),
-            ("Net saves (full_only − ar_only)", f"{net_saves_2yr}  ({pct_saves_2yr:.1f}% of crises)", True),
-        ]
-        for m in op_rows:
-            bold = m[2] if len(m) > 2 else False
-            y = row(ax, m[0], m[1], y, bold_val=bold)
+        if not np.isnan(total_crises if isinstance(total_crises, float) else float("nan") if total_crises is None else 0):
+            op_rows = [
+                ("Total crisis observations",       f"{total_crises}"),
+                ("Both models detect",               f"{both_detect}  ({100*both_detect/total_crises:.1f}%)"),
+                ("AR+News only detects (net saves)", f"{full_only_tot}  ({100*full_only_tot/total_crises:.1f}%)"),
+                ("AR-Only only detects (net losses)",f"{ar_only_tot}  ({100*ar_only_tot/total_crises:.1f}%)"),
+                ("Neither detects",                  f"{neither_tot}  ({100*neither_tot/total_crises:.1f}%)"),
+                ("Net saves (full_only − ar_only)",  f"{net_saves_2yr}  ({pct_saves_2yr:.1f}% of crises)", True),
+            ]
+            for m in op_rows:
+                bold = m[2] if len(m) > 2 else False
+                y = row(ax, m[0], m[1], y, bold_val=bold)
+        else:
+            y = row(ax, "Operational impact", "not computed (sensitivity analysis not run)", y)
 
         pdf.savefig(fig, bbox_inches="tight")
         plt.close(fig)

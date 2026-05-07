@@ -20,7 +20,7 @@ from pathlib import Path
 
 BASE_DIR    = Path(__file__).parent
 RESULTS_DIR = BASE_DIR / "results" / "window_2yr"
-SHUFFLE_DIR = BASE_DIR / "results" / "shuffle_test"
+SHUFFLE_DIR = BASE_DIR / "results" / "shuffle_test_v3"
 FIGURES_DIR = BASE_DIR / "figures"
 
 # ── Training script constants (read from source of truth) ───────────────────
@@ -28,7 +28,6 @@ FIGURES_DIR = BASE_DIR / "figures"
 TRAIN_WINDOW_MONTHS  = 20
 TEST_HORIZON_PERIODS = 2
 IPC_PERIOD_MONTHS    = 4
-VALIDATION_FRACTION  = 0.40
 
 AR_FEATURES = ["ipc_lag_1", "ipc_persistence_2yr", "spatial_lag", "ipc_period", "ipc_country"]
 NEWS_THEMES = ["conflict", "displacement", "economic", "food_security",
@@ -36,21 +35,16 @@ NEWS_THEMES = ["conflict", "displacement", "economic", "food_security",
 NEWS_FEATURES = (
     [f"{t}_relative_coverage" for t in NEWS_THEMES]
     + [f"{t}_zscore" for t in NEWS_THEMES]
-    + ["article_count_zscore"]
-)
+)                           # 18 features — identical to 01_train_models.py and null test
 COMBINED_FEATURES = AR_FEATURES + NEWS_FEATURES
 
 N_AR_FEATS       = len(AR_FEATURES)        # 5
-N_NEWS_FEATS     = len(NEWS_FEATURES)      # 19
-N_COMBINED_FEATS = len(COMBINED_FEATURES)  # 24
+N_NEWS_FEATS     = len(NEWS_FEATURES)      # 18
+N_COMBINED_FEATS = len(COMBINED_FEATURES)  # 23
 
-# CatBoost params from Config:
-CB_AR = dict(iterations=300, depth=6, learning_rate=0.05,
-             loss_function="Logloss", eval_metric="AUC",
-             early_stopping_rounds=30)
-CB_FULL = dict(iterations=500, depth=6, learning_rate=0.03,
-               loss_function="Logloss", eval_metric="PRAUC",
-               auto_class_weights="Balanced", early_stopping_rounds=50)
+# Unified CatBoost params — identical for AR, AR+News, and null model
+CB_PARAMS = dict(iterations=1000, depth=6, learning_rate=0.03,
+                 loss_function="Logloss", eval_metric="AUC")
 
 # ── Load result files ────────────────────────────────────────────────────────
 cfg     = json.load(open(SHUFFLE_DIR / "config.json"))
@@ -68,7 +62,7 @@ date_max       = ds["ipc_period_start"].max().strftime("%b %Y")
 prevalence     = round(ds["target_crisis_binary"].mean() * 100, 1)
 n_pos_total    = int(ds["target_crisis_binary"].sum())
 n_folds        = int(cfg["n_folds"])
-n_perms        = int(cfg["n_permutations"])
+n_perms        = int(cfg["n_models"])
 total_test     = int(fold_df["n_test"].sum())
 total_pos_test = int(fold_df["full_n_pos"].sum())
 total_neg_test = total_test - total_pos_test
@@ -77,12 +71,12 @@ ar_pr      = f"{ms['ar_pr_auc']['mean']:.4f}"
 full_pr    = f"{ms['full_pr_auc']['mean']:.4f}"
 ar_roc     = f"{ms['ar_roc_auc']['mean']:.4f}"
 full_roc   = f"{ms['full_roc_auc']['mean']:.4f}"
-delta_pr   = f"{cfg['real_mean_delta']:.4f}"
-delta_roc  = f"{cfg['real_mean_roc_delta']:.4f}"
-null_pr_m  = f"{cfg['null_mean_full_pr_auc']:.4f}"
-null_pr_s  = f"{cfg['null_std_full_pr_auc']:.4f}"
-null_roc_m = f"{cfg['null_mean_full_roc_auc']:.4f}"
-null_roc_s = f"{cfg['null_std_full_roc_auc']:.4f}"
+delta_pr   = f"{fold_df['delta_pr_auc'].mean():.4f}"
+delta_roc  = f"{(fold_df['full_roc_auc'] - fold_df['ar_roc_auc']).mean():.4f}"
+null_pr_m  = f"{cfg['null_mean_pr_auc']:.4f}"
+null_pr_s  = f"{cfg['null_std_pr_auc']:.4f}"
+null_roc_m = f"{cfg['null_mean_roc_auc']:.4f}"
+null_roc_s = f"{cfg['null_std_roc_auc']:.4f}"
 p_pr       = cfg["p_value_prauc"]
 p_roc      = cfg["p_value_rocauc"]
 
@@ -188,7 +182,7 @@ body(f"{date_min} to {date_max}.  Crisis prevalence: {prevalence}% ({n_pos_total
 body("")
 body(f"GDELT news features ({N_NEWS_FEATS} per fold): 9 topic relative-coverage proportions")
 body("(conflict, displacement, economic, food security, governance, health, humanitarian,")
-body("weather, other), 9 corresponding district-normalised z-scores, and an article-volume z-score.")
+body("weather, other) and 9 corresponding district-normalised z-scores.")
 
 # ── 3. Model Architecture ──────────────────────────────────────────────────────
 section_head("3. Model Architecture")
@@ -196,12 +190,10 @@ body(f"Two CatBoost classifiers ({N_AR_FEATS}-feature AR-Only vs {N_COMBINED_FEA
 body(f"AR features ({N_AR_FEATS}): ipc_lag_1, ipc_persistence_2yr, spatial_lag, ipc_period (cat.), ipc_country (cat.).")
 body(f"AR+News adds {N_NEWS_FEATS} GDELT news features to the identical AR feature set.")
 body("")
-body(f"AR-Only:  depth {CB_AR['depth']}, lr {CB_AR['learning_rate']}, optimised on {CB_AR['eval_metric']} "
-     f"with early stopping.  No class weighting.")
-body(f"AR+News:  depth {CB_FULL['depth']}, lr {CB_FULL['learning_rate']}, optimised on {CB_FULL['eval_metric']} "
-     f"with early stopping and balanced class weights.")
-body("Both models use a temporal hold-out (last 40% of training periods) for early stopping and")
-body("restore the best checkpoint — actual tree counts are well below the configured maxima.")
+body(f"Both models share identical CatBoost params: depth={CB_PARAMS['depth']}, "
+     f"lr={CB_PARAMS['learning_rate']}, {CB_PARAMS['iterations']} iterations, "
+     f"loss={CB_PARAMS['loss_function']}, eval={CB_PARAMS['eval_metric']}.")
+body("No early stopping, no class weighting — identical training protocol for fair null comparison.")
 
 # ── 4. Evaluation Design ───────────────────────────────────────────────────────
 section_head("4. Evaluation Design")
