@@ -241,6 +241,25 @@ Results → `results/` | Figures → `figures/`
 
 Pre-computed results and all figures are included in the repository so figures can be regenerated without retraining.
 
+### Presentation visualization suite (GSSI talk graphics)
+
+Publication-grade reproductions of the talk's data graphics, rebuilt entirely from
+the real datasets/results (no hardcoded figures), output as vector PDF + 600-DPI PNG:
+
+```bash
+cd viz_presentation
+python build_all.py
+```
+
+Figures are written **twice**: `figures/presentation/` (titled, for slides) and
+`figures/presentation_untitled/` (paper-ready — figure body + legends only, no
+title/caption, for embedding directly in the manuscript). The first run also trains the study's News-only
+model via the existing pipeline and writes its per-observation predictions
+(`results/window_2yr/news_only_predictions.csv`) and per-fold metrics
+(`news_only_fold_results.csv`, the same format as `fold_results.csv`). Reported
+PR-AUC values in the figures are read from these canonical result files. See
+`viz_presentation/README.md` for the figure-to-data-source map.
+
 ---
 
 ## Data Sources

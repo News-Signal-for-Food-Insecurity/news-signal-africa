@@ -44,4 +44,3 @@ temp_*
 .vscode/
 .idea/
 *.sublime-project
-.claude/
