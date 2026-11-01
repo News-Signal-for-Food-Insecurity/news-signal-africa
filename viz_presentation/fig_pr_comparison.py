@@ -22,7 +22,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 import data_access as da
-from viz_theme import (BASELINE_COLOUR, INK_SOFT, MODEL_COLOURS, PR_PANEL_TINTS,
+from viz_theme import (BASELINE_COLOUR, INK_SOFT, MODEL_COLOURS,
                        apply_rcparams, is_bare, save_fig, style_axes)
 
 # Draw spec per model: (model_key, display label, colour, linestyle, linewidth)
@@ -35,8 +35,7 @@ _SPEC = {
 
 def _draw(models: list[str], filename: str, *, show_baseline: bool) -> None:
     apply_rcparams()
-    fig, ax = plt.subplots(figsize=(7.4, 6.6))
-    ax.set_facecolor(PR_PANEL_TINTS[models[-1]])
+    fig, ax = plt.subplots(figsize=(7.4, 6.6))   # plain white panel — no decorative tint
 
     handles, labels = [], []
     for name in models:
